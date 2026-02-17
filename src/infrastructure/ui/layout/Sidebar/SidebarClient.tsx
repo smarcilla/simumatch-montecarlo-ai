@@ -1,16 +1,27 @@
 "use client";
 
-import { LeagueDTO } from "@/infrastructure/dtos/league.dto";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { FindLeagueResult } from "@/application/results/find-leagues.result";
 
 interface SidebarProps {
-  readonly leagues: LeagueDTO[];
+  readonly leagues: FindLeagueResult[];
 }
 
 export function SidebarClient({ leagues }: SidebarProps) {
-  const [activeLeague, setActiveLeague] = useState<string>(
-    leagues[0]?.name ?? ""
-  );
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const activeLeague = searchParams.get("league") || leagues[0]?.id || "";
+
+  const handleLeagueClick = (
+    leagueId: string,
+    seasonId: string = "season-25-26"
+  ) => {
+    const queryParams = new URLSearchParams(searchParams);
+    queryParams.set("league", leagueId);
+    queryParams.set("season", seasonId);
+
+    router.push(`/?${queryParams.toString()}`);
+  };
 
   return (
     <aside className="dashboard-sidebar">
@@ -23,8 +34,8 @@ export function SidebarClient({ leagues }: SidebarProps) {
           {leagues.map((league) => (
             <li key={league.name} className="league-item">
               <button
-                className={`league-button ${activeLeague === league.name ? "active" : ""}`}
-                onClick={() => setActiveLeague(league.name)}
+                className={`league-button ${activeLeague === league.id ? "active" : ""}`}
+                onClick={() => handleLeagueClick(league.id!)}
               >
                 {league.name}
               </button>

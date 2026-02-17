@@ -1,68 +1,16 @@
 import { DashboardLayout } from "@/infrastructure/ui/layout/DashboardLayout";
+import { getMatchesByLeagueAndSeason } from "@/infrastructure/actions/match.actions";
 
-export default function Home() {
-  const mockMatches = [
-    {
-      id: 1,
-      home: "Real Madrid",
-      away: "Barcelona",
-      date: "2026-02-15",
-      homeColorPrimary: "#FEBE10",
-      homeColorSecondary: "#00529F",
-      awayColorPrimary: "#A50044",
-      awayColorSecondary: "#004D98",
-    },
-    {
-      id: 2,
-      home: "Atlético Madrid",
-      away: "Sevilla",
-      date: "2026-02-15",
-      homeColorPrimary: "#CB3524",
-      homeColorSecondary: "#1B3D6D",
-      awayColorPrimary: "#F43333",
-      awayColorSecondary: "#FFFFFF",
-    },
-    {
-      id: 3,
-      home: "Valencia",
-      away: "Villarreal",
-      date: "2026-02-16",
-      homeColorPrimary: "#EE3424",
-      homeColorSecondary: "#000000",
-      awayColorPrimary: "#FFED02",
-      awayColorSecondary: "#005187",
-    },
-    {
-      id: 4,
-      home: "Real Sociedad",
-      away: "Athletic Club",
-      date: "2026-02-16",
-      homeColorPrimary: "#0050A5",
-      homeColorSecondary: "#FFFFFF",
-      awayColorPrimary: "#EE2523",
-      awayColorSecondary: "#FFFFFF",
-    },
-    {
-      id: 5,
-      home: "Betis",
-      away: "Celta",
-      date: "2026-02-17",
-      homeColorPrimary: "#00954C",
-      homeColorSecondary: "#FFFFFF",
-      awayColorPrimary: "#7BAFD4",
-      awayColorSecondary: "#FFFFFF",
-    },
-    {
-      id: 6,
-      home: "Getafe",
-      away: "Osasuna",
-      date: "2026-02-17",
-      homeColorPrimary: "#005999",
-      homeColorSecondary: "#0E2E5E",
-      awayColorPrimary: "#D81E28",
-      awayColorSecondary: "#172B88",
-    },
-  ];
+interface PageProps {
+  readonly searchParams: Promise<{ league?: string; season?: string }>;
+}
+
+export default async function Home(props: PageProps) {
+  const searchParams = await props.searchParams;
+  const leagueId = searchParams.league || "la-liga-id";
+  const seasonId = searchParams.season || "season-25-26";
+
+  const matches = await getMatchesByLeagueAndSeason(leagueId, seasonId);
 
   return (
     <DashboardLayout>
@@ -90,7 +38,7 @@ export default function Home() {
         </div>
 
         <div className="matches-grid">
-          {mockMatches.map((match) => (
+          {matches.map((match) => (
             <div
               key={match.id}
               className="match-card"
