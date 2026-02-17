@@ -7,10 +7,14 @@
  *
  */
 export class Color {
-  constructor(readonly hex: string) {
+  private constructor(readonly hex: string) {
     if (!this.isValidHex(hex)) {
       throw new Error(`Invalid hex color: ${hex}`);
     }
+  }
+
+  static create(hex: string): Color {
+    return new Color(hex);
   }
 
   private isValidHex(hex: string): boolean {

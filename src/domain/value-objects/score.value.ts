@@ -4,7 +4,7 @@
  */
 
 export class Score {
-  constructor(
+  private constructor(
     readonly home: number,
     readonly away: number
   ) {
@@ -15,5 +15,9 @@ export class Score {
 
   equals(other: Score): boolean {
     return this.home === other.home && this.away === other.away;
+  }
+
+  static create(home: number, away: number): Score {
+    return new Score(home, away);
   }
 }

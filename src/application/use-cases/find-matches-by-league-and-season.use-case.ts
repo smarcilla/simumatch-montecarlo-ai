@@ -9,9 +9,15 @@ export class FindMatchesByLeagueAndSeasonUseCase {
   async execute(
     command: FindMatchesByLeagueAndSeasonCommand
   ): Promise<FindMatchByLeagueAndSeasonResult[]> {
+    const pagination =
+      command.page !== undefined && command.pageSize !== undefined
+        ? { page: command.page, pageSize: command.pageSize }
+        : undefined;
+
     const matches = await this.matchRepository.findByLeagueAndSeason(
       command.leagueId,
-      command.seasonId
+      command.seasonId,
+      pagination
     );
 
     return matches.map(this.mapToResult);

@@ -1,18 +1,10 @@
-type MatchStatusValue = "finished" | "simulated" | "chronicle_generated";
+export type MatchStatusValue = "finished" | "simulated" | "chronicle_generated";
 
 export class MatchStatus {
   private constructor(readonly value: MatchStatusValue) {}
 
-  static finished() {
-    return new MatchStatus("finished");
-  }
-
-  static simulated() {
-    return new MatchStatus("simulated");
-  }
-
-  static chronicleGenerated() {
-    return new MatchStatus("chronicle_generated");
+  static create(value: MatchStatusValue): MatchStatus {
+    return new MatchStatus(value);
   }
 
   equals(other: MatchStatus): boolean {
