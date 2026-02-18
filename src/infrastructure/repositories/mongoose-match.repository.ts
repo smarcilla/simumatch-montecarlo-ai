@@ -15,6 +15,7 @@ import { Color } from "@/domain/value-objects/color.value";
 import { MatchDate } from "@/domain/value-objects/match-date.value";
 import { Score } from "@/domain/value-objects/score.value";
 import { MatchStatus } from "@/domain/value-objects/match-status.value";
+import { PaginatedResult } from "@/application/results/paginated.result";
 
 export class MongooseMatchRepository implements MatchRepository {
   private static readonly REGISTERED_MODELS = Object.freeze({
@@ -26,26 +27,40 @@ export class MongooseMatchRepository implements MatchRepository {
   async findByLeagueAndSeason(
     leagueId: string,
     seasonId: string,
-    options?: PaginationOptions
-  ): Promise<Match[]> {
-    let query = MatchModel.find({
+    options: PaginationOptions
+  ): Promise<PaginatedResult<Match>> {
+    const filter = {
       leagueId: new Types.ObjectId(leagueId),
       seasonId: new Types.ObjectId(seasonId),
-    })
+    };
+
+    const paginationOptions = {
+      page: options?.page ?? 0,
+      pageSize: options?.pageSize ?? 12,
+    };
+
+    const total = await MatchModel.countDocuments(filter);
+
+    const matches = await MatchModel.find(filter)
       .populate("leagueId")
       .populate("seasonId")
       .populate("homeTeamId")
       .populate("awayTeamId")
-      .sort({ date: 1 });
+      .sort({ date: 1 })
+      .skip(paginationOptions.page * paginationOptions.pageSize)
+      .limit(paginationOptions.pageSize)
+      .lean<IMatchPopulated[]>();
 
-    if (options) {
-      query = query
-        .skip(options.page * options.pageSize)
-        .limit(options.pageSize);
-    }
-
-    const matches = await query.lean<IMatchPopulated[]>();
-    return matches.map((doc) => this.mapToEntity(doc));
+    const totalPages = Math.ceil(total / paginationOptions.pageSize);
+    return {
+      results: matches.map((doc) => this.mapToEntity(doc)),
+      total,
+      page: paginationOptions.page,
+      pageSize: paginationOptions.pageSize,
+      totalPages,
+      hasNextPage: paginationOptions.page < totalPages - 1,
+      hasPreviousPage: paginationOptions.page > 0,
+    };
   }
 
   private mapToEntity(doc: IMatchPopulated): Match {

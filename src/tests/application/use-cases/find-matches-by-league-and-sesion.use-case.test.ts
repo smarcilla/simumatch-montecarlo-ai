@@ -18,9 +18,16 @@ describe("FindMatchesByLeagueAndSeasonUseCase", () => {
     const result = await useCase.execute(command);
 
     expect(result).toBeDefined();
-    expect(Array.isArray(result)).toBe(true);
-    expect(result.length).toBeGreaterThan(0);
-    result.forEach((match) => {
+    expect(result.results).toBeDefined();
+    expect(Array.isArray(result.results)).toBe(true);
+    expect(result.results.length).toBeGreaterThan(0);
+    expect(result.page).toBe(0);
+    expect(result.pageSize).toBe(12);
+    expect(result.total).toBe(4);
+    expect(result.totalPages).toBe(1);
+    expect(result.hasNextPage).toBe(false);
+    expect(result.hasPreviousPage).toBe(false);
+    result.results.forEach((match) => {
       expect(match).toHaveProperty("home");
       expect(match).toHaveProperty("away");
       expect(match).toHaveProperty("date");
@@ -46,7 +53,14 @@ describe("FindMatchesByLeagueAndSeasonUseCase", () => {
     const result = await useCase.execute(command);
 
     expect(result).toBeDefined();
-    expect(Array.isArray(result)).toBe(true);
-    expect(result.length).toBe(0);
+    expect(result.results).toBeDefined();
+    expect(Array.isArray(result.results)).toBe(true);
+    expect(result.results.length).toBe(0);
+    expect(result.page).toBe(0);
+    expect(result.pageSize).toBe(12);
+    expect(result.total).toBe(0);
+    expect(result.totalPages).toBe(0);
+    expect(result.hasNextPage).toBe(false);
+    expect(result.hasPreviousPage).toBe(false);
   });
 });

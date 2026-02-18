@@ -2,25 +2,24 @@ import { Match } from "@/domain/entities/match.entity";
 import { MatchRepository } from "@/domain/repositories/match.repository";
 import { FindMatchesByLeagueAndSeasonCommand } from "../commands/find-matches-by-league-and-season.comand";
 import { FindMatchByLeagueAndSeasonResult } from "../results/find-matches-by-league-and-season.result";
+import { PaginatedResult } from "../results/paginated.result";
 
 export class FindMatchesByLeagueAndSeasonUseCase {
   constructor(private readonly matchRepository: MatchRepository) {}
 
   async execute(
     command: FindMatchesByLeagueAndSeasonCommand
-  ): Promise<FindMatchByLeagueAndSeasonResult[]> {
-    const pagination =
-      command.page !== undefined && command.pageSize !== undefined
-        ? { page: command.page, pageSize: command.pageSize }
-        : undefined;
-
-    const matches = await this.matchRepository.findByLeagueAndSeason(
+  ): Promise<PaginatedResult<FindMatchByLeagueAndSeasonResult>> {
+    const result = await this.matchRepository.findByLeagueAndSeason(
       command.leagueId,
       command.seasonId,
-      pagination
+      { page: command.page ?? 0, pageSize: command.pageSize ?? 12 }
     );
 
-    return matches.map(this.mapToResult);
+    return {
+      ...result,
+      results: result.results.map((match) => this.mapToResult(match)),
+    };
   }
 
   mapToResult(match: Match): FindMatchByLeagueAndSeasonResult {

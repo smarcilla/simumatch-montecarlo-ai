@@ -1,16 +1,22 @@
+// src/app/page.tsx
 import { DashboardLayout } from "@/infrastructure/ui/layout/DashboardLayout";
 import { getMatchesByLeagueAndSeason } from "@/infrastructure/actions/match.actions";
+import { Pagination } from "@/infrastructure/ui/components/Pagination";
 
 interface PageProps {
-  readonly searchParams: Promise<{ league?: string; season?: string }>;
+  readonly searchParams: Promise<{
+    league?: string;
+    season?: string;
+    page?: string;
+  }>;
 }
 
 export default async function Home(props: PageProps) {
   const searchParams = await props.searchParams;
   const leagueId = searchParams.league;
   const seasonId = searchParams.season;
+  const page = searchParams.page ? Number.parseInt(searchParams.page, 10) : 0;
 
-  // Show loading/empty state if params are missing
   if (!leagueId || !seasonId) {
     return (
       <DashboardLayout>
@@ -42,8 +48,7 @@ export default async function Home(props: PageProps) {
     );
   }
 
-  // Fetch matches with valid params
-  const matches = await getMatchesByLeagueAndSeason(leagueId, seasonId);
+  const result = await getMatchesByLeagueAndSeason(leagueId, seasonId, page);
 
   return (
     <DashboardLayout>
@@ -66,12 +71,12 @@ export default async function Home(props: PageProps) {
               color: "var(--text-secondary)",
             }}
           >
-            Temporada activa 2025/2026
+            Temporada activa 2025/2026 • {result.total} partidos
           </p>
         </div>
 
         <div className="matches-grid">
-          {matches.map((match) => (
+          {result.results.map((match) => (
             <div
               key={match.id}
               className="match-card"
@@ -99,15 +104,15 @@ export default async function Home(props: PageProps) {
                   </div>
                 </div>
 
-                {/* VS Central */}
-                <div className="match-vs">
-                  <span className="match-vs-text">VS</span>
-                  <div className="match-vs-divider" />
+                {/* Score */}
+                <div className="match-score">
+                  <span className="score-number">{match.homeScore}</span>
+                  <span className="score-separator">-</span>
+                  <span className="score-number">{match.awayScore}</span>
                 </div>
 
                 {/* Equipo Visitante */}
                 <div className="team-container away">
-                  <span className="team-name">{match.away}</span>
                   <div className="team-color-badge">
                     <div
                       className="team-color-dot"
@@ -118,22 +123,27 @@ export default async function Home(props: PageProps) {
                       style={{ backgroundColor: match.awayColorSecondary }}
                     />
                   </div>
+                  <span className="team-name">{match.away}</span>
                 </div>
               </div>
 
-              <div className="match-meta">
-                <time>
-                  {new Date(match.date).toLocaleDateString("es-ES", {
-                    weekday: "short",
-                    day: "numeric",
-                    month: "short",
-                  })}
-                </time>
-                <span className="league-badge">La Liga</span>
+              <div className="match-date">
+                {new Date(match.date).toLocaleDateString("es-ES", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
               </div>
             </div>
           ))}
         </div>
+
+        <Pagination
+          currentPage={page}
+          totalPages={result.totalPages}
+          leagueId={leagueId}
+          seasonId={seasonId}
+        />
       </div>
     </DashboardLayout>
   );
