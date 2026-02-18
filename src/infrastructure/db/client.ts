@@ -41,6 +41,20 @@ const registerConnectionListeners = () => {
   });
 };
 
+const buildMongoDBUri = (): string => {
+  const baseUri = process.env.MONGODB_URI!;
+  const dbName = process.env.MONGODB_NAME;
+
+  if (!dbName) {
+    return baseUri;
+  }
+
+  const url = new URL(baseUri);
+  url.pathname = `/${dbName}`;
+
+  return url.toString();
+};
+
 export const connectToDatabase = async () => {
   registerConnectionListeners();
 
@@ -56,11 +70,10 @@ export const connectToDatabase = async () => {
 
   try {
     isConnecting = true;
-    const conn = await mongoose.connect(
-      process.env.MONGODB_URI!,
-      connectionOptions
-    );
+    const mongoUri = buildMongoDBUri();
+    const conn = await mongoose.connect(mongoUri, connectionOptions);
     console.log(`Connected to MongoDB: ${conn.connection.host}`);
+    console.log(`Database: ${conn.connection.name}`);
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
     isConnecting = false;
@@ -87,7 +100,6 @@ const gracefulShutdown = async (signal: string) => {
   process.exit(0);
 };
 
-// Registrar señales de terminación
 process.on("SIGINT", () => gracefulShutdown("SIGINT")); // Ctrl+C
 process.on("SIGTERM", () => gracefulShutdown("SIGTERM")); // Kill command
 process.on("SIGUSR2", () => gracefulShutdown("SIGUSR2")); // Nodemon restart

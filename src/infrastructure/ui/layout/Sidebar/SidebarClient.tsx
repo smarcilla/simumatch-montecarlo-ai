@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 import { FindLeagueResult } from "@/application/results/find-leagues.result";
 
 interface SidebarProps {
@@ -12,13 +13,35 @@ export function SidebarClient({ leagues }: SidebarProps) {
   const searchParams = useSearchParams();
   const activeLeague = searchParams.get("league") || leagues[0]?.id || "";
 
-  const handleLeagueClick = (
-    leagueId: string,
-    seasonId: string = "season-25-26"
-  ) => {
+  // Set initial params if missing
+  useEffect(() => {
+    const currentLeague = searchParams.get("league");
+    const currentSeason = searchParams.get("season");
+
+    // If params are missing and we have leagues, set the first league and its first season
+    if ((!currentLeague || !currentSeason) && leagues.length > 0) {
+      const firstLeague = leagues[0]!;
+      const firstSeason = firstLeague.seasons[0];
+
+      if (firstLeague.id && firstSeason?.id) {
+        const queryParams = new URLSearchParams(searchParams);
+        queryParams.set("league", firstLeague.id);
+        queryParams.set("season", firstSeason.id);
+        router.replace(`/?${queryParams.toString()}`);
+      }
+    }
+  }, [leagues, searchParams, router]);
+
+  const handleLeagueClick = (leagueId: string, seasonId?: string) => {
+    // Find the league to get its default season if not provided
+    const league = leagues.find((l) => l.id === leagueId);
+    const selectedSeasonId = seasonId || league?.seasons[0]?.id;
+
+    if (!selectedSeasonId) return;
+
     const queryParams = new URLSearchParams(searchParams);
     queryParams.set("league", leagueId);
-    queryParams.set("season", seasonId);
+    queryParams.set("season", selectedSeasonId);
 
     router.push(`/?${queryParams.toString()}`);
   };

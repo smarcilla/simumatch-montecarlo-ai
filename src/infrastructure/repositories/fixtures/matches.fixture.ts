@@ -28,11 +28,11 @@ export function generateMatchesForLeagueAndSeason(
         league,
         season,
         MatchDate.create(matchDate),
-        new Score(
+        Score.create(
           Math.floor(Math.random() * 4), // 0-3 goles local
           Math.floor(Math.random() * 4) // 0-3 goles visitante
         ),
-        MatchStatus.finished(),
+        MatchStatus.create("finished"),
         homeTeam!,
         awayTeam!
       )

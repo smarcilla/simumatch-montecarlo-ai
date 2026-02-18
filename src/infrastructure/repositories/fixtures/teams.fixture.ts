@@ -10,8 +10,8 @@ export const TEAMS_BY_LEAGUE = {
       "Real Madrid",
       "real-madrid",
       "RMA",
-      new Color("#FEBE10"),
-      new Color("#00529F")
+      Color.create("#FEBE10"),
+      Color.create("#00529F")
     ),
     new Team(
       "team-2",
@@ -19,8 +19,8 @@ export const TEAMS_BY_LEAGUE = {
       "Barcelona",
       "barcelona",
       "BAR",
-      new Color("#A50044"),
-      new Color("#004D98")
+      Color.create("#A50044"),
+      Color.create("#004D98")
     ),
     new Team(
       "team-3",
@@ -28,8 +28,8 @@ export const TEAMS_BY_LEAGUE = {
       "Atlético Madrid",
       "atletico-madrid",
       "ATM",
-      new Color("#CB3524"),
-      new Color("#1B3D6D")
+      Color.create("#CB3524"),
+      Color.create("#1B3D6D")
     ),
     new Team(
       "team-4",
@@ -37,8 +37,8 @@ export const TEAMS_BY_LEAGUE = {
       "Sevilla",
       "sevilla",
       "SEV",
-      new Color("#F43333"),
-      new Color("#FFFFFF")
+      Color.create("#F43333"),
+      Color.create("#FFFFFF")
     ),
     new Team(
       "team-5",
@@ -46,8 +46,8 @@ export const TEAMS_BY_LEAGUE = {
       "Valencia",
       "valencia",
       "VAL",
-      new Color("#EE3424"),
-      new Color("#000000")
+      Color.create("#EE3424"),
+      Color.create("#000000")
     ),
     new Team(
       "team-6",
@@ -55,8 +55,8 @@ export const TEAMS_BY_LEAGUE = {
       "Villarreal",
       "villarreal",
       "VIL",
-      new Color("#FFED02"),
-      new Color("#005187")
+      Color.create("#FFED02"),
+      Color.create("#005187")
     ),
     new Team(
       "team-7",
@@ -64,8 +64,8 @@ export const TEAMS_BY_LEAGUE = {
       "Real Sociedad",
       "real-sociedad",
       "RSO",
-      new Color("#0050A5"),
-      new Color("#FFFFFF")
+      Color.create("#0050A5"),
+      Color.create("#FFFFFF")
     ),
     new Team(
       "team-8",
@@ -73,8 +73,8 @@ export const TEAMS_BY_LEAGUE = {
       "Athletic Club",
       "athletic-club",
       "ATH",
-      new Color("#EE2523"),
-      new Color("#FFFFFF")
+      Color.create("#EE2523"),
+      Color.create("#FFFFFF")
     ),
   ],
   "Premier League": [
@@ -84,8 +84,8 @@ export const TEAMS_BY_LEAGUE = {
       "Manchester City",
       "manchester-city",
       "MCI",
-      new Color("#6CABDD"),
-      new Color("#1C2C5B")
+      Color.create("#6CABDD"),
+      Color.create("#1C2C5B")
     ),
     new Team(
       "team-21",
@@ -93,8 +93,8 @@ export const TEAMS_BY_LEAGUE = {
       "Arsenal",
       "arsenal",
       "ARS",
-      new Color("#EF0107"),
-      new Color("#FFFFFF")
+      Color.create("#EF0107"),
+      Color.create("#FFFFFF")
     ),
     new Team(
       "team-22",
@@ -102,8 +102,8 @@ export const TEAMS_BY_LEAGUE = {
       "Liverpool",
       "liverpool",
       "LIV",
-      new Color("#C8102E"),
-      new Color("#00B2A9")
+      Color.create("#C8102E"),
+      Color.create("#00B2A9")
     ),
     new Team(
       "team-23",
@@ -111,8 +111,8 @@ export const TEAMS_BY_LEAGUE = {
       "Chelsea",
       "chelsea",
       "CHE",
-      new Color("#034694"),
-      new Color("#DBA111")
+      Color.create("#034694"),
+      Color.create("#DBA111")
     ),
     new Team(
       "team-24",
@@ -120,8 +120,8 @@ export const TEAMS_BY_LEAGUE = {
       "Manchester United",
       "manchester-united",
       "MUN",
-      new Color("#DA291C"),
-      new Color("#FBE122")
+      Color.create("#DA291C"),
+      Color.create("#FBE122")
     ),
     new Team(
       "team-25",
@@ -129,8 +129,8 @@ export const TEAMS_BY_LEAGUE = {
       "Tottenham",
       "tottenham",
       "TOT",
-      new Color("#132257"),
-      new Color("#FFFFFF")
+      Color.create("#132257"),
+      Color.create("#FFFFFF")
     ),
     new Team(
       "team-26",
@@ -138,8 +138,8 @@ export const TEAMS_BY_LEAGUE = {
       "Newcastle",
       "newcastle",
       "NEW",
-      new Color("#241F20"),
-      new Color("#FFFFFF")
+      Color.create("#241F20"),
+      Color.create("#FFFFFF")
     ),
     new Team(
       "team-27",
@@ -147,8 +147,8 @@ export const TEAMS_BY_LEAGUE = {
       "Aston Villa",
       "aston-villa",
       "AVL",
-      new Color("#670E36"),
-      new Color("#95BFE5")
+      Color.create("#670E36"),
+      Color.create("#95BFE5")
     ),
   ],
   "Serie A": [
@@ -158,8 +158,8 @@ export const TEAMS_BY_LEAGUE = {
       "Inter",
       "inter",
       "INT",
-      new Color("#0068A8"),
-      new Color("#000000")
+      Color.create("#0068A8"),
+      Color.create("#000000")
     ),
     new Team(
       "team-41",
@@ -167,8 +167,8 @@ export const TEAMS_BY_LEAGUE = {
       "AC Milan",
       "ac-milan",
       "MIL",
-      new Color("#FB090B"),
-      new Color("#000000")
+      Color.create("#FB090B"),
+      Color.create("#000000")
     ),
     new Team(
       "team-42",
@@ -176,8 +176,8 @@ export const TEAMS_BY_LEAGUE = {
       "Juventus",
       "juventus",
       "JUV",
-      new Color("#000000"),
-      new Color("#FFFFFF")
+      Color.create("#000000"),
+      Color.create("#FFFFFF")
     ),
     new Team(
       "team-43",
@@ -185,8 +185,8 @@ export const TEAMS_BY_LEAGUE = {
       "Napoli",
       "napoli",
       "NAP",
-      new Color("#00A7E1"),
-      new Color("#FFFFFF")
+      Color.create("#00A7E1"),
+      Color.create("#FFFFFF")
     ),
     new Team(
       "team-44",
@@ -194,8 +194,8 @@ export const TEAMS_BY_LEAGUE = {
       "Roma",
       "roma",
       "ROM",
-      new Color("#A50034"),
-      new Color("#F7B500")
+      Color.create("#A50034"),
+      Color.create("#F7B500")
     ),
     new Team(
       "team-45",
@@ -203,8 +203,8 @@ export const TEAMS_BY_LEAGUE = {
       "Lazio",
       "lazio",
       "LAZ",
-      new Color("#87CDEE"),
-      new Color("#FFFFFF")
+      Color.create("#87CDEE"),
+      Color.create("#FFFFFF")
     ),
     new Team(
       "team-46",
@@ -212,8 +212,8 @@ export const TEAMS_BY_LEAGUE = {
       "Atalanta",
       "atalanta",
       "ATA",
-      new Color("#1B1B1B"),
-      new Color("#00529F")
+      Color.create("#1B1B1B"),
+      Color.create("#00529F")
     ),
     new Team(
       "team-47",
@@ -221,8 +221,8 @@ export const TEAMS_BY_LEAGUE = {
       "Fiorentina",
       "fiorentina",
       "FIO",
-      new Color("#5B2B82"),
-      new Color("#FFFFFF")
+      Color.create("#5B2B82"),
+      Color.create("#FFFFFF")
     ),
   ],
   Bundesliga: [
@@ -232,8 +232,8 @@ export const TEAMS_BY_LEAGUE = {
       "Bayern Munich",
       "bayern-munich",
       "BAY",
-      new Color("#DC052D"),
-      new Color("#0066B2")
+      Color.create("#DC052D"),
+      Color.create("#0066B2")
     ),
     new Team(
       "team-61",
@@ -241,8 +241,8 @@ export const TEAMS_BY_LEAGUE = {
       "Borussia Dortmund",
       "borussia-dortmund",
       "BVB",
-      new Color("#FDE100"),
-      new Color("#000000")
+      Color.create("#FDE100"),
+      Color.create("#000000")
     ),
     new Team(
       "team-62",
@@ -250,8 +250,8 @@ export const TEAMS_BY_LEAGUE = {
       "RB Leipzig",
       "rb-leipzig",
       "RBL",
-      new Color("#DD0741"),
-      new Color("#FFFFFF")
+      Color.create("#DD0741"),
+      Color.create("#FFFFFF")
     ),
     new Team(
       "team-63",
@@ -259,8 +259,8 @@ export const TEAMS_BY_LEAGUE = {
       "Bayer Leverkusen",
       "bayer-leverkusen",
       "B04",
-      new Color("#E32221"),
-      new Color("#000000")
+      Color.create("#E32221"),
+      Color.create("#000000")
     ),
     new Team(
       "team-64",
@@ -268,8 +268,8 @@ export const TEAMS_BY_LEAGUE = {
       "Union Berlin",
       "union-berlin",
       "FCU",
-      new Color("#EB1923"),
-      new Color("#F4CC14")
+      Color.create("#EB1923"),
+      Color.create("#F4CC14")
     ),
     new Team(
       "team-65",
@@ -277,8 +277,8 @@ export const TEAMS_BY_LEAGUE = {
       "Eintracht Frankfurt",
       "eintracht-frankfurt",
       "SGE",
-      new Color("#E1000F"),
-      new Color("#000000")
+      Color.create("#E1000F"),
+      Color.create("#000000")
     ),
     new Team(
       "team-66",
@@ -286,8 +286,8 @@ export const TEAMS_BY_LEAGUE = {
       "Wolfsburg",
       "wolfsburg",
       "WOB",
-      new Color("#65B32E"),
-      new Color("#FFFFFF")
+      Color.create("#65B32E"),
+      Color.create("#FFFFFF")
     ),
     new Team(
       "team-67",
@@ -295,8 +295,8 @@ export const TEAMS_BY_LEAGUE = {
       "Borussia M'gladbach",
       "borussia-mgladbach",
       "BMG",
-      new Color("#000000"),
-      new Color("#FFFFFF")
+      Color.create("#000000"),
+      Color.create("#FFFFFF")
     ),
   ],
   "Ligue 1": [
@@ -306,8 +306,8 @@ export const TEAMS_BY_LEAGUE = {
       "PSG",
       "psg",
       "PSG",
-      new Color("#004170"),
-      new Color("#DA291C")
+      Color.create("#004170"),
+      Color.create("#DA291C")
     ),
     new Team(
       "team-81",
@@ -315,8 +315,8 @@ export const TEAMS_BY_LEAGUE = {
       "Marseille",
       "marseille",
       "OM",
-      new Color("#2FAEE0"),
-      new Color("#FFFFFF")
+      Color.create("#2FAEE0"),
+      Color.create("#FFFFFF")
     ),
     new Team(
       "team-82",
@@ -324,8 +324,8 @@ export const TEAMS_BY_LEAGUE = {
       "Monaco",
       "monaco",
       "ASM",
-      new Color("#E1000F"),
-      new Color("#FFFFFF")
+      Color.create("#E1000F"),
+      Color.create("#FFFFFF")
     ),
     new Team(
       "team-83",
@@ -333,8 +333,8 @@ export const TEAMS_BY_LEAGUE = {
       "Lyon",
       "lyon",
       "OL",
-      new Color("#DA0812"),
-      new Color("#004F9E")
+      Color.create("#DA0812"),
+      Color.create("#004F9E")
     ),
     new Team(
       "team-84",
@@ -342,8 +342,8 @@ export const TEAMS_BY_LEAGUE = {
       "Lille",
       "lille",
       "LOSC",
-      new Color("#CE0E2D"),
-      new Color("#00305E")
+      Color.create("#CE0E2D"),
+      Color.create("#00305E")
     ),
     new Team(
       "team-85",
@@ -351,8 +351,8 @@ export const TEAMS_BY_LEAGUE = {
       "Lens",
       "lens",
       "RCL",
-      new Color("#FFC300"),
-      new Color("#CC0000")
+      Color.create("#FFC300"),
+      Color.create("#CC0000")
     ),
     new Team(
       "team-86",
@@ -360,8 +360,8 @@ export const TEAMS_BY_LEAGUE = {
       "Nice",
       "nice",
       "OGCN",
-      new Color("#ED1C24"),
-      new Color("#000000")
+      Color.create("#ED1C24"),
+      Color.create("#000000")
     ),
     new Team(
       "team-87",
@@ -369,8 +369,8 @@ export const TEAMS_BY_LEAGUE = {
       "Rennes",
       "rennes",
       "SRF",
-      new Color("#E30613"),
-      new Color("#000000")
+      Color.create("#E30613"),
+      Color.create("#000000")
     ),
   ],
 } as const;

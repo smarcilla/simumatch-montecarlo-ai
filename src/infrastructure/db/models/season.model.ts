@@ -6,7 +6,7 @@ export interface ISeasonDocument extends Document {
   name: string; // "LaLiga 25/26"
   seasonYear: string; // "25/26"
   leagueId: Types.ObjectId; // ← CLAVE: Pertenece a una liga específica
-  externalId?: string; // ID de API externa (si existe)
+  externalId: number; // ID de API externa (si existe)
 }
 
 const SeasonSchema = new Schema<ISeasonDocument>(
@@ -14,7 +14,7 @@ const SeasonSchema = new Schema<ISeasonDocument>(
     name: { type: String, required: true },
     seasonYear: { type: String, required: true },
     leagueId: { type: Schema.Types.ObjectId, ref: "League", required: true },
-    externalId: { type: String },
+    externalId: { type: Number, required: true },
   },
   { timestamps: true }
 );

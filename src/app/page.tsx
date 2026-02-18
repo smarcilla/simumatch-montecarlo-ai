@@ -7,9 +7,42 @@ interface PageProps {
 
 export default async function Home(props: PageProps) {
   const searchParams = await props.searchParams;
-  const leagueId = searchParams.league || "la-liga-id";
-  const seasonId = searchParams.season || "season-25-26";
+  const leagueId = searchParams.league;
+  const seasonId = searchParams.season;
 
+  // Show loading/empty state if params are missing
+  if (!leagueId || !seasonId) {
+    return (
+      <DashboardLayout>
+        <div className="main-content">
+          <div
+            style={{
+              marginBottom: "var(--spacing-xl)",
+              padding: "var(--spacing-lg)",
+              background: "var(--primary-alpha)",
+              borderRadius: "var(--radius-md)",
+              border: "1px solid var(--primary)",
+              textAlign: "center",
+            }}
+          >
+            <h2 style={{ marginBottom: "var(--spacing-sm)" }}>
+              Bienvenido a SimuMatch
+            </h2>
+            <p
+              style={{
+                fontSize: "var(--font-size-sm)",
+                color: "var(--text-secondary)",
+              }}
+            >
+              Selecciona una competición para ver los partidos
+            </p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // Fetch matches with valid params
   const matches = await getMatchesByLeagueAndSeason(leagueId, seasonId);
 
   return (
