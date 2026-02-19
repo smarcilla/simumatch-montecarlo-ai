@@ -42,3 +42,6 @@ next-env.d.ts
 src/types/**
 
 src/infrastructure/scripts/comps.yaml
+.github/instructions/
+.github/prompts/
+docs/

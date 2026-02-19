@@ -1,10 +1,6 @@
 import { MatchStatusValue } from "@/domain/value-objects/match-status.value";
 
-export interface FindMatchesByLeagueAndSeasonCommand {
-  leagueId: string;
-  seasonId: string;
-  page?: number;
-  pageSize?: number;
+export interface MatchFilterOptions {
   statuses?: MatchStatusValue[] | undefined;
   dateFrom?: Date | undefined;
   dateTo?: Date | undefined;

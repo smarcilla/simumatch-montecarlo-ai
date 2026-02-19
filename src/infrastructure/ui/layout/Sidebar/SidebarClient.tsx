@@ -33,13 +33,12 @@ export function SidebarClient({ leagues }: SidebarProps) {
   }, [leagues, searchParams, router]);
 
   const handleLeagueClick = (leagueId: string, seasonId?: string) => {
-    // Find the league to get its default season if not provided
     const league = leagues.find((l) => l.id === leagueId);
     const selectedSeasonId = seasonId || league?.seasons[0]?.id;
 
     if (!selectedSeasonId) return;
 
-    const queryParams = new URLSearchParams(searchParams);
+    const queryParams = new URLSearchParams();
     queryParams.set("league", leagueId);
     queryParams.set("season", selectedSeasonId);
 

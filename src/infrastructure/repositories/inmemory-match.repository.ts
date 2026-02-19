@@ -6,6 +6,7 @@ import { getTeamsByLeague } from "./fixtures/teams.fixture";
 import { getSeasons } from "./fixtures/seasons.fixture";
 import { generateMatchesForLeagueAndSeason } from "./fixtures/matches.fixture";
 import { PaginationOptions } from "@/application/options/pagination.options";
+import { MatchFilterOptions } from "@/application/options/match-filter.options";
 import { PaginatedResult } from "@/application/results/paginated.result";
 
 export class InMemoryMatchRepository implements MatchRepository {
@@ -31,17 +32,36 @@ export class InMemoryMatchRepository implements MatchRepository {
       });
     });
 
-    console.log(`✅ Seeded ${this.matches.length} matches in memory`);
+    console.log(`Seeded ${this.matches.length} matches in memory`);
   }
 
   async findByLeagueAndSeason(
     leagueId: string,
     seasonId: string,
-    options?: PaginationOptions
+    options?: PaginationOptions,
+    filters?: MatchFilterOptions
   ): Promise<PaginatedResult<Match>> {
-    const filteredMatches = this.matches.filter(
+    let filteredMatches = this.matches.filter(
       (match) => match.league.id === leagueId && match.season.id === seasonId
     );
+
+    if (filters?.statuses && filters.statuses.length > 0) {
+      filteredMatches = filteredMatches.filter((match) =>
+        filters.statuses!.includes(match.status.value)
+      );
+    }
+
+    if (filters?.dateFrom) {
+      filteredMatches = filteredMatches.filter(
+        (match) => match.date.date >= filters.dateFrom!
+      );
+    }
+
+    if (filters?.dateTo) {
+      filteredMatches = filteredMatches.filter(
+        (match) => match.date.date <= filters.dateTo!
+      );
+    }
 
     const paginationOptions = {
       page: options?.page ?? 0,

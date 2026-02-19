@@ -333,6 +333,7 @@ button {
   transition: all var(--transition-base);
   overflow: hidden;
   cursor: pointer;
+  gap: var(--spacing-md);
 }
 
 .match-card:hover {
@@ -341,7 +342,6 @@ button {
   border-color: var(--primary);
 }
 
-/* Degradado superior con colores del equipo local */
 .match-card::before {
   content: '';
   position: absolute;
@@ -358,7 +358,6 @@ button {
   );
 }
 
-/* Barra lateral izquierda con color del equipo local */
 .match-card::after {
   content: '';
   position: absolute;
@@ -378,53 +377,93 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
+  gap: var(--spacing-sm);
 }
 
-.team-container {
+.team-side {
   flex: 1;
   display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
-}
-
-.team-container.home {
-  align-items: flex-start;
-}
-
-.team-container.away {
-  align-items: flex-end;
-}
-
-.team-color-badge {
-  display: flex;
   align-items: center;
-  gap: var(--spacing-xs);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  background: var(--bg-elevated);
-  border-radius: var(--radius-sm);
+  gap: var(--spacing-sm);
+  min-width: 0;
 }
 
-.team-color-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: var(--radius-full);
-  flex-shrink: 0;
-  box-shadow: var(--shadow-sm);
+.team-side.home {
+  flex-direction: row;
+  justify-content: flex-start;
 }
 
-.team-color-stripe {
-  width: 2px;
-  height: 10px;
+.team-side.away {
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+}
+
+.team-shield-svg {
   flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
 }
 
 .team-name {
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--text-primary);
   line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.team-side.away .team-name {
+  text-align: right;
+}
+
+.match-score {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  flex-shrink: 0;
+  padding: var(--spacing-xs) var(--spacing-md);
+  background: var(--bg-elevated);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-default);
+}
+
+.score-number {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  min-width: 1ch;
+  text-align: center;
+}
+
+.score-separator {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-lg);
+  font-weight: 400;
+  color: var(--text-tertiary);
+}
+
+.match-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--border-subtle);
+  gap: var(--spacing-sm);
+}
+
+.match-date {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.match-status {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
 }
 
 .match-vs {
@@ -451,28 +490,6 @@ button {
   margin: var(--spacing-xs) 0;
 }
 
-.match-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-md);
-  font-size: var(--font-size-sm);
-  color: var(--text-secondary);
-  padding-top: var(--spacing-md);
-  border-top: 1px solid var(--border-subtle);
-}
-
-.league-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: var(--spacing-xs) var(--spacing-sm);
-  background: var(--bg-elevated);
-  border-radius: var(--radius-sm);
-  font-size: var(--font-size-xs);
-  font-weight: 600;
-  color: var(--text-tertiary);
-}
-
 /* Grid de partidos - Responsive */
 .matches-grid {
   display: grid;
@@ -492,9 +509,10 @@ button {
   .matches-grid {
     grid-template-columns: 1fr;
   }
-  
-  .team-name {
-    font-size: var(--font-size-sm);
+
+  .team-shield-svg {
+    width: 30px;
+    height: 35px;
   }
 }
 
@@ -615,5 +633,358 @@ button {
     min-width: 36px;
     height: 36px;
     font-size: var(--font-size-xs);
+  }
+}
+
+/* ============================================
+   CABECERA DE PÁGINA (LIGA / TEMPORADA)
+   ============================================ */
+
+.page-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-default);
+  margin-bottom: var(--spacing-xl);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+}
+
+.page-header-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.page-header-season {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.page-header-meta {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* ============================================
+   BARRA DE FILTROS DE PARTIDOS
+   ============================================ */
+
+.match-filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-default);
+  margin-bottom: var(--spacing-xl);
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  flex: 1;
+  min-width: 140px;
+}
+
+.filter-label {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+}
+
+.filter-select {
+  appearance: none;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  padding: var(--spacing-sm) var(--spacing-md);
+  cursor: pointer;
+  height: 38px;
+  transition: border-color var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.filter-select:hover {
+  border-color: var(--text-tertiary);
+  background: var(--bg-hover);
+}
+
+.filter-select:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--primary-alpha);
+}
+
+.filter-select[multiple] {
+  height: auto;
+  min-height: 96px;
+  padding: var(--spacing-xs);
+}
+
+.filter-select[multiple] option {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  margin-bottom: 2px;
+  color: var(--text-secondary);
+}
+
+.filter-select[multiple] option:checked {
+  background: var(--primary-alpha);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.filter-checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.filter-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast), color var(--transition-fast);
+  user-select: none;
+}
+
+.filter-checkbox-item:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.filter-checkbox-item input[type="checkbox"] {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  border: 1px solid var(--border-default);
+  border-radius: 3px;
+  background: var(--bg-elevated);
+  cursor: pointer;
+  position: relative;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.filter-checkbox-item input[type="checkbox"]:checked {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.filter-checkbox-item input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 5px;
+  height: 9px;
+  border: 2px solid #0B0E13;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+.filter-checkbox-item input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--primary-alpha);
+}
+
+/* ---- Date Range Picker ---- */
+
+.filter-date-picker {
+  position: relative;
+}
+
+.filter-date-trigger-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.filter-date-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  height: 38px;
+  white-space: nowrap;
+  flex: 1;
+  text-align: left;
+}
+
+.filter-date-trigger:hover,
+.filter-date-trigger.open {
+  border-color: var(--primary);
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.filter-date-trigger svg {
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+}
+
+.filter-clear-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.filter-clear-btn:hover {
+  border-color: var(--error);
+  color: var(--error);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Popover del calendario */
+.filter-date-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 200;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xl);
+  padding: var(--spacing-md);
+
+  --rdp-accent-color: var(--primary);
+  --rdp-accent-background-color: var(--primary-alpha);
+  --rdp-range_start-date-background-color: var(--primary);
+  --rdp-range_start-color: #0B0E13;
+  --rdp-range_end-date-background-color: var(--primary);
+  --rdp-range_end-color: #0B0E13;
+  --rdp-range_middle-background-color: var(--primary-alpha);
+  --rdp-range_middle-color: var(--primary);
+  --rdp-range_start-background: linear-gradient(90deg, transparent 50%, var(--primary-alpha) 50%);
+  --rdp-range_end-background: linear-gradient(270deg, transparent 50%, var(--primary-alpha) 50%);
+  --rdp-today-color: var(--accent);
+  --rdp-selected-border: none;
+  --rdp-day-height: 36px;
+  --rdp-day-width: 36px;
+  --rdp-day_button-height: 32px;
+  --rdp-day_button-width: 32px;
+  --rdp-day_button-border-radius: var(--radius-sm);
+}
+
+.filter-date-popover .rdp-root {
+  color: var(--text-primary);
+  background: transparent;
+}
+
+.filter-date-popover .rdp-day_button {
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.filter-date-popover .rdp-outside .rdp-day_button {
+  color: var(--text-tertiary);
+}
+
+.filter-date-popover .rdp-weekday {
+  color: var(--text-tertiary);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.filter-date-popover .rdp-month_caption {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: var(--font-size-base);
+}
+
+.filter-date-popover .rdp-nav button {
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  width: 28px;
+  height: 28px;
+}
+
+.filter-date-popover .rdp-nav button:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-alpha);
+}
+
+/* ---- Responsive ---- */
+
+@media (max-width: 1024px) {
+  .filter-group {
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 640px) {
+  .match-filters-bar {
+    padding: var(--spacing-md);
+    gap: var(--spacing-sm);
+  }
+
+  .filter-group {
+    min-width: calc(50% - var(--spacing-sm));
+    flex: 1 1 calc(50% - var(--spacing-sm));
+  }
+
+  .filter-date-picker {
+    min-width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .filter-date-popover {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: calc(100vw - var(--spacing-xl) * 2);
   }
 }

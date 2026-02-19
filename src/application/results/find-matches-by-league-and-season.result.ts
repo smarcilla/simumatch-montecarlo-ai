@@ -1,3 +1,5 @@
+import { MatchStatusValue } from "@/domain/value-objects/match-status.value";
+
 export interface FindMatchByLeagueAndSeasonResult {
   id: string;
   home: string;
@@ -9,6 +11,7 @@ export interface FindMatchByLeagueAndSeasonResult {
   awayColorSecondary: string;
   homeScore: number;
   awayScore: number;
+  status: MatchStatusValue;
   league: string;
   season: string;
 }

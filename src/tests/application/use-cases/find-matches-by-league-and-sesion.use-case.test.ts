@@ -37,10 +37,14 @@ describe("FindMatchesByLeagueAndSeasonUseCase", () => {
       expect(match).toHaveProperty("awayColorSecondary");
       expect(match).toHaveProperty("homeScore");
       expect(match).toHaveProperty("awayScore");
+      expect(match).toHaveProperty("status");
       expect(match).toHaveProperty("league");
       expect(match).toHaveProperty("season");
       expect(match.league).toBe("la-liga-id");
       expect(match.season).toBe("season-23-24");
+      expect(["finished", "simulated", "chronicle_generated"]).toContain(
+        match.status
+      );
     });
   });
 

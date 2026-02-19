@@ -6,6 +6,7 @@ import { TeamModel } from "../db/models/team.model";
 import { LeagueModel } from "../db/models/league.model";
 import { SeasonModel } from "../db/models/season.model";
 import { PaginationOptions } from "@/application/options/pagination.options";
+import { MatchFilterOptions } from "@/application/options/match-filter.options";
 import { Types } from "mongoose";
 import { League } from "@/domain/entities/league.entity";
 import { SeasonYear } from "@/domain/value-objects/season-year.value";
@@ -27,12 +28,24 @@ export class MongooseMatchRepository implements MatchRepository {
   async findByLeagueAndSeason(
     leagueId: string,
     seasonId: string,
-    options: PaginationOptions
+    options?: PaginationOptions,
+    filters?: MatchFilterOptions
   ): Promise<PaginatedResult<Match>> {
-    const filter = {
+    const filter: Record<string, unknown> = {
       leagueId: new Types.ObjectId(leagueId),
       seasonId: new Types.ObjectId(seasonId),
     };
+
+    if (filters?.statuses && filters.statuses.length > 0) {
+      filter.status = { $in: filters.statuses };
+    }
+
+    if (filters?.dateFrom || filters?.dateTo) {
+      const dateFilter: Record<string, Date> = {};
+      if (filters.dateFrom) dateFilter.$gte = filters.dateFrom;
+      if (filters.dateTo) dateFilter.$lte = filters.dateTo;
+      filter.date = dateFilter;
+    }
 
     const paginationOptions = {
       page: options?.page ?? 0,

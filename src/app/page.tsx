@@ -1,13 +1,18 @@
-// src/app/page.tsx
 import { DashboardLayout } from "@/infrastructure/ui/layout/DashboardLayout";
 import { getMatchesByLeagueAndSeason } from "@/infrastructure/actions/match.actions";
+import { getLeagues } from "@/infrastructure/actions/league.actions";
 import { Pagination } from "@/infrastructure/ui/components/Pagination";
+import { MatchFiltersBar } from "@/infrastructure/ui/components/filters/MatchFiltersBar";
+import { MatchCard } from "@/infrastructure/ui/components/MatchCard";
 
 interface PageProps {
   readonly searchParams: Promise<{
     league?: string;
     season?: string;
     page?: string;
+    statuses?: string;
+    dateFrom?: string;
+    dateTo?: string;
   }>;
 }
 
@@ -16,6 +21,9 @@ export default async function Home(props: PageProps) {
   const leagueId = searchParams.league;
   const seasonId = searchParams.season;
   const page = searchParams.page ? Number.parseInt(searchParams.page, 10) : 0;
+  const statusesRaw = searchParams.statuses;
+  const dateFromRaw = searchParams.dateFrom;
+  const dateToRaw = searchParams.dateTo;
 
   if (!leagueId || !seasonId) {
     return (
@@ -48,93 +56,49 @@ export default async function Home(props: PageProps) {
     );
   }
 
-  const result = await getMatchesByLeagueAndSeason(leagueId, seasonId, page);
+  const [result, leagues] = await Promise.all([
+    getMatchesByLeagueAndSeason(
+      leagueId,
+      seasonId,
+      page,
+      12,
+      statusesRaw,
+      dateFromRaw,
+      dateToRaw
+    ),
+    getLeagues(),
+  ]);
+
+  const activeLeague = leagues.find((l) => l.id === leagueId);
+  const activeSeason = activeLeague?.seasons.find((s) => s.id === seasonId);
+
+  const leagueTitle = activeLeague?.name ?? "Liga";
 
   return (
     <DashboardLayout>
       <div className="main-content">
-        <div
-          style={{
-            marginBottom: "var(--spacing-xl)",
-            padding: "var(--spacing-lg)",
-            background: "var(--primary-alpha)",
-            borderRadius: "var(--radius-md)",
-            border: "1px solid var(--primary)",
-          }}
-        >
-          <h2 style={{ marginBottom: "var(--spacing-sm)" }}>
-            Listado de Partidos
-          </h2>
-          <p
-            style={{
-              fontSize: "var(--font-size-sm)",
-              color: "var(--text-secondary)",
-            }}
-          >
-            Temporada activa 2025/2026 • {result.total} partidos
-          </p>
+        <div className="page-header">
+          <h1 className="page-header-title">
+            {leagueTitle}
+            {activeSeason ? (
+              <span className="page-header-season">
+                {` ${activeSeason.year}`}
+              </span>
+            ) : null}
+          </h1>
+          <p className="page-header-meta">{result.total} partidos</p>
         </div>
+
+        {activeLeague && (
+          <MatchFiltersBar
+            activeLeague={activeLeague}
+            currentSeasonId={seasonId}
+          />
+        )}
 
         <div className="matches-grid">
           {result.results.map((match) => (
-            <div
-              key={match.id}
-              className="match-card"
-              style={{
-                // @ts-expect-error - CSS custom properties
-                "--team-home-primary": match.homeColorPrimary,
-                "--team-home-secondary": match.homeColorSecondary,
-                "--team-away-primary": match.awayColorPrimary,
-                "--team-away-secondary": match.awayColorSecondary,
-              }}
-            >
-              <div className="match-teams">
-                {/* Equipo Local */}
-                <div className="team-container home">
-                  <span className="team-name">{match.home}</span>
-                  <div className="team-color-badge">
-                    <div
-                      className="team-color-dot"
-                      style={{ backgroundColor: match.homeColorPrimary }}
-                    />
-                    <div
-                      className="team-color-stripe"
-                      style={{ backgroundColor: match.homeColorSecondary }}
-                    />
-                  </div>
-                </div>
-
-                {/* Score */}
-                <div className="match-score">
-                  <span className="score-number">{match.homeScore}</span>
-                  <span className="score-separator">-</span>
-                  <span className="score-number">{match.awayScore}</span>
-                </div>
-
-                {/* Equipo Visitante */}
-                <div className="team-container away">
-                  <div className="team-color-badge">
-                    <div
-                      className="team-color-dot"
-                      style={{ backgroundColor: match.awayColorPrimary }}
-                    />
-                    <div
-                      className="team-color-stripe"
-                      style={{ backgroundColor: match.awayColorSecondary }}
-                    />
-                  </div>
-                  <span className="team-name">{match.away}</span>
-                </div>
-              </div>
-
-              <div className="match-date">
-                {new Date(match.date).toLocaleDateString("es-ES", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
-              </div>
-            </div>
+            <MatchCard key={match.id} match={match} />
           ))}
         </div>
 
@@ -143,6 +107,9 @@ export default async function Home(props: PageProps) {
           totalPages={result.totalPages}
           leagueId={leagueId}
           seasonId={seasonId}
+          statusesRaw={statusesRaw}
+          dateFromRaw={dateFromRaw}
+          dateToRaw={dateToRaw}
         />
       </div>
     </DashboardLayout>
