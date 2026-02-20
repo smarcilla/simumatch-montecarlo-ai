@@ -215,6 +215,33 @@ button {
   letter-spacing: 0.05em;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.hamburger-button {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.hamburger-button:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-alpha);
+}
+
 /* Sidebar */
 .dashboard-sidebar {
   grid-area: sidebar;
@@ -331,7 +358,6 @@ button {
   border-radius: var(--radius-md);
   border: 1px solid var(--border-default);
   transition: all var(--transition-base);
-  overflow: hidden;
   cursor: pointer;
   gap: var(--spacing-md);
 }
@@ -349,6 +375,8 @@ button {
   top: 0;
   width: 100%;
   height: 4px;
+  border-top-left-radius: var(--radius-md);
+  border-top-right-radius: var(--radius-md);
   background: linear-gradient(
     90deg, 
     var(--team-home-primary, var(--primary)) 0%, 
@@ -365,6 +393,7 @@ button {
   top: 4px;
   width: 4px;
   height: calc(100% - 4px);
+  border-bottom-left-radius: var(--radius-md);
   background: linear-gradient(
     180deg, 
     var(--team-home-primary, var(--primary)) 0%, 
@@ -386,6 +415,7 @@ button {
   align-items: center;
   gap: var(--spacing-sm);
   min-width: 0;
+  position: relative;
 }
 
 .team-side.home {
@@ -404,6 +434,11 @@ button {
 }
 
 .team-name {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
   font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--text-primary);
@@ -411,6 +446,33 @@ button {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  cursor: pointer;
+  text-align: left;
+  min-width: 0;
+}
+
+.team-tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 50;
+  box-shadow: var(--shadow-md);
+  animation: tooltip-fade-in 120ms ease;
+}
+
+@keyframes tooltip-fade-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
 .team-side.away .team-name {
@@ -494,13 +556,26 @@ button {
 .matches-grid {
   display: grid;
   gap: var(--spacing-lg);
-  grid-template-columns: repeat(3, 1fr); /* Desktop: 3 columnas */
+  grid-template-columns: repeat(2, 1fr); /* Desktop: 2 columnas */
 }
 
-/* Tablet: 2 columnas */
+/* Tablet: 1 columna */
 @media (max-width: 1024px) {
   .matches-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
+  }
+
+  .team-shield-svg {
+    width: 32px;
+    height: 37px;
+  }
+
+  .score-number {
+    font-size: var(--font-size-lg);
+  }
+
+  .match-score {
+    padding: var(--spacing-xs) var(--spacing-sm);
   }
 }
 
@@ -560,11 +635,39 @@ button {
     grid-template-columns: 1fr;
     grid-template-rows: var(--header-height) 1fr var(--footer-height);
   }
-  
-  .dashboard-sidebar {
-    display: none; /* Mobile menu to be implemented */
+
+  .hamburger-button {
+    display: flex;
   }
-  
+
+  .dashboard-sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: var(--sidebar-width);
+    height: 100vh;
+    z-index: 200;
+    transition: left var(--transition-slow);
+    padding-top: var(--spacing-lg);
+  }
+
+  .dashboard-sidebar.sidebar-drawer-open {
+    left: 0;
+  }
+
+  .sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 199;
+    animation: overlay-fade-in 200ms ease;
+  }
+
+  @keyframes overlay-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
   .main-content {
     padding: var(--spacing-md);
   }

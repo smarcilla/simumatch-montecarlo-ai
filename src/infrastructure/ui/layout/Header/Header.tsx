@@ -1,3 +1,5 @@
+import { HamburgerButton } from "./HamburgerButton";
+
 export function Header() {
   return (
     <header className="dashboard-header">
@@ -8,13 +10,16 @@ export function Header() {
             <p className="app-subtitle">Monte Carlo Simulations</p>
           </div>
         </div>
-        <div
-          style={{
-            fontSize: "var(--font-size-sm)",
-            color: "var(--text-tertiary)",
-          }}
-        >
-          Acciones | Usuario
+        <div className="header-actions">
+          <div
+            style={{
+              fontSize: "var(--font-size-sm)",
+              color: "var(--text-tertiary)",
+            }}
+          >
+            Acciones | Usuario
+          </div>
+          <HamburgerButton />
         </div>
       </div>
     </header>

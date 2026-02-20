@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FindLeagueResult } from "@/application/results/find-leagues.result";
 
 interface SidebarProps {
@@ -12,6 +12,15 @@ export function SidebarClient({ leagues }: SidebarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeLeague = searchParams.get("league") || leagues[0]?.id || "";
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setIsOpen((prev) => !prev);
+    globalThis.addEventListener("toggle-mobile-menu", handler);
+    return () => globalThis.removeEventListener("toggle-mobile-menu", handler);
+  }, []);
+
+  const close = () => setIsOpen(false);
 
   // Set initial params if missing
   useEffect(() => {
@@ -42,29 +51,37 @@ export function SidebarClient({ leagues }: SidebarProps) {
     queryParams.set("league", leagueId);
     queryParams.set("season", selectedSeasonId);
 
+    close();
     router.push(`/?${queryParams.toString()}`);
   };
 
   return (
-    <aside className="dashboard-sidebar">
-      <div className="sidebar-header">
-        <h2 className="sidebar-title">Competiciones</h2>
-      </div>
+    <>
+      {isOpen && (
+        <div className="sidebar-overlay" onClick={close} aria-hidden="true" />
+      )}
+      <aside
+        className={`dashboard-sidebar${isOpen ? " sidebar-drawer-open" : ""}`}
+      >
+        <div className="sidebar-header">
+          <h2 className="sidebar-title">Competiciones</h2>
+        </div>
 
-      <nav>
-        <ul className="league-list">
-          {leagues.map((league) => (
-            <li key={league.name} className="league-item">
-              <button
-                className={`league-button ${activeLeague === league.id ? "active" : ""}`}
-                onClick={() => handleLeagueClick(league.id!)}
-              >
-                {league.name}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </aside>
+        <nav>
+          <ul className="league-list">
+            {leagues.map((league) => (
+              <li key={league.name} className="league-item">
+                <button
+                  className={`league-button ${activeLeague === league.id ? "active" : ""}`}
+                  onClick={() => handleLeagueClick(league.id!)}
+                >
+                  {league.name}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </aside>
+    </>
   );
 }

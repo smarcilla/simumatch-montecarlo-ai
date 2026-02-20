@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { FindMatchByLeagueAndSeasonResult } from "@/application/results/find-matches-by-league-and-season.result";
 
 const STATUS_LABELS: Record<string, string> = {
@@ -49,6 +52,8 @@ interface MatchCardProps {
 }
 
 export function MatchCard({ match }: MatchCardProps) {
+  const [tooltip, setTooltip] = useState<string | null>(null);
+
   return (
     <div
       className="match-card"
@@ -67,7 +72,20 @@ export function MatchCard({ match }: MatchCardProps) {
             primary={match.homeColorPrimary}
             secondary={match.homeColorSecondary}
           />
-          <span className="team-name">{match.home}</span>
+          <button
+            className="team-name"
+            onMouseEnter={() => setTooltip(match.home)}
+            onMouseLeave={() => setTooltip(null)}
+            onFocus={() => setTooltip(match.home)}
+            onBlur={() => setTooltip(null)}
+            onTouchStart={() => setTooltip(match.home)}
+            onTouchEnd={() => setTooltip(null)}
+          >
+            {match.home}
+          </button>
+          {tooltip === match.home && (
+            <div className="team-tooltip">{match.home}</div>
+          )}
         </div>
 
         <div className="match-score">
@@ -77,7 +95,20 @@ export function MatchCard({ match }: MatchCardProps) {
         </div>
 
         <div className="team-side away">
-          <span className="team-name">{match.away}</span>
+          <button
+            className="team-name"
+            onMouseEnter={() => setTooltip(match.away)}
+            onMouseLeave={() => setTooltip(null)}
+            onFocus={() => setTooltip(match.away)}
+            onBlur={() => setTooltip(null)}
+            onTouchStart={() => setTooltip(match.away)}
+            onTouchEnd={() => setTooltip(null)}
+          >
+            {match.away}
+          </button>
+          {tooltip === match.away && (
+            <div className="team-tooltip">{match.away}</div>
+          )}
           <TeamShield
             primary={match.awayColorPrimary}
             secondary={match.awayColorSecondary}
