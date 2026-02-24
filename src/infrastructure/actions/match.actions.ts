@@ -2,6 +2,7 @@
 
 import { DIContainer } from "@/infrastructure/di-container";
 import { FindMatchByLeagueAndSeasonResult } from "@/application/results/find-matches-by-league-and-season.result";
+import { FindMatchByIdResult } from "@/application/results/find-match-by-id.result";
 import { PaginatedResult } from "@/application/results/paginated.result";
 import { MatchStatusValue } from "@/domain/value-objects/match-status.value";
 
@@ -42,4 +43,11 @@ export async function getMatchesByLeagueAndSeason(
     dateTo,
   });
   return result;
+}
+
+export async function getMatchById(
+  id: string
+): Promise<FindMatchByIdResult | null> {
+  const useCase = await DIContainer.getFindMatchByIdUseCase();
+  return useCase.execute(id);
 }

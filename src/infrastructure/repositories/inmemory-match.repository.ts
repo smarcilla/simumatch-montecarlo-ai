@@ -85,4 +85,8 @@ export class InMemoryMatchRepository implements MatchRepository {
       hasPreviousPage: paginationOptions.page > 0,
     };
   }
+
+  async findById(id: string): Promise<Match | null> {
+    return this.matches.find((match) => match.id === id) ?? null;
+  }
 }

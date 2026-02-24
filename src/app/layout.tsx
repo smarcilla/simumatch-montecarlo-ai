@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { connectionManager } from "@/infrastructure/db/connection-manager";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -25,11 +24,6 @@ export const metadata: Metadata = {
   title: "SimuMatch AI - Simulaciones de Monte Carlo para fútbol",
   description: "Descubre qué hubiera pasado con 100.000 simulaciones avanzadas",
 };
-
-// Inicializar conexión solo en producción
-if (process.env.REPOSITORY_TYPE === "mongoose") {
-  await connectionManager.initialize().catch(console.error);
-}
 
 export default function RootLayout({
   children,

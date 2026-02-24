@@ -11,4 +11,5 @@ export interface MatchRepository {
     options?: PaginationOptions,
     filters?: MatchFilterOptions
   ): Promise<PaginatedResult<Match>>;
+  findById(id: string): Promise<Match | null>;
 }

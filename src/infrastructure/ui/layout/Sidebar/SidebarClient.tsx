@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FindLeagueResult } from "@/application/results/find-leagues.result";
 
@@ -10,6 +10,7 @@ interface SidebarProps {
 
 export function SidebarClient({ leagues }: SidebarProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const activeLeague = searchParams.get("league") || leagues[0]?.id || "";
   const [isOpen, setIsOpen] = useState(false);
@@ -22,12 +23,12 @@ export function SidebarClient({ leagues }: SidebarProps) {
 
   const close = () => setIsOpen(false);
 
-  // Set initial params if missing
   useEffect(() => {
     const currentLeague = searchParams.get("league");
     const currentSeason = searchParams.get("season");
 
-    // If params are missing and we have leagues, set the first league and its first season
+    if (pathname !== "/") return;
+
     if ((!currentLeague || !currentSeason) && leagues.length > 0) {
       const firstLeague = leagues[0]!;
       const firstSeason = firstLeague.seasons[0];
@@ -39,7 +40,7 @@ export function SidebarClient({ leagues }: SidebarProps) {
         router.replace(`/?${queryParams.toString()}`);
       }
     }
-  }, [leagues, searchParams, router]);
+  }, [leagues, pathname, searchParams, router]);
 
   const handleLeagueClick = (leagueId: string, seasonId?: string) => {
     const league = leagues.find((l) => l.id === leagueId);

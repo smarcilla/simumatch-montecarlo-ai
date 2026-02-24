@@ -7,6 +7,7 @@ const connectionOptions = {
   autoIndex: true,
   serverSelectionTimeoutMS: 5000,
   socketTimeoutMS: 45000,
+  maxPoolSize: Number(process.env.MONGODB_MAX_POOL_SIZE ?? 1),
 };
 
 let isConnecting = false;

@@ -6,8 +6,8 @@ import { beforeAll, describe, expect, it } from "vitest";
 describe("FindLeaguesUseCase", () => {
   let useCase: FindLeaguesUseCase;
 
-  beforeAll(() => {
-    useCase = DIContainer.getFindLeaguesUseCase();
+  beforeAll(async () => {
+    useCase = await DIContainer.getFindLeaguesUseCase();
   });
 
   it("should return a list of leagues", async () => {
