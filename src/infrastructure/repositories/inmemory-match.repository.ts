@@ -89,4 +89,10 @@ export class InMemoryMatchRepository implements MatchRepository {
   async findById(id: string): Promise<Match | null> {
     return this.matches.find((match) => match.id === id) ?? null;
   }
+
+  async findByExternalId(externalId: number): Promise<Match | null> {
+    return (
+      this.matches.find((match) => match.externalId === externalId) ?? null
+    );
+  }
 }

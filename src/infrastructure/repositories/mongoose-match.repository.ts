@@ -19,6 +19,12 @@ import { MatchStatus } from "@/domain/value-objects/match-status.value";
 import { PaginatedResult } from "@/application/results/paginated.result";
 
 export class MongooseMatchRepository implements MatchRepository {
+  private static readonly REGISTERED_MODELS = Object.freeze({
+    season: SeasonModel,
+    team: TeamModel,
+    league: LeagueModel,
+  });
+
   async findById(id: string): Promise<Match | null> {
     const match = await MatchModel.findById(new Types.ObjectId(id))
       .populate("leagueId")
@@ -29,11 +35,17 @@ export class MongooseMatchRepository implements MatchRepository {
 
     return match ? this.mapToEntity(match) : null;
   }
-  private static readonly REGISTERED_MODELS = Object.freeze({
-    season: SeasonModel,
-    team: TeamModel,
-    league: LeagueModel,
-  });
+
+  async findByExternalId(externalId: number): Promise<Match | null> {
+    const match = await MatchModel.findOne({ externalId })
+      .populate("leagueId")
+      .populate("seasonId")
+      .populate("homeTeamId")
+      .populate("awayTeamId")
+      .lean<IMatchPopulated>();
+
+    return match ? this.mapToEntity(match) : null;
+  }
 
   async findByLeagueAndSeason(
     leagueId: string,

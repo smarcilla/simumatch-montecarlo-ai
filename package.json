@@ -22,7 +22,9 @@
     "seed:leagues": "tsx src/infrastructure/scripts/seed-leagues.script.ts",
     "seed:seasons": "tsx src/infrastructure/scripts/seed-seasons.script.ts",
     "seed:teams": "tsx src/infrastructure/scripts/seed-teams.script.ts",
-    "seed:matches": "tsx src/infrastructure/scripts/seed-matches.script.ts"
+    "seed:matches": "tsx src/infrastructure/scripts/seed-matches.script.ts",
+    "seed:players": "tsx src/infrastructure/scripts/seed-players.script.ts",
+    "seed:shots": "tsx src/infrastructure/scripts/seed-shots.script.ts"
   },
   "dependencies": {
     "@playwright/test": "^1.58.2",

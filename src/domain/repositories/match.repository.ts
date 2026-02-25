@@ -12,4 +12,5 @@ export interface MatchRepository {
     filters?: MatchFilterOptions
   ): Promise<PaginatedResult<Match>>;
   findById(id: string): Promise<Match | null>;
+  findByExternalId(externalId: number): Promise<Match | null>;
 }
