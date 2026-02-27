@@ -107,6 +107,8 @@ describe("AddShotsByShotRawUseCase", () => {
     shotRepository = {
       findByExternalId: vi.fn(),
       upsert: vi.fn().mockResolvedValue(undefined),
+      findByMatchId: vi.fn(),
+      findAllByMatchId: vi.fn(),
     };
     useCase = new AddShotsByShotRawUseCase(
       playerRepository,

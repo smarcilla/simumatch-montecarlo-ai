@@ -18,4 +18,20 @@ export class Shot {
     readonly goalkeeper: Player | null,
     readonly matchId: string
   ) {}
+
+  isGoal(): boolean {
+    return this.shotType.value === "goal";
+  }
+
+  isSave(): boolean {
+    return this.shotType.value === "save";
+  }
+
+  isOnTarget(): boolean {
+    return this.shotType.value === "goal" || this.shotType.value === "save";
+  }
+
+  isPenalty(): boolean {
+    return this.situation.value === "penalty";
+  }
 }

@@ -3,12 +3,15 @@ import { FindMatchesByLeagueAndSeasonUseCase } from "@/application/use-cases/fin
 import { FindLeaguesUseCase } from "@/application/use-cases/find-leagues.use-case";
 import { AddPlayersByShotsUseCase } from "@/application/use-cases/add-players-by-shots.use-case";
 import { AddShotsByShotRawUseCase } from "@/application/use-cases/add-shots-by-shot-raw.use-case";
+import { FindShotsByMatchUseCase } from "@/application/use-cases/find-shots-by-match.use-case";
+import { FindShotStatsByMatchUseCase } from "@/application/use-cases/find-shot-stats-by-match.use-case";
 import { LeagueRepository } from "@/domain/repositories/league.repository";
 import { MatchRepository } from "@/domain/repositories/match.repository";
 import { PlayerRepository } from "@/domain/repositories/player.repository";
 import { ShotRepository } from "@/domain/repositories/shot.repository";
 import { InMemoryLeagueRepository } from "./repositories/inmemory-league.repository";
 import { InMemoryMatchRepository } from "./repositories/inmemory-match.repository";
+import { InMemoryShotRepository } from "./repositories/inmemory-shot.repository";
 import { MongooseLeagueRepository } from "./repositories/mongoose-league.repository";
 import { MongooseMatchRepository } from "./repositories/mongoose-match.repository";
 import { MongoosePlayerRepository } from "./repositories/mongoose-player.repository";
@@ -30,6 +33,8 @@ export class DIContainer {
   private static findMatchByIdUseCase: FindMatchByIdUseCase;
   private static addPlayersByShotsUseCase: AddPlayersByShotsUseCase;
   private static addShotsByShotRawUseCase: AddShotsByShotRawUseCase;
+  private static findShotsByMatchUseCase: FindShotsByMatchUseCase;
+  private static findShotStatsByMatchUseCase: FindShotStatsByMatchUseCase;
 
   static isInMemory(): boolean {
     if (!DIContainer.repositoryType) {
@@ -72,7 +77,9 @@ export class DIContainer {
 
   static getShotRepository(): ShotRepository {
     if (!DIContainer.shotRepository) {
-      DIContainer.shotRepository = new MongooseShotRepository();
+      DIContainer.shotRepository = DIContainer.isInMemory()
+        ? new InMemoryShotRepository()
+        : new MongooseShotRepository();
     }
     return DIContainer.shotRepository;
   }
@@ -142,6 +149,26 @@ export class DIContainer {
     return DIContainer.addShotsByShotRawUseCase;
   }
 
+  static async getFindShotsByMatchUseCase(): Promise<FindShotsByMatchUseCase> {
+    await DIContainer.initializeDatabaseConnection();
+    if (!DIContainer.findShotsByMatchUseCase) {
+      DIContainer.findShotsByMatchUseCase = new FindShotsByMatchUseCase(
+        DIContainer.getShotRepository()
+      );
+    }
+    return DIContainer.findShotsByMatchUseCase;
+  }
+
+  static async getFindShotStatsByMatchUseCase(): Promise<FindShotStatsByMatchUseCase> {
+    await DIContainer.initializeDatabaseConnection();
+    if (!DIContainer.findShotStatsByMatchUseCase) {
+      DIContainer.findShotStatsByMatchUseCase = new FindShotStatsByMatchUseCase(
+        DIContainer.getShotRepository()
+      );
+    }
+    return DIContainer.findShotStatsByMatchUseCase;
+  }
+
   static reset(): void {
     DIContainer.leagueRepository = null as unknown as LeagueRepository;
     DIContainer.matchRepository = null as unknown as MatchRepository;
@@ -155,5 +182,9 @@ export class DIContainer {
       null as unknown as AddPlayersByShotsUseCase;
     DIContainer.addShotsByShotRawUseCase =
       null as unknown as AddShotsByShotRawUseCase;
+    DIContainer.findShotsByMatchUseCase =
+      null as unknown as FindShotsByMatchUseCase;
+    DIContainer.findShotStatsByMatchUseCase =
+      null as unknown as FindShotStatsByMatchUseCase;
   }
 }

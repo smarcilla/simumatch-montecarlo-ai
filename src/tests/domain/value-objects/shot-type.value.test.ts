@@ -39,4 +39,12 @@ describe("ShotType", () => {
     const b = ShotType.create("miss");
     expect(a.equals(b)).toBe(false);
   });
+
+  it("should return true for isShotType with valid value", () => {
+    expect(ShotType.isShotType("save")).toBe(true);
+  });
+
+  it("should return false for isShotType with invalid value", () => {
+    expect(ShotType.isShotType("invalid")).toBe(false);
+  });
 });

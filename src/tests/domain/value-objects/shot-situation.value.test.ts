@@ -34,4 +34,12 @@ describe("ShotSituation", () => {
     const b = ShotSituation.create("penalty");
     expect(a.equals(b)).toBe(false);
   });
+
+  it("should return true for isShotSituation with valid value", () => {
+    expect(ShotSituation.isShotSituation("free-kick")).toBe(true);
+  });
+
+  it("should return false for isShotSituation with invalid value", () => {
+    expect(ShotSituation.isShotSituation("invalid")).toBe(false);
+  });
 });

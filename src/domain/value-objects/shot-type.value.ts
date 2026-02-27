@@ -1,11 +1,10 @@
-const SHOT_TYPE_VALUES = ["miss", "save", "goal", "block", "post"] as const;
-export type ShotTypeValue = (typeof SHOT_TYPE_VALUES)[number];
+export type ShotTypeValue = "miss" | "save" | "goal" | "block" | "post";
 
 export class ShotType {
   private constructor(readonly value: ShotTypeValue) {}
 
   static create(value: string): ShotType {
-    if (!(SHOT_TYPE_VALUES as ReadonlyArray<string>).includes(value)) {
+    if (!ShotType.isShotType(value)) {
       throw new Error(`Invalid ShotType value: ${value}`);
     }
     return new ShotType(value as ShotTypeValue);
@@ -13,5 +12,15 @@ export class ShotType {
 
   equals(other: ShotType): boolean {
     return this.value === other.value;
+  }
+
+  static isShotType(value: string): boolean {
+    return new Set<ShotTypeValue>([
+      "miss",
+      "save",
+      "goal",
+      "block",
+      "post",
+    ]).has(value as ShotTypeValue);
   }
 }

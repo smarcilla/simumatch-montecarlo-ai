@@ -3,14 +3,11 @@
 import { DIContainer } from "@/infrastructure/di-container";
 import { FindMatchByLeagueAndSeasonResult } from "@/application/results/find-matches-by-league-and-season.result";
 import { FindMatchByIdResult } from "@/application/results/find-match-by-id.result";
+import { FindShotResult } from "@/application/results/find-shots-by-match.result";
+import { ShotMatchStatsResult } from "@/application/results/shot-match-stats.result";
 import { PaginatedResult } from "@/application/results/paginated.result";
-import { MatchStatusValue } from "@/domain/value-objects/match-status.value";
-
-const VALID_STATUSES: Set<MatchStatusValue> = new Set([
-  "finished",
-  "simulated",
-  "chronicle_generated",
-]);
+import { FindShotsByMatchCommand } from "@/application/commands/find-shots-by-match.command";
+import { createFindMatchesByLeagueAndSeasonCommand } from "@/application/commands/find-matches-by-league-and-season.comand";
 
 export async function getMatchesByLeagueAndSeason(
   leagueId: string,
@@ -21,27 +18,19 @@ export async function getMatchesByLeagueAndSeason(
   dateFromRaw?: string,
   dateToRaw?: string
 ): Promise<PaginatedResult<FindMatchByLeagueAndSeasonResult>> {
-  const statuses =
-    statusesRaw
-      ?.split(",")
-      .map((s) => s.trim())
-      .filter((s): s is MatchStatusValue =>
-        VALID_STATUSES.has(s as MatchStatusValue)
-      ) ?? [];
-
-  const dateFrom = dateFromRaw ? new Date(dateFromRaw) : undefined;
-  const dateTo = dateToRaw ? new Date(`${dateToRaw}T23:59:59.999Z`) : undefined;
-
-  const useCase = await DIContainer.getFindMatchesByLeagueAndSeasonUseCase();
-  const result = await useCase.execute({
+  const command = createFindMatchesByLeagueAndSeasonCommand(
     leagueId,
     seasonId,
     page,
     pageSize,
-    statuses: statuses.length > 0 ? statuses : undefined,
-    dateFrom,
-    dateTo,
-  });
+    statusesRaw,
+    dateFromRaw,
+    dateToRaw
+  );
+
+  const useCase = await DIContainer.getFindMatchesByLeagueAndSeasonUseCase();
+  const result = await useCase.execute(command);
+
   return result;
 }
 
@@ -50,4 +39,18 @@ export async function getMatchById(
 ): Promise<FindMatchByIdResult | null> {
   const useCase = await DIContainer.getFindMatchByIdUseCase();
   return useCase.execute(id);
+}
+
+export async function getShotsByMatch(
+  command: FindShotsByMatchCommand
+): Promise<PaginatedResult<FindShotResult>> {
+  const useCase = await DIContainer.getFindShotsByMatchUseCase();
+  return useCase.execute(command);
+}
+
+export async function getShotStatsByMatch(
+  matchId: string
+): Promise<ShotMatchStatsResult> {
+  const useCase = await DIContainer.getFindShotStatsByMatchUseCase();
+  return useCase.execute(matchId);
 }
