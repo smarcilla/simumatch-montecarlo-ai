@@ -49,4 +49,5 @@ MatchSchema.index({ date: 1 });
 MatchSchema.index({ status: 1 });
 
 export const MatchModel =
-  mongoose.models.Match || mongoose.model<IMatchDocument>("Match", MatchSchema);
+  (mongoose.models.Match as mongoose.Model<IMatchDocument>) ||
+  mongoose.model<IMatchDocument>("Match", MatchSchema);

@@ -103,6 +103,7 @@ describe("AddShotsByShotRawUseCase", () => {
       findByLeagueAndSeason: vi.fn(),
       findById: vi.fn(),
       findByExternalId: vi.fn().mockResolvedValue(mockMatch),
+      updateStatus: vi.fn().mockResolvedValue(undefined),
     };
     shotRepository = {
       findByExternalId: vi.fn(),

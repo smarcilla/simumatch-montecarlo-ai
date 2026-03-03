@@ -9,7 +9,7 @@ export class MongoosePlayerRepository implements PlayerRepository {
     }).lean<IPlayerDocument>();
     if (!doc) return null;
     return new Player(
-      (doc._id as { toString(): string }).toString(),
+      doc._id.toString(),
       doc.externalId,
       doc.name,
       doc.slug,

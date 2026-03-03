@@ -15,7 +15,10 @@ import { Team } from "@/domain/entities/team.entity";
 import { Color } from "@/domain/value-objects/color.value";
 import { MatchDate } from "@/domain/value-objects/match-date.value";
 import { Score } from "@/domain/value-objects/score.value";
-import { MatchStatus } from "@/domain/value-objects/match-status.value";
+import {
+  MatchStatus,
+  MatchStatusValue,
+} from "@/domain/value-objects/match-status.value";
 import { PaginatedResult } from "@/application/results/paginated.result";
 
 export class MongooseMatchRepository implements MatchRepository {
@@ -96,6 +99,12 @@ export class MongooseMatchRepository implements MatchRepository {
       hasNextPage: paginationOptions.page < totalPages - 1,
       hasPreviousPage: paginationOptions.page > 0,
     };
+  }
+
+  async updateStatus(matchId: string, status: MatchStatusValue): Promise<void> {
+    await MatchModel.findByIdAndUpdate(new Types.ObjectId(matchId), {
+      $set: { status },
+    });
   }
 
   private mapToEntity(doc: IMatchPopulated): Match {

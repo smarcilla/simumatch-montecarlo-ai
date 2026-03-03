@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { FindMatchByIdResult } from "@/application/results/find-match-by-id.result";
 import {
   simulateMatch,
@@ -16,11 +17,13 @@ interface MatchActionsPanelProps {
 export function MatchActionsPanel({ match }: MatchActionsPanelProps) {
   const [isPending, setIsPending] = useState(false);
   const { id, status } = match;
+  const router = useRouter();
 
-  const handleAction = async (action: (id: string) => Promise<void>) => {
+  const handleAction = async (action: (id: string) => Promise<unknown>) => {
     setIsPending(true);
     try {
       await action(id);
+      router.refresh();
     } finally {
       setIsPending(false);
     }

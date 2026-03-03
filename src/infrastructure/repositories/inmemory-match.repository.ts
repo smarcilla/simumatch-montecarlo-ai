@@ -8,6 +8,10 @@ import { generateMatchesForLeagueAndSeason } from "./fixtures/matches.fixture";
 import { PaginationOptions } from "@/application/options/pagination.options";
 import { MatchFilterOptions } from "@/application/options/match-filter.options";
 import { PaginatedResult } from "@/application/results/paginated.result";
+import {
+  MatchStatus,
+  MatchStatusValue,
+} from "@/domain/value-objects/match-status.value";
 
 export class InMemoryMatchRepository implements MatchRepository {
   private readonly matches: Match[] = [];
@@ -94,5 +98,24 @@ export class InMemoryMatchRepository implements MatchRepository {
     return (
       this.matches.find((match) => match.externalId === externalId) ?? null
     );
+  }
+
+  async updateStatus(matchId: string, status: MatchStatusValue): Promise<void> {
+    const idx = this.matches.findIndex((m) => m.id === matchId);
+    if (idx === -1) return;
+    const match = this.matches[idx];
+    if (!match) return;
+    const updated = new Match(
+      match.id,
+      match.externalId,
+      match.league,
+      match.season,
+      match.date,
+      match.score,
+      MatchStatus.create(status),
+      match.homeTeam,
+      match.awayTeam
+    );
+    this.matches[idx] = updated;
   }
 }

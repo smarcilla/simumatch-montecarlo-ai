@@ -16,7 +16,7 @@ interface MatchPageProps {
   params: Promise<{ id: string }>;
 }
 
-export default async function MatchPage({ params }: MatchPageProps) {
+export default async function MatchPage({ params }: Readonly<MatchPageProps>) {
   const { id } = await params;
 
   const [match, initialShots, shotStats] = await Promise.all([

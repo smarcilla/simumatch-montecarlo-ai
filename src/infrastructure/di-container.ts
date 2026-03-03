@@ -5,17 +5,22 @@ import { AddPlayersByShotsUseCase } from "@/application/use-cases/add-players-by
 import { AddShotsByShotRawUseCase } from "@/application/use-cases/add-shots-by-shot-raw.use-case";
 import { FindShotsByMatchUseCase } from "@/application/use-cases/find-shots-by-match.use-case";
 import { FindShotStatsByMatchUseCase } from "@/application/use-cases/find-shot-stats-by-match.use-case";
+import { SimulateMatchUseCase } from "@/application/use-cases/simulate-match.use-case";
 import { LeagueRepository } from "@/domain/repositories/league.repository";
 import { MatchRepository } from "@/domain/repositories/match.repository";
 import { PlayerRepository } from "@/domain/repositories/player.repository";
 import { ShotRepository } from "@/domain/repositories/shot.repository";
+import { SimulationRepository } from "@/domain/repositories/simulation.repository";
+import { MonteCarloSimulatorService } from "@/domain/services/montecarlo-simulator.service";
 import { InMemoryLeagueRepository } from "./repositories/inmemory-league.repository";
 import { InMemoryMatchRepository } from "./repositories/inmemory-match.repository";
+import { InMemorySimulationRepository } from "./repositories/inmemory-simulation.repository";
 import { InMemoryShotRepository } from "./repositories/inmemory-shot.repository";
 import { MongooseLeagueRepository } from "./repositories/mongoose-league.repository";
 import { MongooseMatchRepository } from "./repositories/mongoose-match.repository";
 import { MongoosePlayerRepository } from "./repositories/mongoose-player.repository";
 import { MongooseShotRepository } from "./repositories/mongoose-shot.repository";
+import { MongooseSimulationRepository } from "./repositories/mongoose-simulation.repository";
 import { connectionManager } from "@/infrastructure/db/connection-manager";
 import { FindMatchByIdUseCase } from "@/application/use-cases/find-match-by-id.use-case";
 
@@ -28,6 +33,7 @@ export class DIContainer {
   private static matchRepository: MatchRepository;
   private static playerRepository: PlayerRepository;
   private static shotRepository: ShotRepository;
+  private static simulationRepository: SimulationRepository;
   private static findMatchesByLeagueAndSeasonUseCase: FindMatchesByLeagueAndSeasonUseCase;
   private static findLeaguesUseCase: FindLeaguesUseCase;
   private static findMatchByIdUseCase: FindMatchByIdUseCase;
@@ -35,6 +41,7 @@ export class DIContainer {
   private static addShotsByShotRawUseCase: AddShotsByShotRawUseCase;
   private static findShotsByMatchUseCase: FindShotsByMatchUseCase;
   private static findShotStatsByMatchUseCase: FindShotStatsByMatchUseCase;
+  private static simulateMatchUseCase: SimulateMatchUseCase;
 
   static isInMemory(): boolean {
     if (!DIContainer.repositoryType) {
@@ -82,6 +89,15 @@ export class DIContainer {
         : new MongooseShotRepository();
     }
     return DIContainer.shotRepository;
+  }
+
+  static getSimulationRepository(): SimulationRepository {
+    if (!DIContainer.simulationRepository) {
+      DIContainer.simulationRepository = DIContainer.isInMemory()
+        ? new InMemorySimulationRepository()
+        : new MongooseSimulationRepository();
+    }
+    return DIContainer.simulationRepository;
   }
 
   static async getFindMatchesByLeagueAndSeasonUseCase(): Promise<FindMatchesByLeagueAndSeasonUseCase> {
@@ -169,6 +185,19 @@ export class DIContainer {
     return DIContainer.findShotStatsByMatchUseCase;
   }
 
+  static async getSimulateMatchUseCase(): Promise<SimulateMatchUseCase> {
+    await DIContainer.initializeDatabaseConnection();
+    if (!DIContainer.simulateMatchUseCase) {
+      DIContainer.simulateMatchUseCase = new SimulateMatchUseCase(
+        DIContainer.getShotRepository(),
+        DIContainer.getMatchRepository(),
+        DIContainer.getSimulationRepository(),
+        new MonteCarloSimulatorService()
+      );
+    }
+    return DIContainer.simulateMatchUseCase;
+  }
+
   static reset(): void {
     DIContainer.leagueRepository = null as unknown as LeagueRepository;
     DIContainer.matchRepository = null as unknown as MatchRepository;
@@ -186,5 +215,7 @@ export class DIContainer {
       null as unknown as FindShotsByMatchUseCase;
     DIContainer.findShotStatsByMatchUseCase =
       null as unknown as FindShotStatsByMatchUseCase;
+    DIContainer.simulationRepository = null as unknown as SimulationRepository;
+    DIContainer.simulateMatchUseCase = null as unknown as SimulateMatchUseCase;
   }
 }
