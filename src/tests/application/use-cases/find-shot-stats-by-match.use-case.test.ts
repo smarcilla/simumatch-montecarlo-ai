@@ -1,82 +1,105 @@
 import { FindShotStatsByMatchUseCase } from "@/application/use-cases/find-shot-stats-by-match.use-case";
 import { DIContainer } from "@/infrastructure/di-container";
-import { beforeAll, describe, expect, it } from "vitest";
-
-const MATCH_ID = "match-la-liga-id-season-22-23-0";
+import { beforeEach, describe, expect, it } from "vitest";
+import { Types } from "mongoose";
+import {
+  buildLeague,
+  buildSeason,
+  buildTeam,
+  buildMatch,
+  buildPlayer,
+  buildShot,
+} from "@/tests/helpers/builders";
 
 describe("FindShotStatsByMatchUseCase", () => {
   let useCase: FindShotStatsByMatchUseCase;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     useCase = await DIContainer.getFindShotStatsByMatchUseCase();
   });
 
-  it("should return stats for a match", async () => {
-    const stats = await useCase.execute(MATCH_ID);
-    expect(stats).toBeDefined();
-    expect(stats).toHaveProperty("homeXg");
-    expect(stats).toHaveProperty("awayXg");
-    expect(stats).toHaveProperty("homeGoals");
-    expect(stats).toHaveProperty("awayGoals");
-    expect(stats).toHaveProperty("playerStats");
-    expect(stats).toHaveProperty("goalkeeperStats");
-  });
+  it("should aggregate xG totals per team from shots", async () => {
+    const league = await buildLeague();
+    const season = await buildSeason(league._id);
+    const homeTeam = await buildTeam();
+    const awayTeam = await buildTeam();
+    const match = await buildMatch(
+      league._id,
+      season._id,
+      homeTeam._id,
+      awayTeam._id
+    );
+    const p1 = await buildPlayer();
+    const p2 = await buildPlayer();
+    await buildShot(match._id, p1._id, { isHome: true, xg: 0.3, xgot: 0.2 });
+    await buildShot(match._id, p1._id, { isHome: true, xg: 0.2, xgot: 0.1 });
+    await buildShot(match._id, p2._id, { isHome: false, xg: 0.4, xgot: 0.3 });
 
-  it("should have non-negative xG values", async () => {
-    const stats = await useCase.execute(MATCH_ID);
+    const stats = await useCase.execute(match._id.toString());
+
+    expect(stats.homeXg).toBeCloseTo(0.5, 5);
+    expect(stats.awayXg).toBeCloseTo(0.4, 5);
     expect(stats.homeXg).toBeGreaterThanOrEqual(0);
     expect(stats.awayXg).toBeGreaterThanOrEqual(0);
   });
 
-  it("should correctly count goals", async () => {
-    const stats = await useCase.execute(MATCH_ID);
-    expect(stats.homeGoals).toBeGreaterThanOrEqual(0);
-    expect(stats.awayGoals).toBeGreaterThanOrEqual(0);
+  it("should count goals by shot type", async () => {
+    const league = await buildLeague();
+    const season = await buildSeason(league._id);
+    const homeTeam = await buildTeam();
+    const awayTeam = await buildTeam();
+    const match = await buildMatch(
+      league._id,
+      season._id,
+      homeTeam._id,
+      awayTeam._id
+    );
+    const p1 = await buildPlayer();
+    const p2 = await buildPlayer();
+    await buildShot(match._id, p1._id, { isHome: true, shotType: "goal" });
+    await buildShot(match._id, p1._id, { isHome: true, shotType: "save" });
+    await buildShot(match._id, p2._id, { isHome: false, shotType: "goal" });
+
+    const stats = await useCase.execute(match._id.toString());
+
+    expect(stats.homeGoals).toBe(1);
+    expect(stats.awayGoals).toBe(1);
   });
 
   it("should return player stats with expected fields", async () => {
-    const stats = await useCase.execute(MATCH_ID);
+    const league = await buildLeague();
+    const season = await buildSeason(league._id);
+    const homeTeam = await buildTeam();
+    const awayTeam = await buildTeam();
+    const match = await buildMatch(
+      league._id,
+      season._id,
+      homeTeam._id,
+      awayTeam._id
+    );
+    const player = await buildPlayer();
+    await buildShot(match._id, player._id, { isHome: true });
+
+    const stats = await useCase.execute(match._id.toString());
+
     expect(stats.playerStats.length).toBeGreaterThan(0);
-    const player = stats.playerStats[0];
-    expect(player).toHaveProperty("playerName");
-    expect(player).toHaveProperty("playerShortName");
-    expect(player).toHaveProperty("isHome");
-    expect(player).toHaveProperty("shots");
-    expect(player).toHaveProperty("goals");
-    expect(player).toHaveProperty("totalXg");
-    expect(player).toHaveProperty("totalXgot");
+    const ps = stats.playerStats[0];
+    expect(ps).toHaveProperty("playerName");
+    expect(ps).toHaveProperty("playerShortName");
+    expect(ps).toHaveProperty("isHome");
+    expect(ps).toHaveProperty("shots");
+    expect(ps).toHaveProperty("goals");
+    expect(ps).toHaveProperty("totalXg");
+    expect(ps).toHaveProperty("totalXgot");
   });
 
-  it("should return goalkeeper stats with expected fields when data exists", async () => {
-    const stats = await useCase.execute(MATCH_ID);
-    if (stats.goalkeeperStats.length > 0) {
-      const gk = stats.goalkeeperStats[0];
-      expect(gk).toHaveProperty("goalkeeperName");
-      expect(gk).toHaveProperty("goalkeeperShortName");
-      expect(gk).toHaveProperty("isHome");
-      expect(gk).toHaveProperty("xgotFaced");
-      expect(gk).toHaveProperty("goalsConceded");
-      expect(gk).toHaveProperty("saves");
-    }
-  });
-
-  it("should return empty stats for unknown match", async () => {
-    const stats = await useCase.execute("non-existent-match");
+  it("should return empty stats for a match with no shots", async () => {
+    const stats = await useCase.execute(new Types.ObjectId().toString());
     expect(stats.homeXg).toBe(0);
     expect(stats.awayXg).toBe(0);
     expect(stats.homeGoals).toBe(0);
     expect(stats.awayGoals).toBe(0);
     expect(stats.playerStats).toHaveLength(0);
     expect(stats.goalkeeperStats).toHaveLength(0);
-  });
-
-  it("should delegate calculation to domain service (homeXg matches sum of home shot xG)", async () => {
-    const stats = await useCase.execute(MATCH_ID);
-    const allShots =
-      await DIContainer.getShotRepository().findAllByMatchId(MATCH_ID);
-    const expectedHomeXg = allShots
-      .filter((s) => s.isHome)
-      .reduce((acc, s) => acc + s.xg, 0);
-    expect(stats.homeXg).toBeCloseTo(Math.round(expectedHomeXg * 100) / 100, 5);
   });
 });

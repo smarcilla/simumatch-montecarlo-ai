@@ -12,10 +12,7 @@ import { PlayerRepository } from "@/domain/repositories/player.repository";
 import { ShotRepository } from "@/domain/repositories/shot.repository";
 import { SimulationRepository } from "@/domain/repositories/simulation.repository";
 import { MonteCarloSimulatorService } from "@/domain/services/montecarlo-simulator.service";
-import { InMemoryLeagueRepository } from "./repositories/inmemory-league.repository";
-import { InMemoryMatchRepository } from "./repositories/inmemory-match.repository";
-import { InMemorySimulationRepository } from "./repositories/inmemory-simulation.repository";
-import { InMemoryShotRepository } from "./repositories/inmemory-shot.repository";
+
 import { MongooseLeagueRepository } from "./repositories/mongoose-league.repository";
 import { MongooseMatchRepository } from "./repositories/mongoose-match.repository";
 import { MongoosePlayerRepository } from "./repositories/mongoose-player.repository";
@@ -24,11 +21,7 @@ import { MongooseSimulationRepository } from "./repositories/mongoose-simulation
 import { connectionManager } from "@/infrastructure/db/connection-manager";
 import { FindMatchByIdUseCase } from "@/application/use-cases/find-match-by-id.use-case";
 
-type RepositoryType = "inmemory" | "mongoose";
-
 export class DIContainer {
-  private static repositoryType: RepositoryType;
-
   private static leagueRepository: LeagueRepository;
   private static matchRepository: MatchRepository;
   private static playerRepository: PlayerRepository;
@@ -43,34 +36,20 @@ export class DIContainer {
   private static findShotStatsByMatchUseCase: FindShotStatsByMatchUseCase;
   private static simulateMatchUseCase: SimulateMatchUseCase;
 
-  static isInMemory(): boolean {
-    if (!DIContainer.repositoryType) {
-      DIContainer.repositoryType =
-        (process.env.REPOSITORY_TYPE as RepositoryType) || "inmemory";
-    }
-    return DIContainer.repositoryType === "inmemory";
-  }
-
   static async initializeDatabaseConnection(): Promise<void> {
-    if (!DIContainer.isInMemory()) {
-      await connectionManager.initialize();
-    }
+    await connectionManager.initialize();
   }
 
   static getLeagueRepository(): LeagueRepository {
     if (!DIContainer.leagueRepository) {
-      DIContainer.leagueRepository = DIContainer.isInMemory()
-        ? new InMemoryLeagueRepository()
-        : new MongooseLeagueRepository();
+      DIContainer.leagueRepository = new MongooseLeagueRepository();
     }
     return DIContainer.leagueRepository;
   }
 
   static getMatchRepository(): MatchRepository {
     if (!DIContainer.matchRepository) {
-      DIContainer.matchRepository = DIContainer.isInMemory()
-        ? new InMemoryMatchRepository([])
-        : new MongooseMatchRepository();
+      DIContainer.matchRepository = new MongooseMatchRepository();
     }
     return DIContainer.matchRepository;
   }
@@ -84,18 +63,14 @@ export class DIContainer {
 
   static getShotRepository(): ShotRepository {
     if (!DIContainer.shotRepository) {
-      DIContainer.shotRepository = DIContainer.isInMemory()
-        ? new InMemoryShotRepository()
-        : new MongooseShotRepository();
+      DIContainer.shotRepository = new MongooseShotRepository();
     }
     return DIContainer.shotRepository;
   }
 
   static getSimulationRepository(): SimulationRepository {
     if (!DIContainer.simulationRepository) {
-      DIContainer.simulationRepository = DIContainer.isInMemory()
-        ? new InMemorySimulationRepository()
-        : new MongooseSimulationRepository();
+      DIContainer.simulationRepository = new MongooseSimulationRepository();
     }
     return DIContainer.simulationRepository;
   }
@@ -103,12 +78,6 @@ export class DIContainer {
   static async getFindMatchesByLeagueAndSeasonUseCase(): Promise<FindMatchesByLeagueAndSeasonUseCase> {
     await DIContainer.initializeDatabaseConnection();
     if (!DIContainer.findMatchesByLeagueAndSeasonUseCase) {
-      // Si es InMemory, necesita inicializar con leagues
-      if (DIContainer.isInMemory()) {
-        const leagues = await DIContainer.getLeagueRepository().getLeagues();
-        DIContainer.matchRepository = new InMemoryMatchRepository(leagues);
-      }
-
       DIContainer.findMatchesByLeagueAndSeasonUseCase =
         new FindMatchesByLeagueAndSeasonUseCase(
           DIContainer.getMatchRepository()
@@ -130,12 +99,6 @@ export class DIContainer {
   static async getFindMatchByIdUseCase(): Promise<FindMatchByIdUseCase> {
     await DIContainer.initializeDatabaseConnection();
     if (!DIContainer.findMatchByIdUseCase) {
-      // Si es InMemory, necesita inicializar con leagues
-      if (DIContainer.isInMemory()) {
-        const leagues = await DIContainer.getLeagueRepository().getLeagues();
-        DIContainer.matchRepository = new InMemoryMatchRepository(leagues);
-      }
-
       DIContainer.findMatchByIdUseCase = new FindMatchByIdUseCase(
         DIContainer.getMatchRepository()
       );

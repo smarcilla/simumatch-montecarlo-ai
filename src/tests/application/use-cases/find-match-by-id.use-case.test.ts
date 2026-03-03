@@ -1,39 +1,54 @@
 import { FindMatchByIdUseCase } from "@/application/use-cases/find-match-by-id.use-case";
 import { DIContainer } from "@/infrastructure/di-container";
-
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
+import { Types } from "mongoose";
+import {
+  buildLeague,
+  buildSeason,
+  buildTeam,
+  buildMatch,
+} from "@/tests/helpers/builders";
 
 describe("FindMatchByIdUseCase", () => {
   let useCase: FindMatchByIdUseCase;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     useCase = await DIContainer.getFindMatchByIdUseCase();
   });
 
-  it("should return a match by id", async () => {
-    const matchId = "match-la-liga-id-season-22-23-0";
-    const match = await useCase.execute(matchId);
+  it("should return a match with all expected fields", async () => {
+    const league = await buildLeague();
+    const season = await buildSeason(league._id);
+    const homeTeam = await buildTeam();
+    const awayTeam = await buildTeam();
+    const match = await buildMatch(
+      league._id,
+      season._id,
+      homeTeam._id,
+      awayTeam._id
+    );
 
-    expect(match).toBeDefined();
-    expect(match).toHaveProperty("id", matchId);
-    expect(match).toHaveProperty("date");
-    expect(match).toHaveProperty("status");
-    expect(match).toHaveProperty("home");
-    expect(match).toHaveProperty("away");
-    expect(match).toHaveProperty("homeColorPrimary");
-    expect(match).toHaveProperty("homeColorSecondary");
-    expect(match).toHaveProperty("awayColorPrimary");
-    expect(match).toHaveProperty("awayColorSecondary");
-    expect(match).toHaveProperty("homeScore");
-    expect(match).toHaveProperty("awayScore");
-    expect(match).toHaveProperty("league");
-    expect(match).toHaveProperty("season");
+    const result = await useCase.execute(match._id.toString());
+
+    expect(result).not.toBeNull();
+    expect(result!.id).toBe(match._id.toString());
+    expect(result!.home).toBe(homeTeam.name);
+    expect(result!.away).toBe(awayTeam.name);
+    expect(result!.league).toBe(league._id.toString());
+    expect(result!.season).toBe(season._id.toString());
+    expect(result!).toHaveProperty("date");
+    expect(result!).toHaveProperty("status");
+    expect(result!).toHaveProperty("homeColorPrimary");
+    expect(result!).toHaveProperty("homeColorSecondary");
+    expect(result!).toHaveProperty("awayColorPrimary");
+    expect(result!).toHaveProperty("awayColorSecondary");
+    expect(result!).toHaveProperty("homeScore");
+    expect(result!).toHaveProperty("awayScore");
   });
 
-  it("should return null if match not found", async () => {
-    const matchId = "non-existent-match-id";
-    const match = await useCase.execute(matchId);
-
-    expect(match).toBeNull();
+  it("should return null when match does not exist", async () => {
+    const nonExistentId = new Types.ObjectId().toString();
+    const result = await useCase.execute(nonExistentId);
+    expect(result).toBeNull();
   });
 });

@@ -1,22 +1,38 @@
-import { describe, it, expect, beforeEach } from "vitest";
 import { SimulateMatchUseCase } from "@/application/use-cases/simulate-match.use-case";
 import { DIContainer } from "@/infrastructure/di-container";
-
-const MATCH_ID = "match-la-liga-id-season-22-23-0";
+import { beforeEach, describe, expect, it } from "vitest";
+import {
+  buildLeague,
+  buildSeason,
+  buildTeam,
+  buildMatch,
+  buildShots,
+} from "@/tests/helpers/builders";
 
 describe("SimulateMatchUseCase", () => {
   let useCase: SimulateMatchUseCase;
+  let matchId: string;
 
   beforeEach(async () => {
-    DIContainer.reset();
     useCase = await DIContainer.getSimulateMatchUseCase();
+    const league = await buildLeague();
+    const season = await buildSeason(league._id);
+    const homeTeam = await buildTeam();
+    const awayTeam = await buildTeam();
+    const match = await buildMatch(
+      league._id,
+      season._id,
+      homeTeam._id,
+      awayTeam._id
+    );
+    await buildShots(match._id, 20);
+    matchId = match._id.toString();
   });
 
   it("should return a simulation result with expected fields", async () => {
-    const result = await useCase.execute(MATCH_ID);
+    const result = await useCase.execute(matchId);
 
-    expect(result).toBeDefined();
-    expect(result.matchId).toBe(MATCH_ID);
+    expect(result.matchId).toBe(matchId);
     expect(result).toHaveProperty("homeWinProbability");
     expect(result).toHaveProperty("drawProbability");
     expect(result).toHaveProperty("awayWinProbability");
@@ -29,8 +45,7 @@ describe("SimulateMatchUseCase", () => {
   });
 
   it("should return probabilities that sum to 1", async () => {
-    const result = await useCase.execute(MATCH_ID);
-
+    const result = await useCase.execute(matchId);
     const total =
       result.homeWinProbability +
       result.drawProbability +
@@ -38,26 +53,51 @@ describe("SimulateMatchUseCase", () => {
     expect(total).toBeCloseTo(1, 1);
   });
 
-  it("should persist the simulation in the repository", async () => {
-    await useCase.execute(MATCH_ID);
-
-    const saved =
-      await DIContainer.getSimulationRepository().findByMatchId(MATCH_ID);
-    expect(saved).not.toBeNull();
-    expect(saved!.matchId).toBe(MATCH_ID);
+  it("should return probabilities within valid range", async () => {
+    const result = await useCase.execute(matchId);
+    expect(result.homeWinProbability).toBeGreaterThanOrEqual(0);
+    expect(result.homeWinProbability).toBeLessThanOrEqual(1);
+    expect(result.drawProbability).toBeGreaterThanOrEqual(0);
+    expect(result.drawProbability).toBeLessThanOrEqual(1);
+    expect(result.awayWinProbability).toBeGreaterThanOrEqual(0);
+    expect(result.awayWinProbability).toBeLessThanOrEqual(1);
   });
 
-  it("should call updateStatus without error even when match is in-memory", async () => {
-    await expect(useCase.execute(MATCH_ID)).resolves.not.toThrow();
+  it("should persist the simulation so it can be retrieved", async () => {
+    await useCase.execute(matchId);
+    const saved =
+      await DIContainer.getSimulationRepository().findByMatchId(matchId);
+    expect(saved).not.toBeNull();
+    expect(saved!.matchId).toBe(matchId);
   });
 
-  it("should overwrite existing simulation on re-execution", async () => {
-    await useCase.execute(MATCH_ID);
-    const firstResult = await useCase.execute(MATCH_ID);
-
+  it("should overwrite an existing simulation on re-execution", async () => {
+    await useCase.execute(matchId);
+    await useCase.execute(matchId);
     const saved =
-      await DIContainer.getSimulationRepository().findByMatchId(MATCH_ID);
+      await DIContainer.getSimulationRepository().findByMatchId(matchId);
     expect(saved).not.toBeNull();
-    expect(firstResult.matchId).toBe(MATCH_ID);
+  });
+
+  it("should return score distribution with valid structure", async () => {
+    const result = await useCase.execute(matchId);
+    expect(result.scoreDistribution.length).toBeGreaterThan(0);
+    result.scoreDistribution.forEach((item) => {
+      expect(item.home).toBeGreaterThanOrEqual(0);
+      expect(item.away).toBeGreaterThanOrEqual(0);
+      expect(item.percentage).toBeGreaterThanOrEqual(0);
+      expect(item.percentage).toBeLessThanOrEqual(100);
+    });
+  });
+
+  it("should return player stats for all shot takers", async () => {
+    const result = await useCase.execute(matchId);
+    expect(result.playerStats.length).toBeGreaterThan(0);
+    result.playerStats.forEach((ps) => {
+      expect(ps).toHaveProperty("playerId");
+      expect(ps).toHaveProperty("playerName");
+      expect(ps.goalProbability).toBeGreaterThanOrEqual(0);
+      expect(ps.goalProbability).toBeLessThanOrEqual(100);
+    });
   });
 });

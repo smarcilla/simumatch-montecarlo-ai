@@ -103,4 +103,60 @@ describe("FindMatchesByLeagueAndSeasonUseCase", () => {
     expect(result.total).toBe(1);
     expect(result.results[0]!.status).toBe("finished");
   });
+
+  it("should filter matches by multiple statuses", async () => {
+    const league = await buildLeague();
+    const season = await buildSeason(league._id);
+    const homeTeam = await buildTeam();
+    const awayTeam = await buildTeam();
+    await buildMatch(league._id, season._id, homeTeam._id, awayTeam._id, {
+      status: "finished",
+    });
+    await buildMatch(league._id, season._id, homeTeam._id, awayTeam._id, {
+      status: "simulated",
+    });
+
+    const result = await useCase.execute({
+      leagueId: league._id.toString(),
+      seasonId: season._id.toString(),
+      statuses: ["finished", "simulated"],
+    });
+
+    expect(result.total).toBe(2);
+    const statuses = result.results.map((m) => m.status);
+    expect(statuses).toContain("finished");
+    expect(statuses).toContain("simulated");
+  });
+
+  it("should filter matches by date range", async () => {
+    const league = await buildLeague();
+    const season = await buildSeason(league._id);
+    const homeTeam = await buildTeam();
+    const awayTeam = await buildTeam();
+    await buildMatch(league._id, season._id, homeTeam._id, awayTeam._id, {
+      date: new Date("2023-01-01"),
+    });
+    const match2 = await buildMatch(
+      league._id,
+      season._id,
+      homeTeam._id,
+      awayTeam._id,
+      {
+        date: new Date("2023-02-01"),
+      }
+    );
+    await buildMatch(league._id, season._id, homeTeam._id, awayTeam._id, {
+      date: new Date("2023-03-01"),
+    });
+
+    const result = await useCase.execute({
+      leagueId: league._id.toString(),
+      seasonId: season._id.toString(),
+      dateFrom: new Date("2023-01-15"),
+      dateTo: new Date("2023-02-15"),
+    });
+
+    expect(result.total).toBe(1);
+    expect(result.results[0]!.id).toBe(match2._id.toString());
+  });
 });

@@ -4,6 +4,12 @@ import tsconfigPaths from "vite-tsconfig-paths";
 export default defineConfig({
   plugins: [tsconfigPaths()],
   test: {
+    globalSetup: ["src/tests/setup/global.setup.ts"],
+    setupFiles: ["src/tests/setup/vitest.setup.ts"],
+    fileParallelism: false,
+    env: {
+      MONGODB_NAME: "test",
+    },
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],
