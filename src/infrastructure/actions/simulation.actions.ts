@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { DIContainer } from "@/infrastructure/di-container";
 import { SimulateMatchResult } from "@/application/results/simulate-match.result";
 
@@ -9,7 +10,14 @@ export async function simulateMatch(id: string): Promise<SimulateMatchResult> {
 }
 
 export async function viewSimulation(id: string): Promise<void> {
-  console.log("=== [action] viewSimulation | id:", id, "===");
+  redirect(`/match/${id}/simulation`);
+}
+
+export async function getSimulationByMatchId(
+  matchId: string
+): Promise<SimulateMatchResult | null> {
+  const useCase = await DIContainer.getFindSimulationByMatchIdUseCase();
+  return useCase.execute(matchId);
 }
 
 //TODO: mover a chronicle.actions.ts

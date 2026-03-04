@@ -96,6 +96,7 @@ describe("SimulateMatchUseCase", () => {
     result.playerStats.forEach((ps) => {
       expect(ps).toHaveProperty("playerId");
       expect(ps).toHaveProperty("playerName");
+      expect(ps).toHaveProperty("isHome");
       expect(ps.goalProbability).toBeGreaterThanOrEqual(0);
       expect(ps.goalProbability).toBeLessThanOrEqual(100);
     });

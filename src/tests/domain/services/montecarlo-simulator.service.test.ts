@@ -120,7 +120,7 @@ describe("MonteCarloSimulatorService", () => {
     expect(result.xPtsHome).toBeCloseTo(expectedHome, 5);
   });
 
-  it("should return at most 5 score distribution entries", () => {
+  it("should return at most 10 score distribution entries", () => {
     const shots = [
       makeShot("1", "m1", true, 0.3, 0.4, 600, playerA),
       makeShot("2", "m1", false, 0.3, 0.4, 1200, playerB),
@@ -128,11 +128,16 @@ describe("MonteCarloSimulatorService", () => {
       makeShot("4", "m1", false, 0.1, 0.2, 2400, playerB),
       makeShot("5", "m1", true, 0.4, 0.5, 3000, playerA),
       makeShot("6", "m1", false, 0.2, 0.3, 3600, playerB),
+      makeShot("7", "m1", true, 0.3, 0.4, 4200, playerA),
+      makeShot("8", "m1", false, 0.2, 0.3, 4800, playerB),
+      makeShot("9", "m1", true, 0.5, 0.6, 5400, playerA),
+      makeShot("10", "m1", false, 0.3, 0.4, 6000, playerB),
+      makeShot("11", "m1", true, 0.2, 0.3, 6600, playerA),
     ];
 
     const result = service.simulate("m1", shots);
 
-    expect(result.scoreDistribution.length).toBeLessThanOrEqual(5);
+    expect(result.scoreDistribution.length).toBeLessThanOrEqual(10);
   });
 
   it("should return one momentum point per shot ordered by time", () => {
@@ -161,6 +166,7 @@ describe("MonteCarloSimulatorService", () => {
     const stat = result.playerStats.find((p) => p.playerId === playerA.id);
     expect(stat).toBeDefined();
     expect(stat!.sga).toBeCloseTo(xgot - xg, 5);
+    expect(stat!.isHome).toBe(true);
   });
 
   it("should expose topScoringPlayer from the returned Simulation", () => {

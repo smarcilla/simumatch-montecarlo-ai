@@ -5,6 +5,7 @@ import { AddPlayersByShotsUseCase } from "@/application/use-cases/add-players-by
 import { AddShotsByShotRawUseCase } from "@/application/use-cases/add-shots-by-shot-raw.use-case";
 import { FindShotsByMatchUseCase } from "@/application/use-cases/find-shots-by-match.use-case";
 import { FindShotStatsByMatchUseCase } from "@/application/use-cases/find-shot-stats-by-match.use-case";
+import { FindSimulationByMatchIdUseCase } from "@/application/use-cases/find-simulation-by-match-id.use-case";
 import { SimulateMatchUseCase } from "@/application/use-cases/simulate-match.use-case";
 import { LeagueRepository } from "@/domain/repositories/league.repository";
 import { MatchRepository } from "@/domain/repositories/match.repository";
@@ -35,6 +36,7 @@ export class DIContainer {
   private static findShotsByMatchUseCase: FindShotsByMatchUseCase;
   private static findShotStatsByMatchUseCase: FindShotStatsByMatchUseCase;
   private static simulateMatchUseCase: SimulateMatchUseCase;
+  private static findSimulationByMatchIdUseCase: FindSimulationByMatchIdUseCase;
 
   static async initializeDatabaseConnection(): Promise<void> {
     await connectionManager.initialize();
@@ -161,6 +163,17 @@ export class DIContainer {
     return DIContainer.simulateMatchUseCase;
   }
 
+  static async getFindSimulationByMatchIdUseCase(): Promise<FindSimulationByMatchIdUseCase> {
+    await DIContainer.initializeDatabaseConnection();
+    if (!DIContainer.findSimulationByMatchIdUseCase) {
+      DIContainer.findSimulationByMatchIdUseCase =
+        new FindSimulationByMatchIdUseCase(
+          DIContainer.getSimulationRepository()
+        );
+    }
+    return DIContainer.findSimulationByMatchIdUseCase;
+  }
+
   static reset(): void {
     DIContainer.leagueRepository = null as unknown as LeagueRepository;
     DIContainer.matchRepository = null as unknown as MatchRepository;
@@ -180,5 +193,7 @@ export class DIContainer {
       null as unknown as FindShotStatsByMatchUseCase;
     DIContainer.simulationRepository = null as unknown as SimulationRepository;
     DIContainer.simulateMatchUseCase = null as unknown as SimulateMatchUseCase;
+    DIContainer.findSimulationByMatchIdUseCase =
+      null as unknown as FindSimulationByMatchIdUseCase;
   }
 }

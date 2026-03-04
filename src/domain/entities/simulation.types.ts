@@ -2,6 +2,7 @@ export interface SimulationPlayerStat {
   playerId: string;
   playerName: string;
   playerShortName: string;
+  isHome: boolean;
   goalProbability: number;
   sga: number;
 }

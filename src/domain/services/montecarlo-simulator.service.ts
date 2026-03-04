@@ -155,7 +155,7 @@ export class MonteCarloSimulatorService {
   ): ScoreDistributionItem[] {
     return Array.from(scoreMap.entries())
       .sort((a, b) => b[1] - a[1])
-      .slice(0, 5)
+      .slice(0, 10)
       .map(([key, count]) => {
         const parts = key.split("-");
         const home = Number.parseInt(parts[0] ?? "0", 10);
@@ -178,6 +178,7 @@ export class MonteCarloSimulatorService {
       {
         playerName: string;
         playerShortName: string;
+        isHome: boolean;
         totalXg: number;
         totalXgot: number;
       }
@@ -189,6 +190,7 @@ export class MonteCarloSimulatorService {
         playerMap.set(id, {
           playerName: shot.player.name,
           playerShortName: shot.player.shortName,
+          isHome: shot.isHome,
           totalXg: 0,
           totalXgot: 0,
         });
@@ -205,6 +207,7 @@ export class MonteCarloSimulatorService {
       playerId,
       playerName: data.playerName,
       playerShortName: data.playerShortName,
+      isHome: data.isHome,
       goalProbability:
         ((playerGoalCounts.get(playerId) ?? 0) / ITERATIONS) * 100,
       sga: data.totalXgot - data.totalXg,

@@ -33,6 +33,7 @@ const SimulationPlayerStatSchema = new Schema<SimulationPlayerStat>(
     playerId: { type: String, required: true },
     playerName: { type: String, required: true },
     playerShortName: { type: String, required: true },
+    isHome: { type: Boolean, required: true },
     goalProbability: { type: Number, required: true },
     sga: { type: Number, required: true },
   },

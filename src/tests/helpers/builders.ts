@@ -1,5 +1,8 @@
 import { Types } from "mongoose";
-import { LeagueModel } from "@/infrastructure/db/models/league.model";
+import {
+  ILeagueDocument,
+  LeagueModel,
+} from "@/infrastructure/db/models/league.model";
 import { SeasonModel } from "@/infrastructure/db/models/season.model";
 import { TeamModel } from "@/infrastructure/db/models/team.model";
 import { MatchModel } from "@/infrastructure/db/models/match.model";
@@ -17,7 +20,7 @@ export async function buildLeague(overrides: Record<string, unknown> = {}) {
     country: "Spain",
     externalId: `ext-${id}`,
     ...overrides,
-  });
+  }) as Promise<ILeagueDocument>;
 }
 
 export async function buildSeason(
