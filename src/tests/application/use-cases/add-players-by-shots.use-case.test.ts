@@ -1,22 +1,19 @@
 import { AddPlayersByShotsUseCase } from "@/application/use-cases/add-players-by-shots.use-case";
 import { PlayerRepository } from "@/domain/repositories/player.repository";
-import { Player } from "@/domain/entities/player.entity";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { DIContainer } from "@/infrastructure/di-container";
+import { beforeEach, describe, expect, it } from "vitest";
 
 describe("AddPlayersByShotsUseCase", () => {
   let useCase: AddPlayersByShotsUseCase;
   let playerRepository: PlayerRepository;
 
-  beforeEach(() => {
-    playerRepository = {
-      findByExternalId: vi.fn(),
-      upsert: vi.fn().mockResolvedValue(undefined),
-    };
-    useCase = new AddPlayersByShotsUseCase(playerRepository);
+  beforeEach(async () => {
+    useCase = await DIContainer.getAddPlayersByShotsUseCase();
+    playerRepository = DIContainer.getPlayerRepository();
   });
 
-  it("should call upsert for each command", async () => {
-    const commands = [
+  it("should persist all players for each command", async () => {
+    await useCase.execute([
       {
         name: "Jon Guridi",
         slug: "jon-guridi",
@@ -33,15 +30,14 @@ describe("AddPlayersByShotsUseCase", () => {
         jerseyNumber: "13",
         externalId: 94527,
       },
-    ];
+    ]);
 
-    await useCase.execute(commands);
-
-    expect(playerRepository.upsert).toHaveBeenCalledTimes(2);
+    expect(await playerRepository.findByExternalId(788141)).not.toBeNull();
+    expect(await playerRepository.findByExternalId(94527)).not.toBeNull();
   });
 
-  it("should upsert a Player entity with the correct externalId", async () => {
-    const commands = [
+  it("should persist a player with the correct fields", async () => {
+    await useCase.execute([
       {
         name: "Jon Guridi",
         slug: "jon-guridi",
@@ -50,19 +46,22 @@ describe("AddPlayersByShotsUseCase", () => {
         jerseyNumber: "18",
         externalId: 788141,
       },
-    ];
+    ]);
 
-    await useCase.execute(commands);
-
-    const upsertedPlayer = (playerRepository.upsert as ReturnType<typeof vi.fn>)
-      .mock.calls[0]![0] as Player;
-    expect(upsertedPlayer.externalId).toBe(788141);
-    expect(upsertedPlayer.name).toBe("Jon Guridi");
+    const player = await playerRepository.findByExternalId(788141);
+    expect(player).not.toBeNull();
+    expect(player!.externalId).toBe(788141);
+    expect(player!.name).toBe("Jon Guridi");
+    expect(player!.slug).toBe("jon-guridi");
+    expect(player!.shortName).toBe("J. Guridi");
+    expect(player!.position).toBe("M");
+    expect(player!.jerseyNumber).toBe("18");
   });
 
   it("should do nothing when commands array is empty", async () => {
     await useCase.execute([]);
-    expect(playerRepository.upsert).not.toHaveBeenCalled();
+
+    expect(await playerRepository.findByExternalId(788141)).toBeNull();
   });
 
   it("should process all players across multiple batches", async () => {
@@ -77,6 +76,9 @@ describe("AddPlayersByShotsUseCase", () => {
 
     await useCase.execute(commands);
 
-    expect(playerRepository.upsert).toHaveBeenCalledTimes(25);
+    expect(await playerRepository.findByExternalId(100)).not.toBeNull();
+    expect(await playerRepository.findByExternalId(109)).not.toBeNull();
+    expect(await playerRepository.findByExternalId(110)).not.toBeNull();
+    expect(await playerRepository.findByExternalId(124)).not.toBeNull();
   });
 });

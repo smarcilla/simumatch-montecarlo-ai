@@ -18,4 +18,8 @@ export class InMemorySimulationRepository implements SimulationRepository {
   async findByMatchId(matchId: string): Promise<Simulation | null> {
     return this.simulations.find((s) => s.matchId === matchId) ?? null;
   }
+
+  async deleteAll(): Promise<void> {
+    this.simulations.splice(0, this.simulations.length);
+  }
 }

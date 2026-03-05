@@ -244,4 +244,8 @@ export class InMemoryShotRepository implements ShotRepository {
       hasPreviousPage: options.page > 0,
     };
   }
+
+  async deleteAll(): Promise<void> {
+    this.shots.splice(0, this.shots.length);
+  }
 }

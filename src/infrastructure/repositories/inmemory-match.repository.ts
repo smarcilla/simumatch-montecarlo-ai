@@ -118,4 +118,19 @@ export class InMemoryMatchRepository implements MatchRepository {
     );
     this.matches[idx] = updated;
   }
+
+  async upsert(match: Match): Promise<void> {
+    const idx = this.matches.findIndex(
+      (m) => m.externalId === match.externalId
+    );
+    if (idx === -1) {
+      this.matches.push(match);
+    } else {
+      this.matches[idx] = match;
+    }
+  }
+
+  async deleteAll(): Promise<void> {
+    this.matches.splice(0, this.matches.length);
+  }
 }

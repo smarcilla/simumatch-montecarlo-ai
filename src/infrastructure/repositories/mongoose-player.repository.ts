@@ -35,4 +35,8 @@ export class MongoosePlayerRepository implements PlayerRepository {
       { upsert: true }
     );
   }
+
+  async deleteAll(): Promise<void> {
+    await PlayerModel.deleteMany({});
+  }
 }

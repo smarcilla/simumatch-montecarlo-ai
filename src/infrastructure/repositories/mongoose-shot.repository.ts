@@ -37,8 +37,12 @@ interface IShotPopulated {
 
 export class MongooseShotRepository implements ShotRepository {
   async findByExternalId(externalId: number): Promise<Shot | null> {
-    const doc = await ShotModel.findOne({ externalId }).lean();
-    return doc ? (null as unknown as Shot) : null;
+    const doc = await ShotModel.findOne({ externalId })
+      .populate<{ playerId: IPlayerPopulated }>("playerId")
+      .populate<{ goalkeeperPlayerId?: IPlayerPopulated }>("goalkeeperPlayerId")
+      .lean<IShotPopulated>();
+    if (!doc) return null;
+    return this.mapToEntity(doc, doc.matchId.toString());
   }
 
   async upsert(shot: Shot): Promise<void> {
@@ -162,5 +166,9 @@ export class MongooseShotRepository implements ShotRepository {
       goalkeeper,
       matchId
     );
+  }
+
+  async deleteAll(): Promise<void> {
+    await ShotModel.deleteMany({});
   }
 }

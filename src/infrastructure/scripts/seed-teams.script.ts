@@ -1,6 +1,7 @@
 // src/infrastructure/scripts/seed-teams.script.ts
 import { connectionManager } from "../db/connection-manager";
-import { TeamModel } from "../db/models/team.model";
+import { DIContainer } from "../di-container";
+import { UpsertTeamCommand } from "@/application/commands/upsert-team.command";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 
@@ -23,10 +24,10 @@ interface MatchRawDocument {
   awayTeam: TeamData;
 }
 
+const scriptStart = Date.now();
+
 try {
-  console.log(
-    `\n🔧 Target database: ${process.env.MONGODB_NAME || "default"}\n`
-  );
+  console.log(`Target database: ${process.env.MONGODB_NAME || "default"}`);
 
   await connectionManager.initialize();
 
@@ -35,22 +36,20 @@ try {
     throw new Error("Database connection not established");
   }
 
-  console.log("📖 Reading teams from league_matches_raw collection...");
+  console.log("Reading teams from league_matches_raw collection...");
   const matchesRaw = await db
     .collection<MatchRawDocument>("league_matches_raw")
     .find({})
     .toArray();
 
-  console.log(`   Found ${matchesRaw.length} raw matches`);
+  console.log(`Found ${matchesRaw.length} raw matches`);
 
   if (matchesRaw.length === 0) {
-    console.log("\n⚠️  No raw matches found. Exiting...");
+    console.log("No raw matches found. Exiting...");
     process.exit(0);
   }
 
-  console.log("\n🔄 Extracting unique teams...");
-
-  // Map to store unique teams by externalId
+  console.log("Extracting unique teams...");
   const teamsMap = new Map<number, TeamData>();
 
   for (const match of matchesRaw) {
@@ -62,54 +61,41 @@ try {
     }
   }
 
-  console.log(`   Extracted ${teamsMap.size} unique teams`);
+  console.log(`Extracted ${teamsMap.size} unique teams`);
 
-  console.log("\n🔄 Syncing teams...");
-  let inserted = 0;
-  let updated = 0;
+  const commands: UpsertTeamCommand[] = [];
   let skipped = 0;
 
   for (const [externalId, teamData] of teamsMap) {
     if (!teamData.teamColors?.primary || !teamData.teamColors?.secondary) {
       console.warn(
-        `   ⚠️  Team missing colors: ${teamData.name} (${externalId})`
+        `Team missing colors: ${teamData.name} (${externalId}), skipping`
       );
       skipped++;
       continue;
     }
-
-    const teamDocument = {
+    commands.push({
+      externalId,
       name: teamData.name,
       slug: teamData.slug,
       shortName: teamData.shortName,
       primaryColor: teamData.teamColors.primary,
       secondaryColor: teamData.teamColors.secondary,
-      externalId: externalId,
-    };
-
-    // Find by externalId and update or insert
-    const result = await TeamModel.updateOne(
-      { externalId: teamDocument.externalId },
-      { $set: teamDocument },
-      { upsert: true }
-    );
-
-    if (result.upsertedCount > 0) {
-      inserted++;
-    } else if (result.modifiedCount > 0) {
-      updated++;
-    }
+    });
   }
 
-  console.log("\n📊 Sync results:");
-  console.log(`   ✅ Inserted: ${inserted} new teams`);
-  console.log(`   🔄 Updated: ${updated} existing teams`);
-  console.log(`   ⏭️  Skipped: ${skipped} (missing colors)`);
-  console.log(`   📌 Total unique teams: ${teamsMap.size}`);
+  const useCase = await DIContainer.getUpsertTeamsUseCase();
 
-  console.log("\n✅ Sync completed successfully!");
+  console.log("Syncing teams...");
+  const syncStart = Date.now();
+  await useCase.execute(commands);
+  console.log(
+    `Teams synced [${Date.now() - syncStart}ms] - processed: ${commands.length}, skipped: ${skipped}`
+  );
+
+  console.log(`Script completed [${Date.now() - scriptStart}ms]`);
 } catch (error) {
-  console.error("❌ Script failed:", error);
+  console.error("Script failed:", error);
   process.exit(1);
 } finally {
   await connectionManager.close();

@@ -8,6 +8,7 @@ import { TeamModel } from "@/infrastructure/db/models/team.model";
 import { MatchModel } from "@/infrastructure/db/models/match.model";
 import { ShotModel } from "@/infrastructure/db/models/shot.model";
 import { PlayerModel } from "@/infrastructure/db/models/player.model";
+import { SimulationModel } from "@/infrastructure/db/models/simulation.model";
 
 let counter = 0;
 
@@ -136,4 +137,22 @@ export async function buildMatchWithContext(
     overrides.match
   );
   return { league, season, homeTeam, awayTeam, match };
+}
+
+export async function buildSimulation(
+  matchId: Types.ObjectId | string,
+  overrides: Record<string, unknown> = {}
+) {
+  return SimulationModel.create({
+    matchId: new Types.ObjectId(matchId.toString()),
+    homeWinProbability: 0.5,
+    drawProbability: 0.3,
+    awayWinProbability: 0.2,
+    xPtsHome: 1.8,
+    xPtsAway: 0.9,
+    scoreDistribution: [],
+    playerStats: [],
+    momentumTimeline: [],
+    ...overrides,
+  });
 }

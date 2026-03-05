@@ -15,4 +15,6 @@ export interface MatchRepository {
   findById(id: string): Promise<Match | null>;
   findByExternalId(externalId: number): Promise<Match | null>;
   updateStatus(matchId: string, status: MatchStatusValue): Promise<void>;
+  upsert(match: Match): Promise<void>;
+  deleteAll(): Promise<void>;
 }

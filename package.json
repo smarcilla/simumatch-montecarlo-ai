@@ -24,7 +24,10 @@
     "seed:teams": "tsx src/infrastructure/scripts/seed-teams.script.ts",
     "seed:matches": "tsx src/infrastructure/scripts/seed-matches.script.ts",
     "seed:players": "tsx src/infrastructure/scripts/seed-players.script.ts",
-    "seed:shots": "tsx src/infrastructure/scripts/seed-shots.script.ts"
+    "seed:shots": "tsx src/infrastructure/scripts/seed-shots.script.ts",
+    "seed:all": "tsx src/infrastructure/scripts/seed-all.script.ts",
+    "clear:collections": "tsx src/infrastructure/scripts/clear-collections.script.ts",
+    "reset:db": "tsx src/infrastructure/scripts/reset-db.script.ts"
   },
   "dependencies": {
     "@playwright/test": "^1.58.2",

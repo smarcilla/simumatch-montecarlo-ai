@@ -12,4 +12,5 @@ export interface ShotRepository {
     filters: ShotFilterOptions
   ): Promise<PaginatedResult<Shot>>;
   findAllByMatchId(matchId: string): Promise<Shot[]>;
+  deleteAll(): Promise<void>;
 }

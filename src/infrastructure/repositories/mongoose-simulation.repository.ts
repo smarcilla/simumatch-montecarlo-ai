@@ -37,6 +37,10 @@ export class MongooseSimulationRepository implements SimulationRepository {
     return doc ? this.mapToEntity(doc) : null;
   }
 
+  async deleteAll(): Promise<void> {
+    await SimulationModel.deleteMany({});
+  }
+
   private mapToEntity(doc: ISimulationDocument): Simulation {
     return new Simulation(
       doc._id.toString(),

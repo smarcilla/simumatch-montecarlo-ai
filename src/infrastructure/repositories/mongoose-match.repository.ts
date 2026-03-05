@@ -107,6 +107,30 @@ export class MongooseMatchRepository implements MatchRepository {
     });
   }
 
+  async upsert(match: Match): Promise<void> {
+    await MatchModel.updateOne(
+      { externalId: match.externalId },
+      {
+        $set: {
+          externalId: match.externalId,
+          leagueId: new Types.ObjectId(match.league.id!),
+          seasonId: new Types.ObjectId(match.season.id!),
+          homeTeamId: new Types.ObjectId(match.homeTeam.id),
+          awayTeamId: new Types.ObjectId(match.awayTeam.id),
+          date: match.date.date,
+          homeScore: match.score.home,
+          awayScore: match.score.away,
+          status: match.status.value,
+        },
+      },
+      { upsert: true }
+    );
+  }
+
+  async deleteAll(): Promise<void> {
+    await MatchModel.deleteMany({});
+  }
+
   private mapToEntity(doc: IMatchPopulated): Match {
     // Mapear League
     const league = new League(
