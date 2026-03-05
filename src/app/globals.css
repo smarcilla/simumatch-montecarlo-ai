@@ -7,40 +7,40 @@
 
 :root {
   /* Colores Base - Dark Mode por defecto */
-  --bg-primary: #0B0E13;
-  --bg-surface: #151A23;
-  --bg-elevated: #1E2633;
-  --bg-hover: #252D3A;
-  
-  --text-primary: #E8EAED;
-  --text-secondary: #8B92A8;
-  --text-tertiary: #5C6370;
-  
-  --border-subtle: #1E2633;
-  --border-default: #2A3342;
-  --border-focus: #3B82F6;
-  
+  --bg-primary: #0b0e13;
+  --bg-surface: #151a23;
+  --bg-elevated: #1e2633;
+  --bg-hover: #252d3a;
+
+  --text-primary: #e8eaed;
+  --text-secondary: #8b92a8;
+  --text-tertiary: #5c6370;
+
+  --border-subtle: #1e2633;
+  --border-default: #2a3342;
+  --border-focus: #3b82f6;
+
   /* Colores Funcionales */
-  --primary: #00D9A3;
-  --primary-hover: #00B88A;
+  --primary: #00d9a3;
+  --primary-hover: #00b88a;
   --primary-alpha: rgba(0, 217, 163, 0.15);
-  
-  --accent: #FF6B35;
+
+  --accent: #ff6b35;
   --accent-alpha: rgba(255, 107, 53, 0.15);
-  
-  --info: #3B82F6;
+
+  --info: #3b82f6;
   --info-alpha: rgba(59, 130, 246, 0.15);
-  
-  --warning: #F59E0B;
-  --error: #EF4444;
-  --success: #10B981;
-  
+
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --success: #10b981;
+
   /* Layout Dimensions */
   --header-height: 4rem;
   --sidebar-width: 15rem;
   --footer-height: 2.5rem;
   --content-max-width: 1200px;
-  
+
   /* Spacing Scale */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
@@ -48,29 +48,29 @@
   --spacing-lg: 1.5rem;
   --spacing-xl: 2rem;
   --spacing-2xl: 3rem;
-  
+
   /* Border Radius */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-full: 9999px;
-  
+
   /* Shadows */
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
   --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.25);
-  
+
   /* Transitions */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
-  
+
   /* Typography */
   --font-sans: var(--font-inter);
   --font-display: var(--font-space-grotesk);
   --font-mono: var(--font-jetbrains-mono);
-  
+
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-base: 0.9375rem;
@@ -83,18 +83,18 @@
 /* Light Mode */
 @media (prefers-color-scheme: light) {
   :root {
-    --bg-primary: #F8F9FA;
-    --bg-surface: #FFFFFF;
-    --bg-elevated: #FFFFFF;
-    --bg-hover: #F3F4F6;
-    
-    --text-primary: #0B0E13;
-    --text-secondary: #5C6370;
-    --text-tertiary: #8B92A8;
-    
-    --border-subtle: #E8EAED;
-    --border-default: #D1D5DB;
-    
+    --bg-primary: #f8f9fa;
+    --bg-surface: #ffffff;
+    --bg-elevated: #ffffff;
+    --bg-hover: #f3f4f6;
+
+    --text-primary: #0b0e13;
+    --text-secondary: #5c6370;
+    --text-tertiary: #8b92a8;
+
+    --border-subtle: #e8eaed;
+    --border-default: #d1d5db;
+
     --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
     --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
@@ -126,7 +126,12 @@ body {
 }
 
 /* Typography */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 700;
@@ -134,10 +139,21 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary);
 }
 
-h1 { font-size: var(--font-size-3xl); }
-h2 { font-size: var(--font-size-2xl); font-weight: 600; }
-h3 { font-size: var(--font-size-xl); font-weight: 600; }
-h4 { font-size: var(--font-size-lg); font-weight: 600; }
+h1 {
+  font-size: var(--font-size-3xl);
+}
+h2 {
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+}
+h3 {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+}
+h4 {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
 
 p {
   margin: 0;
@@ -337,7 +353,7 @@ button {
 }
 
 .league-button.active::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 50%;
@@ -369,7 +385,7 @@ button {
 }
 
 .match-card::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 0;
@@ -378,8 +394,8 @@ button {
   border-top-left-radius: var(--radius-md);
   border-top-right-radius: var(--radius-md);
   background: linear-gradient(
-    90deg, 
-    var(--team-home-primary, var(--primary)) 0%, 
+    90deg,
+    var(--team-home-primary, var(--primary)) 0%,
     var(--team-home-secondary, var(--primary-hover)) 50%,
     var(--team-away-primary, var(--info)) 50%,
     var(--team-away-secondary, var(--accent)) 100%
@@ -387,7 +403,7 @@ button {
 }
 
 .match-card::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 4px;
@@ -395,8 +411,8 @@ button {
   height: calc(100% - 4px);
   border-bottom-left-radius: var(--radius-md);
   background: linear-gradient(
-    180deg, 
-    var(--team-home-primary, var(--primary)) 0%, 
+    180deg,
+    var(--team-home-primary, var(--primary)) 0%,
     var(--team-home-secondary, var(--primary-hover)) 100%
   );
   opacity: 0.9;
@@ -471,8 +487,14 @@ button {
 }
 
 @keyframes tooltip-fade-in {
-  from { opacity: 0; transform: translateX(-50%) translateY(4px); }
-  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 .team-side.away .team-name {
@@ -591,7 +613,6 @@ button {
   }
 }
 
-
 /* Utilities */
 .text-gradient {
   background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%);
@@ -664,8 +685,12 @@ button {
   }
 
   @keyframes overlay-fade-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   .main-content {
@@ -824,7 +849,10 @@ button {
   padding: var(--spacing-sm) var(--spacing-md);
   cursor: pointer;
   height: 38px;
-  transition: border-color var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .filter-select:hover {
@@ -872,7 +900,9 @@ button {
   color: var(--text-secondary);
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--radius-sm);
-  transition: background var(--transition-fast), color var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
   user-select: none;
 }
 
@@ -891,7 +921,9 @@ button {
   background: var(--bg-elevated);
   cursor: pointer;
   position: relative;
-  transition: border-color var(--transition-fast), background var(--transition-fast);
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast);
   flex-shrink: 0;
 }
 
@@ -907,7 +939,7 @@ button {
   top: 1px;
   width: 5px;
   height: 9px;
-  border: 2px solid #0B0E13;
+  border: 2px solid #0b0e13;
   border-top: none;
   border-left: none;
   transform: rotate(45deg);
@@ -997,13 +1029,21 @@ button {
   --rdp-accent-color: var(--primary);
   --rdp-accent-background-color: var(--primary-alpha);
   --rdp-range_start-date-background-color: var(--primary);
-  --rdp-range_start-color: #0B0E13;
+  --rdp-range_start-color: #0b0e13;
   --rdp-range_end-date-background-color: var(--primary);
-  --rdp-range_end-color: #0B0E13;
+  --rdp-range_end-color: #0b0e13;
   --rdp-range_middle-background-color: var(--primary-alpha);
   --rdp-range_middle-color: var(--primary);
-  --rdp-range_start-background: linear-gradient(90deg, transparent 50%, var(--primary-alpha) 50%);
-  --rdp-range_end-background: linear-gradient(270deg, transparent 50%, var(--primary-alpha) 50%);
+  --rdp-range_start-background: linear-gradient(
+    90deg,
+    transparent 50%,
+    var(--primary-alpha) 50%
+  );
+  --rdp-range_end-background: linear-gradient(
+    270deg,
+    transparent 50%,
+    var(--primary-alpha) 50%
+  );
   --rdp-today-color: var(--accent);
   --rdp-selected-border: none;
   --rdp-day-height: 36px;
@@ -1022,7 +1062,9 @@ button {
   color: var(--text-primary);
   font-family: inherit;
   font-size: var(--font-size-sm);
-  transition: background var(--transition-fast), color var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
 }
 
 .filter-date-popover .rdp-outside .rdp-day_button {
@@ -1435,16 +1477,58 @@ button {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  background: var(--badge-color, var(--primary));
+  color: var(--badge-text-color, var(--bg-surface));
 }
 
-.shots-team-badge-home {
-  background: var(--primary-alpha);
-  color: var(--primary);
+.shot-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  vertical-align: middle;
+  color: currentColor;
+  position: relative;
 }
 
-.shots-team-badge-away {
-  background: var(--accent-alpha);
-  color: var(--accent);
+.table-team-shield-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  vertical-align: middle;
+  position: relative;
+}
+
+.shot-icon-wrapper[data-tooltip]::after,
+.table-team-shield-wrap[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 5px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 3px 8px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 20;
+  box-shadow: 0 2px 8px var(--shadow-md);
+}
+
+.shot-icon-wrapper[data-tooltip]:hover::after,
+.shot-icon-wrapper[data-tooltip]:focus::after,
+.shot-icon-wrapper[data-tooltip]:active::after,
+.table-team-shield-wrap[data-tooltip]:hover::after,
+.table-team-shield-wrap[data-tooltip]:focus::after,
+.table-team-shield-wrap[data-tooltip]:active::after {
+  opacity: 1;
 }
 
 .shots-type-badge {
@@ -1543,12 +1627,23 @@ button {
   flex: 1;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-xs);
+}
+
+.shot-stats-xg-team-header {
+  display: flex;
+  align-items: center;
   gap: var(--spacing-xs);
 }
 
 .shot-stats-xg-team-away {
   text-align: right;
   align-items: flex-end;
+}
+
+.shot-stats-xg-team-away .shot-stats-xg-value {
+  align-self: flex-end;
 }
 
 .shot-stats-xg-team-name {
@@ -1561,7 +1656,27 @@ button {
   font-family: var(--font-mono);
   font-size: var(--font-size-2xl);
   font-weight: 700;
-  color: var(--primary);
+  color: var(--text-primary);
+  background: color-mix(
+    in srgb,
+    var(--xg-team-secondary, transparent) 18%,
+    transparent
+  );
+  border: 1px solid var(--xg-team-color, var(--border-default));
+  border-radius: var(--radius-sm);
+  padding: 2px var(--spacing-sm);
+  display: inline-block;
+  align-self: flex-start;
+  width: fit-content;
+}
+
+.shot-stats-xg-team-pip {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-right: var(--spacing-xs);
 }
 
 .shot-stats-xg-goals {
@@ -1725,9 +1840,13 @@ button {
   align-items: center;
   gap: var(--spacing-sm);
   padding: var(--spacing-lg) var(--spacing-xl);
-  background: var(--bg-elevated);
+  background: color-mix(
+    in srgb,
+    var(--xpts-color, var(--bg-elevated)) 12%,
+    var(--bg-elevated)
+  );
   border-radius: var(--radius-md);
-  border-top: 3px solid var(--xpts-color, var(--primary));
+  border: 2px solid var(--xpts-secondary, var(--border-default));
 }
 
 .simulation-xpts-team {
@@ -1808,7 +1927,17 @@ button {
   padding: var(--spacing-xs) var(--spacing-sm);
   background: var(--bg-elevated);
   border-radius: var(--radius-full);
-  border-left: 4px solid;
+}
+
+.simulation-score-legend-item::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--legend-primary, var(--text-tertiary));
+  border: 2.5px solid var(--legend-secondary, var(--text-secondary));
+  flex-shrink: 0;
 }
 
 @media (max-width: 640px) {

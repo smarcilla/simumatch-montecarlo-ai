@@ -1,16 +1,39 @@
 import { PlayerShotStatsResult } from "@/application/results/shot-match-stats.result";
+import { TableTeamShield } from "@/infrastructure/ui/components/ShotIcons";
 
 interface ShotPlayerStatsTableProps {
   readonly playerStats: PlayerShotStatsResult[];
   readonly homeTeam: string;
   readonly awayTeam: string;
+  readonly homeColor: string;
+  readonly awayColor: string;
+  readonly homeColorSecondary: string;
+  readonly awayColorSecondary: string;
 }
 
 export function ShotPlayerStatsTable({
   playerStats,
   homeTeam,
   awayTeam,
+  homeColor,
+  awayColor,
+  homeColorSecondary,
+  awayColorSecondary,
 }: ShotPlayerStatsTableProps) {
+  const tableData = playerStats
+    .slice()
+    .sort((a, b) => b.totalXg - a.totalXg)
+    .map((p) => ({
+      playerShortName: p.playerShortName,
+      primaryColor: p.isHome ? homeColor : awayColor,
+      secondaryColor: p.isHome ? homeColorSecondary : awayColorSecondary,
+      teamName: p.isHome ? homeTeam : awayTeam,
+      shots: p.shots,
+      goals: p.goals,
+      totalXg: p.totalXg.toFixed(2),
+      totalXgot: p.totalXgot > 0 ? p.totalXgot.toFixed(2) : "—",
+    }));
+
   return (
     <div className="shot-stats-section">
       <h4 className="shot-stats-section-title">xG por jugador</h4>
@@ -35,33 +58,24 @@ export function ShotPlayerStatsTable({
             </tr>
           </thead>
           <tbody>
-            {playerStats
-              .slice()
-              .sort((a, b) => b.totalXg - a.totalXg)
-              .map((p) => (
-                <tr key={p.playerName} className="shot-stats-row">
-                  <td className="shot-stats-td">{p.playerShortName}</td>
-                  <td className="shot-stats-td">
-                    <span
-                      className={`shots-team-badge shots-team-badge-${p.isHome ? "home" : "away"}`}
-                    >
-                      {p.isHome ? homeTeam : awayTeam}
-                    </span>
-                  </td>
-                  <td className="shot-stats-td shot-stats-td-number">
-                    <span>{p.shots}</span>
-                    <span className="shot-stats-td-sub">
-                      {p.goals} gol{p.goals === 1 ? "" : "es"}
-                    </span>
-                  </td>
-                  <td className="shot-stats-td shot-stats-td-number">
-                    <span>{p.totalXg.toFixed(2)}</span>
-                    <span className="shot-stats-td-sub">
-                      {p.totalXgot > 0 ? p.totalXgot.toFixed(2) : "—"}
-                    </span>
-                  </td>
-                </tr>
-              ))}
+            {tableData.map((p) => (
+              <tr key={p.playerShortName} className="shot-stats-row">
+                <td className="shot-stats-td">{p.playerShortName}</td>
+                <td className="shot-stats-td">
+                  <TableTeamShield
+                    primary={p.primaryColor}
+                    secondary={p.secondaryColor}
+                    name={p.teamName}
+                  />
+                </td>
+                <td className="shot-stats-td shot-stats-td-number">
+                  {p.shots} ({p.goals})
+                </td>
+                <td className="shot-stats-td shot-stats-td-number">
+                  {p.totalXg} ({p.totalXgot})
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

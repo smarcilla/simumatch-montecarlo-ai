@@ -14,10 +14,11 @@ import {
 import { MomentumPointData } from "@/domain/entities/simulation.types";
 
 const NEUTRAL_COLOR = "#5C6370";
+const NEUTRAL_SECONDARY = "#8B92A8";
 
 const TOOLTIP_BOX = {
-  background: "#1E2633",
-  border: "1px solid #2A3342",
+  background: "var(--bg-elevated)",
+  border: "1px solid var(--border-default)",
   borderRadius: "8px",
   padding: "8px 12px",
   display: "flex" as const,
@@ -28,6 +29,7 @@ const TOOLTIP_BOX = {
 interface AreaTooltipProps {
   active?: boolean;
   payload?: { dataKey: string; value: number }[];
+  label?: string | number;
   homeTeam: string;
   awayTeam: string;
 }
@@ -35,6 +37,7 @@ interface AreaTooltipProps {
 const AreaTooltip = ({
   active,
   payload,
+  label,
   homeTeam,
   awayTeam,
 }: Readonly<AreaTooltipProps>) => {
@@ -46,10 +49,25 @@ const AreaTooltip = ({
   };
   return (
     <div style={TOOLTIP_BOX}>
+      {label !== undefined && (
+        <span
+          style={{
+            color: "var(--text-secondary)",
+            fontWeight: 500,
+            fontSize: "0.8rem",
+          }}
+        >
+          Min. {label}
+        </span>
+      )}
       {[...payload].reverse().map((entry) => (
         <span
           key={entry.dataKey}
-          style={{ color: "#E8EAED", fontWeight: 600, fontSize: "0.9rem" }}
+          style={{
+            color: "var(--text-primary)",
+            fontWeight: 600,
+            fontSize: "0.9rem",
+          }}
         >
           {nameMap[entry.dataKey] ?? entry.dataKey}{" "}
           {(entry.value ?? 0).toFixed(1)}%
@@ -65,6 +83,8 @@ interface MomentumTimelineChartProps {
   readonly awayTeam: string;
   readonly homeColor: string;
   readonly awayColor: string;
+  readonly homeColorSecondary: string;
+  readonly awayColorSecondary: string;
 }
 
 interface MomentumLegendLabelProps {
@@ -85,7 +105,9 @@ function MomentumLegendLabel({
   };
   const label = labelMap[value] ?? value;
   return (
-    <span style={{ color: "#E8EAED", fontSize: "0.875rem" }}>{label}</span>
+    <span style={{ color: "var(--text-primary)", fontSize: "0.875rem" }}>
+      {label}
+    </span>
   );
 }
 
@@ -107,6 +129,8 @@ export function MomentumTimelineChart({
   awayTeam,
   homeColor,
   awayColor,
+  homeColorSecondary,
+  awayColorSecondary,
 }: MomentumTimelineChartProps) {
   const data = momentumTimeline.map((point) => ({
     minute: point.minute,
@@ -129,21 +153,21 @@ export function MomentumTimelineChart({
           stackOffset="expand"
           margin={{ top: 8, right: 16, left: 0, bottom: 8 }}
         >
-          <CartesianGrid strokeDasharray="3 3" stroke="#2A3342" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--border-default)" />
           <XAxis
             dataKey="minute"
             label={{
               value: "Min.",
               position: "insideBottomRight",
               offset: -8,
-              fill: "#8B92A8",
+              fill: "var(--text-secondary)",
               fontSize: 11,
             }}
-            tick={{ fill: "#8B92A8", fontSize: 12 }}
+            tick={{ fill: "var(--text-secondary)", fontSize: 12 }}
           />
           <YAxis
             tickFormatter={(v: number) => `${Math.round(v * 100)}%`}
-            tick={{ fill: "#8B92A8", fontSize: 12 }}
+            tick={{ fill: "var(--text-secondary)", fontSize: 12 }}
           />
           <Tooltip
             content={<AreaTooltip homeTeam={homeTeam} awayTeam={awayTeam} />}
@@ -153,7 +177,7 @@ export function MomentumTimelineChart({
             type="monotone"
             dataKey="home"
             stackId="1"
-            stroke={homeColor}
+            stroke={homeColorSecondary}
             fill={homeColor}
             fillOpacity={0.7}
           />
@@ -161,7 +185,7 @@ export function MomentumTimelineChart({
             type="monotone"
             dataKey="draw"
             stackId="1"
-            stroke={NEUTRAL_COLOR}
+            stroke={NEUTRAL_SECONDARY}
             fill={NEUTRAL_COLOR}
             fillOpacity={0.5}
           />
@@ -169,7 +193,7 @@ export function MomentumTimelineChart({
             type="monotone"
             dataKey="away"
             stackId="1"
-            stroke={awayColor}
+            stroke={awayColorSecondary}
             fill={awayColor}
             fillOpacity={0.7}
           />

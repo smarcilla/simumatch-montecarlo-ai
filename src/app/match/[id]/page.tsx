@@ -33,7 +33,17 @@ export default async function MatchPage({ params }: Readonly<MatchPageProps>) {
 
   return (
     <DashboardLayout>
-      <div className="match-detail-page">
+      <div
+        className="match-detail-page"
+        style={
+          {
+            "--team-home-primary": match.homeColorPrimary,
+            "--team-home-secondary": match.homeColorSecondary,
+            "--team-away-primary": match.awayColorPrimary,
+            "--team-away-secondary": match.awayColorSecondary,
+          } as React.CSSProperties
+        }
+      >
         <Link
           href={`/?league=${match.league}&season=${match.season}`}
           className="match-detail-back"
@@ -46,12 +56,20 @@ export default async function MatchPage({ params }: Readonly<MatchPageProps>) {
           stats={shotStats}
           homeTeam={match.home}
           awayTeam={match.away}
+          homeColor={match.homeColorPrimary}
+          awayColor={match.awayColorPrimary}
+          homeColorSecondary={match.homeColorSecondary}
+          awayColorSecondary={match.awayColorSecondary}
         />
         <ShotsTable
           matchId={id}
           initialData={initialShots}
           homeTeam={match.home}
           awayTeam={match.away}
+          homeColor={match.homeColorPrimary}
+          awayColor={match.awayColorPrimary}
+          homeColorSecondary={match.homeColorSecondary}
+          awayColorSecondary={match.awayColorSecondary}
         />
       </div>
     </DashboardLayout>

@@ -7,6 +7,12 @@ import { getShotsByMatch } from "@/infrastructure/actions/match.actions";
 import { ShotTypeValue } from "@/domain/value-objects/shot-type.value";
 import { ShotSituationValue } from "@/domain/value-objects/shot-situation.value";
 import { createFindShotsByMatchCommand } from "@/application/commands/find-shots-by-match.command";
+import {
+  BodyPartIcon,
+  SituationIcon,
+  ShotTypeIcon,
+  TableTeamShield,
+} from "@/infrastructure/ui/components/ShotIcons";
 
 const SHOT_TYPE_LABELS: Record<ShotTypeValue, string> = {
   goal: "Gol",
@@ -27,18 +33,15 @@ const SITUATION_LABELS: Record<ShotSituationValue, string> = {
   "fast-break": "Contragolpe",
 };
 
-const BODY_PART_LABELS: Record<string, string> = {
-  head: "Cabeza",
-  "left-foot": "Pie izq.",
-  "right-foot": "Pie der.",
-  other: "Otro",
-};
-
 interface ShotsTableProps {
   readonly matchId: string;
   readonly initialData: PaginatedResult<FindShotResult>;
   readonly homeTeam: string;
   readonly awayTeam: string;
+  readonly homeColor: string;
+  readonly awayColor: string;
+  readonly homeColorSecondary: string;
+  readonly awayColorSecondary: string;
 }
 
 export function ShotsTable({
@@ -46,6 +49,10 @@ export function ShotsTable({
   initialData,
   homeTeam,
   awayTeam,
+  homeColor,
+  awayColor,
+  homeColorSecondary,
+  awayColorSecondary,
 }: ShotsTableProps) {
   const [data, setData] =
     useState<PaginatedResult<FindShotResult>>(initialData);
@@ -110,6 +117,19 @@ export function ShotsTable({
     return `${min}'`;
   };
 
+  const shotTypesOptions = (
+    Object.keys(SHOT_TYPE_LABELS) as ShotTypeValue[]
+  ).map((t) => ({
+    value: t,
+    label: SHOT_TYPE_LABELS[t],
+  }));
+  const situationsOptions = (
+    Object.keys(SITUATION_LABELS) as ShotSituationValue[]
+  ).map((s) => ({
+    value: s,
+    label: SITUATION_LABELS[s],
+  }));
+
   return (
     <div className="shots-section">
       <div className="shots-filters">
@@ -124,9 +144,9 @@ export function ShotsTable({
             onChange={handleFilterChange(setShotTypesFilter, "shotTypesFilter")}
           >
             <option value="">Todos</option>
-            {(Object.keys(SHOT_TYPE_LABELS) as ShotTypeValue[]).map((t) => (
-              <option key={t} value={t}>
-                {SHOT_TYPE_LABELS[t]}
+            {shotTypesOptions.map((t) => (
+              <option key={t.value} value={t.value}>
+                {t.label}
               </option>
             ))}
           </select>
@@ -146,13 +166,11 @@ export function ShotsTable({
             )}
           >
             <option value="">Todas</option>
-            {(Object.keys(SITUATION_LABELS) as ShotSituationValue[]).map(
-              (s) => (
-                <option key={s} value={s}>
-                  {SITUATION_LABELS[s]}
-                </option>
-              )
-            )}
+            {situationsOptions.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -226,17 +244,19 @@ export function ShotsTable({
                     </span>
                   </td>
                   <td className="shots-td">
-                    <span
-                      className={`shots-team-badge shots-team-badge-${shot.isHome ? "home" : "away"}`}
-                    >
-                      {shot.isHome ? homeTeam : awayTeam}
-                    </span>
+                    <TableTeamShield
+                      primary={shot.isHome ? homeColor : awayColor}
+                      secondary={
+                        shot.isHome ? homeColorSecondary : awayColorSecondary
+                      }
+                      name={shot.isHome ? homeTeam : awayTeam}
+                    />
                     <span className="shots-td-sub">
-                      {BODY_PART_LABELS[shot.bodyPart] ?? shot.bodyPart}
+                      <BodyPartIcon value={shot.bodyPart} />
                     </span>
                   </td>
                   <td className="shots-td">
-                    {SITUATION_LABELS[shot.situation]}
+                    <SituationIcon value={shot.situation} />
                   </td>
                   <td className="shots-td shots-td-number">
                     <span>{shot.xg.toFixed(2)}</span>
@@ -248,7 +268,7 @@ export function ShotsTable({
                     <span
                       className={`shots-type-badge shots-type-${shot.shotType}`}
                     >
-                      {SHOT_TYPE_LABELS[shot.shotType]}
+                      <ShotTypeIcon value={shot.shotType} />
                     </span>
                   </td>
                 </tr>

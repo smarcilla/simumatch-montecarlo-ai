@@ -10,13 +10,16 @@ interface SimulationProbabilityChartProps {
   readonly awayTeam: string;
   readonly homeColor: string;
   readonly awayColor: string;
+  readonly homeColorSecondary: string;
+  readonly awayColorSecondary: string;
 }
 
 const NEUTRAL_COLOR = "#5C6370";
+const NEUTRAL_SECONDARY = "#8B92A8";
 
 const TOOLTIP_BOX = {
-  background: "#1E2633",
-  border: "1px solid #2A3342",
+  background: "var(--bg-elevated)",
+  border: "1px solid var(--border-default)",
   borderRadius: "8px",
   padding: "8px 12px",
 };
@@ -31,7 +34,13 @@ function PieTooltip({ active, payload }: Readonly<PieTooltipProps>) {
   const entry = payload[0]!;
   return (
     <div style={TOOLTIP_BOX}>
-      <span style={{ color: "#E8EAED", fontWeight: 700, fontSize: "1rem" }}>
+      <span
+        style={{
+          color: "var(--text-primary)",
+          fontWeight: 700,
+          fontSize: "1rem",
+        }}
+      >
         {entry.name} {entry.value}%
       </span>
     </div>
@@ -40,7 +49,9 @@ function PieTooltip({ active, payload }: Readonly<PieTooltipProps>) {
 
 function LegendLabel({ value }: Readonly<{ value: string }>) {
   return (
-    <span style={{ color: "#E8EAED", fontSize: "0.875rem" }}>{value}</span>
+    <span style={{ color: "var(--text-primary)", fontSize: "0.875rem" }}>
+      {value}
+    </span>
   );
 }
 
@@ -56,22 +67,27 @@ export function SimulationProbabilityChart({
   awayTeam,
   homeColor,
   awayColor,
+  homeColorSecondary,
+  awayColorSecondary,
 }: SimulationProbabilityChartProps) {
   const data = [
     {
       name: homeTeam,
       value: Math.round(homeWinProbability * 1000) / 10,
       fill: homeColor,
+      stroke: homeColorSecondary,
     },
     {
       name: "Empate",
       value: Math.round(drawProbability * 1000) / 10,
       fill: NEUTRAL_COLOR,
+      stroke: NEUTRAL_SECONDARY,
     },
     {
       name: awayTeam,
       value: Math.round(awayWinProbability * 1000) / 10,
       fill: awayColor,
+      stroke: awayColorSecondary,
     },
   ];
 
@@ -88,6 +104,7 @@ export function SimulationProbabilityChart({
             outerRadius={110}
             dataKey="value"
             labelLine={false}
+            strokeWidth={1.5}
           />
           <Tooltip content={<PieTooltip />} />
           <Legend formatter={formatLegendLabel} />

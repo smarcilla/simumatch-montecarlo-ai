@@ -10,8 +10,11 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { ScoreDistributionItemData } from "@/domain/entities/simulation.types";
+import { TableTeamShield } from "@/infrastructure/ui/components/ShotIcons";
 
+const ITERATIONS = 10_000;
 const NEUTRAL_COLOR = "#5C6370";
+const NEUTRAL_SECONDARY = "#8B92A8";
 
 interface ScoreBarShape {
   readonly x?: number;
@@ -19,6 +22,7 @@ interface ScoreBarShape {
   readonly width?: number;
   readonly height?: number;
   readonly color?: string | undefined;
+  readonly strokeColor?: string | undefined;
 }
 
 function ScoreBarShapeRenderer(props: Readonly<ScoreBarShape>) {
@@ -29,6 +33,8 @@ function ScoreBarShapeRenderer(props: Readonly<ScoreBarShape>) {
       width={Math.max(0, props.width ?? 0)}
       height={props.height ?? 0}
       fill={props.color ?? NEUTRAL_COLOR}
+      stroke={props.strokeColor ?? NEUTRAL_SECONDARY}
+      strokeWidth={1.5}
       rx={4}
       ry={4}
     />
@@ -51,13 +57,19 @@ function CustomTooltip({
   return (
     <div
       style={{
-        background: "#1E2633",
-        border: "1px solid #2A3342",
+        background: "var(--bg-elevated)",
+        border: "1px solid var(--border-default)",
         borderRadius: "8px",
         padding: "8px 12px",
       }}
     >
-      <span style={{ color: "#E8EAED", fontWeight: 700, fontSize: "1rem" }}>
+      <span
+        style={{
+          color: "var(--text-primary)",
+          fontWeight: 700,
+          fontSize: "1rem",
+        }}
+      >
         {label} ({value}%)
       </span>
     </div>
@@ -70,17 +82,21 @@ interface ScoreDistributionChartProps {
   readonly awayTeam: string;
   readonly homeColor: string;
   readonly awayColor: string;
+  readonly homeColorSecondary: string;
+  readonly awayColorSecondary: string;
 }
 
-function resolveBarColor(
+function resolveBarColors(
   home: number,
   away: number,
   homeColor: string,
-  awayColor: string
-): string {
-  if (home > away) return homeColor;
-  if (away > home) return awayColor;
-  return NEUTRAL_COLOR;
+  awayColor: string,
+  homeColorSecondary: string,
+  awayColorSecondary: string
+): { fill: string; stroke: string } {
+  if (home > away) return { fill: homeColor, stroke: homeColorSecondary };
+  if (away > home) return { fill: awayColor, stroke: awayColorSecondary };
+  return { fill: NEUTRAL_COLOR, stroke: NEUTRAL_SECONDARY };
 }
 
 export function ScoreDistributionChart({
@@ -89,11 +105,32 @@ export function ScoreDistributionChart({
   awayTeam,
   homeColor,
   awayColor,
+  homeColorSecondary,
+  awayColorSecondary,
 }: ScoreDistributionChartProps) {
-  const chartData = scoreDistribution.map((item) => ({
-    label: `${item.home}-${item.away}`,
-    value: Math.round(item.percentage * 10) / 10,
-    color: resolveBarColor(item.home, item.away, homeColor, awayColor),
+  const totalSimulations = ITERATIONS;
+
+  const chartData = scoreDistribution.map((item) => {
+    const colors = resolveBarColors(
+      item.home,
+      item.away,
+      homeColor,
+      awayColor,
+      homeColorSecondary,
+      awayColorSecondary
+    );
+    return {
+      label: `${item.home}-${item.away}`,
+      value: Math.round(item.percentage * 10) / 10,
+      color: colors.fill,
+      strokeColor: colors.stroke,
+    };
+  });
+
+  const tableData = scoreDistribution.map((item) => ({
+    score: `${item.home}-${item.away}`,
+    count: item.count,
+    percentage: (Math.round(item.percentage * 10) / 10).toFixed(1),
   }));
 
   return (
@@ -102,19 +139,34 @@ export function ScoreDistributionChart({
       <div className="simulation-score-legend">
         <span
           className="simulation-score-legend-item"
-          style={{ borderColor: homeColor }}
+          style={
+            {
+              "--legend-primary": homeColor,
+              "--legend-secondary": homeColorSecondary,
+            } as React.CSSProperties
+          }
         >
           {homeTeam} gana
         </span>
         <span
           className="simulation-score-legend-item"
-          style={{ borderColor: NEUTRAL_COLOR }}
+          style={
+            {
+              "--legend-primary": NEUTRAL_COLOR,
+              "--legend-secondary": NEUTRAL_SECONDARY,
+            } as React.CSSProperties
+          }
         >
           Empate
         </span>
         <span
           className="simulation-score-legend-item"
-          style={{ borderColor: awayColor }}
+          style={
+            {
+              "--legend-primary": awayColor,
+              "--legend-secondary": awayColorSecondary,
+            } as React.CSSProperties
+          }
         >
           {awayTeam} gana
         </span>
@@ -126,20 +178,23 @@ export function ScoreDistributionChart({
         >
           <CartesianGrid
             strokeDasharray="3 3"
-            stroke="#2A3342"
+            stroke="var(--border-default)"
             vertical={false}
           />
           <XAxis
             dataKey="label"
-            tick={{ fill: "#E8EAED", fontSize: 12 }}
+            tick={{ fill: "var(--text-primary)", fontSize: 12 }}
             angle={-40}
             textAnchor="end"
             interval={0}
           />
-          <YAxis unit="%" tick={{ fill: "#8B92A8", fontSize: 12 }} />
+          <YAxis
+            unit="%"
+            tick={{ fill: "var(--text-secondary)", fontSize: 12 }}
+          />
           <Tooltip
             content={<CustomTooltip />}
-            cursor={{ fill: "rgba(255,255,255,0.05)" }}
+            cursor={{ fill: "var(--bg-hover)" }}
           />
           <Bar
             dataKey="value"
@@ -153,22 +208,36 @@ export function ScoreDistributionChart({
           <thead>
             <tr>
               <th>Marcador</th>
-              <th>{homeTeam}</th>
-              <th>{awayTeam}</th>
-              <th>Frecuencia</th>
-              <th>%</th>
+              <th title={`Total: ${totalSimulations} simulaciones`}>
+                Frecuencia
+              </th>
+              <th title="Porcentaje de simulaciones con este resultado">%</th>
             </tr>
           </thead>
           <tbody>
-            {scoreDistribution.map((item) => (
-              <tr key={`${item.home}-${item.away}`}>
-                <td>
-                  {item.home}-{item.away}
+            {tableData.map((item) => (
+              <tr key={item.score}>
+                <td
+                  style={{ display: "flex", alignItems: "center", gap: "6px" }}
+                >
+                  <TableTeamShield
+                    primary={homeColor}
+                    secondary={homeColorSecondary}
+                    name={homeTeam}
+                  />
+                  <span style={{ fontWeight: 700 }}>{item.score}</span>
+                  <TableTeamShield
+                    primary={awayColor}
+                    secondary={awayColorSecondary}
+                    name={awayTeam}
+                  />
                 </td>
-                <td>{item.home}</td>
-                <td>{item.away}</td>
-                <td>{item.count}</td>
-                <td>{(Math.round(item.percentage * 10) / 10).toFixed(1)}%</td>
+                <td title={`${item.count} de ${totalSimulations} simulaciones`}>
+                  {item.count}
+                </td>
+                <td title="Porcentaje de simulaciones con este resultado">
+                  {item.percentage}%
+                </td>
               </tr>
             ))}
           </tbody>

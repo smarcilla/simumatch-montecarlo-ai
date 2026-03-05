@@ -52,6 +52,8 @@ export default async function SimulationPage({
           awayTeam={match.away}
           homeColor={match.homeColorPrimary}
           awayColor={match.awayColorPrimary}
+          homeColorSecondary={match.homeColorSecondary}
+          awayColorSecondary={match.awayColorSecondary}
         />
         <SimulationXptsCards
           xPtsHome={simulation.xPtsHome}
@@ -60,6 +62,8 @@ export default async function SimulationPage({
           awayTeam={match.away}
           homeColor={match.homeColorPrimary}
           awayColor={match.awayColorPrimary}
+          homeColorSecondary={match.homeColorSecondary}
+          awayColorSecondary={match.awayColorSecondary}
         />
         <ScoreDistributionChart
           scoreDistribution={simulation.scoreDistribution}
@@ -67,6 +71,8 @@ export default async function SimulationPage({
           awayTeam={match.away}
           homeColor={match.homeColorPrimary}
           awayColor={match.awayColorPrimary}
+          homeColorSecondary={match.homeColorSecondary}
+          awayColorSecondary={match.awayColorSecondary}
         />
         <PlayerStatsChart
           playerStats={simulation.playerStats}
@@ -74,6 +80,8 @@ export default async function SimulationPage({
           awayTeam={match.away}
           homeColor={match.homeColorPrimary}
           awayColor={match.awayColorPrimary}
+          homeColorSecondary={match.homeColorSecondary}
+          awayColorSecondary={match.awayColorSecondary}
         />
         <MomentumTimelineChart
           momentumTimeline={simulation.momentumTimeline}
@@ -81,6 +89,8 @@ export default async function SimulationPage({
           awayTeam={match.away}
           homeColor={match.homeColorPrimary}
           awayColor={match.awayColorPrimary}
+          homeColorSecondary={match.homeColorSecondary}
+          awayColorSecondary={match.awayColorSecondary}
         />
       </div>
     </DashboardLayout>

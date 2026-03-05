@@ -7,12 +7,20 @@ interface ShotStatsPanelProps {
   readonly stats: ShotMatchStatsResult;
   readonly homeTeam: string;
   readonly awayTeam: string;
+  readonly homeColor: string;
+  readonly awayColor: string;
+  readonly homeColorSecondary: string;
+  readonly awayColorSecondary: string;
 }
 
 export function ShotStatsPanel({
   stats,
   homeTeam,
   awayTeam,
+  homeColor,
+  awayColor,
+  homeColorSecondary,
+  awayColorSecondary,
 }: ShotStatsPanelProps) {
   return (
     <div className="shot-stats-panel">
@@ -25,6 +33,10 @@ export function ShotStatsPanel({
         awayXg={stats.awayXg}
         homeGoals={stats.homeGoals}
         awayGoals={stats.awayGoals}
+        homeColor={homeColor}
+        awayColor={awayColor}
+        homeColorSecondary={homeColorSecondary}
+        awayColorSecondary={awayColorSecondary}
       />
 
       {stats.playerStats.length > 0 && (
@@ -32,6 +44,10 @@ export function ShotStatsPanel({
           playerStats={stats.playerStats}
           homeTeam={homeTeam}
           awayTeam={awayTeam}
+          homeColor={homeColor}
+          awayColor={awayColor}
+          homeColorSecondary={homeColorSecondary}
+          awayColorSecondary={awayColorSecondary}
         />
       )}
 
@@ -40,6 +56,10 @@ export function ShotStatsPanel({
           goalkeeperStats={stats.goalkeeperStats}
           homeTeam={homeTeam}
           awayTeam={awayTeam}
+          homeColor={homeColor}
+          awayColor={awayColor}
+          homeColorSecondary={homeColorSecondary}
+          awayColorSecondary={awayColorSecondary}
         />
       )}
     </div>

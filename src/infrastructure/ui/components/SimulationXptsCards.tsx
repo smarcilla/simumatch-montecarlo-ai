@@ -5,6 +5,8 @@ interface SimulationXptsCardsProps {
   readonly awayTeam: string;
   readonly homeColor: string;
   readonly awayColor: string;
+  readonly homeColorSecondary: string;
+  readonly awayColorSecondary: string;
 }
 
 export function SimulationXptsCards({
@@ -14,6 +16,8 @@ export function SimulationXptsCards({
   awayTeam,
   homeColor,
   awayColor,
+  homeColorSecondary,
+  awayColorSecondary,
 }: SimulationXptsCardsProps) {
   const formattedXPtsHome = xPtsHome.toFixed(2);
   const formattedXPtsAway = xPtsAway.toFixed(2);
@@ -23,14 +27,24 @@ export function SimulationXptsCards({
       <div className="simulation-xpts-cards">
         <div
           className="simulation-xpts-card"
-          style={{ "--xpts-color": homeColor } as React.CSSProperties}
+          style={
+            {
+              "--xpts-color": homeColor,
+              "--xpts-secondary": homeColorSecondary,
+            } as React.CSSProperties
+          }
         >
           <span className="simulation-xpts-team">{homeTeam}</span>
           <span className="simulation-xpts-value">{formattedXPtsHome}</span>
         </div>
         <div
           className="simulation-xpts-card"
-          style={{ "--xpts-color": awayColor } as React.CSSProperties}
+          style={
+            {
+              "--xpts-color": awayColor,
+              "--xpts-secondary": awayColorSecondary,
+            } as React.CSSProperties
+          }
         >
           <span className="simulation-xpts-team">{awayTeam}</span>
           <span className="simulation-xpts-value">{formattedXPtsAway}</span>

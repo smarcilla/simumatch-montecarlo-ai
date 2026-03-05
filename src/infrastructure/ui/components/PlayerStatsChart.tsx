@@ -11,10 +11,11 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { SimulationPlayerStat } from "@/domain/entities/simulation.types";
+import { TableTeamShield } from "@/infrastructure/ui/components/ShotIcons";
 
 const TOOLTIP_BOX = {
-  background: "#1E2633",
-  border: "1px solid #2A3342",
+  background: "var(--bg-elevated)",
+  border: "1px solid var(--border-default)",
   borderRadius: "8px",
   padding: "8px 12px",
 };
@@ -27,7 +28,12 @@ interface PlayerBarShape {
   isHome?: boolean;
 }
 
-function makeBarShape(homeColor: string, awayColor: string) {
+function makeBarShape(
+  homeColor: string,
+  awayColor: string,
+  homeColorSecondary: string,
+  awayColorSecondary: string
+) {
   return function PlayerBarShapeRenderer(props: PlayerBarShape) {
     return (
       <rect
@@ -36,6 +42,8 @@ function makeBarShape(homeColor: string, awayColor: string) {
         width={Math.max(0, props.width ?? 0)}
         height={props.height ?? 0}
         fill={props.isHome ? homeColor : awayColor}
+        stroke={props.isHome ? homeColorSecondary : awayColorSecondary}
+        strokeWidth={1.5}
         rx={4}
         ry={4}
       />
@@ -57,7 +65,13 @@ function BarTooltip({ active, payload, label }: Readonly<BarTooltipProps>) {
   const value = payload[0]?.value ?? 0;
   return (
     <div style={TOOLTIP_BOX}>
-      <span style={{ color: "#E8EAED", fontWeight: 700, fontSize: "1rem" }}>
+      <span
+        style={{
+          color: "var(--text-primary)",
+          fontWeight: 700,
+          fontSize: "1rem",
+        }}
+      >
         {label} {value}%
       </span>
     </div>
@@ -70,6 +84,8 @@ interface PlayerStatsChartProps {
   readonly awayTeam: string;
   readonly homeColor: string;
   readonly awayColor: string;
+  readonly homeColorSecondary: string;
+  readonly awayColorSecondary: string;
 }
 
 export function PlayerStatsChart({
@@ -78,6 +94,8 @@ export function PlayerStatsChart({
   awayTeam,
   homeColor,
   awayColor,
+  homeColorSecondary,
+  awayColorSecondary,
 }: PlayerStatsChartProps) {
   const sorted = [...playerStats].sort(
     (a, b) => b.goalProbability - a.goalProbability
@@ -92,14 +110,21 @@ export function PlayerStatsChart({
   const tableData = sorted.map((p) => ({
     playerName: p.playerShortName,
     team: p.isHome ? homeTeam : awayTeam,
+    isHome: p.isHome,
     goalProbability: (Math.round(p.goalProbability * 10) / 10).toFixed(1),
     sga: p.sga.toFixed(3),
   }));
 
   const chartHeight = Math.max(CHART_MIN_HEIGHT, chartData.length * ROW_HEIGHT);
   const barShape = useMemo(
-    () => makeBarShape(homeColor, awayColor),
-    [homeColor, awayColor]
+    () =>
+      makeBarShape(
+        homeColor,
+        awayColor,
+        homeColorSecondary,
+        awayColorSecondary
+      ),
+    [homeColor, awayColor, homeColorSecondary, awayColorSecondary]
   );
 
   return (
@@ -115,23 +140,23 @@ export function PlayerStatsChart({
         >
           <CartesianGrid
             strokeDasharray="3 3"
-            stroke="#2A3342"
+            stroke="var(--border-default)"
             horizontal={false}
           />
           <XAxis
             type="number"
             unit="%"
-            tick={{ fill: "#8B92A8", fontSize: 12 }}
+            tick={{ fill: "var(--text-secondary)", fontSize: 12 }}
           />
           <YAxis
             type="category"
             dataKey="name"
-            tick={{ fill: "#8B92A8", fontSize: 12 }}
+            tick={{ fill: "var(--text-secondary)", fontSize: 12 }}
             width={80}
           />
           <Tooltip
             content={<BarTooltip />}
-            cursor={{ fill: "rgba(255,255,255,0.05)" }}
+            cursor={{ fill: "var(--bg-hover)" }}
           />
           <Bar dataKey="value" radius={[0, 4, 4, 0]} shape={barShape} />
         </BarChart>
@@ -142,15 +167,27 @@ export function PlayerStatsChart({
             <tr>
               <th>Jugador</th>
               <th>Equipo</th>
-              <th>Goal Prob.</th>
-              <th>SGA</th>
+              <th title="Probabilidad de marcar al menos un gol en la simulación">
+                Prob Gol
+              </th>
+              <th title="Shot-Creating Actions: acciones que generan disparos a portería">
+                SGA
+              </th>
             </tr>
           </thead>
           <tbody>
             {tableData.map((p) => (
               <tr key={p.playerName}>
                 <td>{p.playerName}</td>
-                <td>{p.team}</td>
+                <td>
+                  <TableTeamShield
+                    primary={p.isHome ? homeColor : awayColor}
+                    secondary={
+                      p.isHome ? homeColorSecondary : awayColorSecondary
+                    }
+                    name={p.team}
+                  />
+                </td>
                 <td>{p.goalProbability}%</td>
                 <td>{p.sga}</td>
               </tr>
