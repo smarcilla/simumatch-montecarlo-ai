@@ -1,0 +1,32 @@
+[
+  {
+    "name": "La Liga",
+    "country": "Spain",
+    "externalId": "Spain La Liga",
+    "numericExternalId": 8
+  },
+  {
+    "name": "Premier League",
+    "country": "England",
+    "externalId": "England Premier League",
+    "numericExternalId": 17
+  },
+  {
+    "name": "Ligue 1",
+    "country": "France",
+    "externalId": "France Ligue 1",
+    "numericExternalId": 34
+  },
+  {
+    "name": "Bundesliga",
+    "country": "Germany",
+    "externalId": "Germany Bundesliga",
+    "numericExternalId": 35
+  },
+  {
+    "name": "Serie A",
+    "country": "Italy",
+    "externalId": "Italy Serie A",
+    "numericExternalId": 23
+  }
+]

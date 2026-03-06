@@ -16,6 +16,14 @@ interface ILeagueWithSeasons {
   seasons: ISeasonDocument[];
 }
 
+interface ILeagueDocument {
+  _id: Types.ObjectId;
+  name: string;
+  country: string;
+  externalId?: string;
+  numericExternalId?: number;
+}
+
 export class MongooseLeagueRepository implements LeagueRepository {
   async getLeagues(): Promise<League[]> {
     const leaguesWithSeasons = await LeagueModel.aggregate<ILeagueWithSeasons>([
@@ -29,7 +37,7 @@ export class MongooseLeagueRepository implements LeagueRepository {
       },
       {
         $match: {
-          "seasons.0": { $exists: true }, // ← Solo leagues que tienen al menos 1 season
+          "seasons.0": { $exists: true },
         },
       },
       {
@@ -44,10 +52,44 @@ export class MongooseLeagueRepository implements LeagueRepository {
       },
     ]);
 
-    return leaguesWithSeasons.map(this.mapToEntity);
+    return leaguesWithSeasons.map(this.mapWithSeasonsToEntity);
   }
 
-  private mapToEntity(doc: ILeagueWithSeasons): League {
+  async findAll(): Promise<League[]> {
+    const docs = await LeagueModel.find({}).lean<ILeagueDocument[]>();
+    return docs.map((doc) => this.mapToEntity(doc));
+  }
+
+  async findByNumericExternalId(
+    numericExternalId: number
+  ): Promise<League | null> {
+    const doc = await LeagueModel.findOne({
+      numericExternalId,
+    }).lean<ILeagueDocument>();
+    if (!doc) return null;
+    return this.mapToEntity(doc);
+  }
+
+  async upsert(league: League): Promise<void> {
+    await LeagueModel.updateOne(
+      { numericExternalId: league.numericExternalId },
+      {
+        $set: {
+          name: league.name,
+          country: league.country,
+          externalId: league.externalId,
+          numericExternalId: league.numericExternalId,
+        },
+      },
+      { upsert: true }
+    );
+  }
+
+  async deleteAll(): Promise<void> {
+    await LeagueModel.deleteMany({});
+  }
+
+  private mapWithSeasonsToEntity(doc: ILeagueWithSeasons): League {
     const seasons = doc.seasons.map(
       (s) =>
         new Season(
@@ -62,6 +104,17 @@ export class MongooseLeagueRepository implements LeagueRepository {
       doc.name,
       doc.country,
       seasons,
+      doc._id.toString(),
+      doc.externalId,
+      doc.numericExternalId
+    );
+  }
+
+  private mapToEntity(doc: ILeagueDocument): League {
+    return new League(
+      doc.name,
+      doc.country,
+      [],
       doc._id.toString(),
       doc.externalId,
       doc.numericExternalId

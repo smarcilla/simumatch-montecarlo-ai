@@ -9,6 +9,10 @@ import { FindSimulationByMatchIdUseCase } from "@/application/use-cases/find-sim
 import { SimulateMatchUseCase } from "@/application/use-cases/simulate-match.use-case";
 import { UpsertTeamsUseCase } from "@/application/use-cases/upsert-teams.use-case";
 import { UpsertMatchesUseCase } from "@/application/use-cases/upsert-matches.use-case";
+import { UpsertLeaguesUseCase } from "@/application/use-cases/upsert-leagues.use-case";
+import { ClearLeaguesUseCase } from "@/application/use-cases/clear-leagues.use-case";
+import { UpsertSeasonsUseCase } from "@/application/use-cases/upsert-seasons.use-case";
+import { ClearSeasonsUseCase } from "@/application/use-cases/clear-seasons.use-case";
 import { ClearSimulationsUseCase } from "@/application/use-cases/clear-simulations.use-case";
 import { ClearShotsUseCase } from "@/application/use-cases/clear-shots.use-case";
 import { ClearPlayersUseCase } from "@/application/use-cases/clear-players.use-case";
@@ -17,6 +21,7 @@ import { ClearTeamsUseCase } from "@/application/use-cases/clear-teams.use-case"
 import { LeagueRepository } from "@/domain/repositories/league.repository";
 import { MatchRepository } from "@/domain/repositories/match.repository";
 import { PlayerRepository } from "@/domain/repositories/player.repository";
+import { SeasonRepository } from "@/domain/repositories/season.repository";
 import { ShotRepository } from "@/domain/repositories/shot.repository";
 import { SimulationRepository } from "@/domain/repositories/simulation.repository";
 import { TeamRepository } from "@/domain/repositories/team.repository";
@@ -25,6 +30,7 @@ import { MonteCarloSimulatorService } from "@/domain/services/montecarlo-simulat
 import { MongooseLeagueRepository } from "./repositories/mongoose-league.repository";
 import { MongooseMatchRepository } from "./repositories/mongoose-match.repository";
 import { MongoosePlayerRepository } from "./repositories/mongoose-player.repository";
+import { MongooseSeasonRepository } from "./repositories/mongoose-season.repository";
 import { MongooseShotRepository } from "./repositories/mongoose-shot.repository";
 import { MongooseSimulationRepository } from "./repositories/mongoose-simulation.repository";
 import { MongooseTeamRepository } from "./repositories/mongoose-team.repository";
@@ -35,6 +41,7 @@ export class DIContainer {
   private static leagueRepository: LeagueRepository;
   private static matchRepository: MatchRepository;
   private static playerRepository: PlayerRepository;
+  private static seasonRepository: SeasonRepository;
   private static shotRepository: ShotRepository;
   private static simulationRepository: SimulationRepository;
   private static teamRepository: TeamRepository;
@@ -49,6 +56,10 @@ export class DIContainer {
   private static findSimulationByMatchIdUseCase: FindSimulationByMatchIdUseCase;
   private static upsertTeamsUseCase: UpsertTeamsUseCase;
   private static upsertMatchesUseCase: UpsertMatchesUseCase;
+  private static upsertLeaguesUseCase: UpsertLeaguesUseCase;
+  private static clearLeaguesUseCase: ClearLeaguesUseCase;
+  private static upsertSeasonsUseCase: UpsertSeasonsUseCase;
+  private static clearSeasonsUseCase: ClearSeasonsUseCase;
   private static clearSimulationsUseCase: ClearSimulationsUseCase;
   private static clearShotsUseCase: ClearShotsUseCase;
   private static clearPlayersUseCase: ClearPlayersUseCase;
@@ -85,6 +96,13 @@ export class DIContainer {
       DIContainer.shotRepository = new MongooseShotRepository();
     }
     return DIContainer.shotRepository;
+  }
+
+  static getSeasonRepository(): SeasonRepository {
+    if (!DIContainer.seasonRepository) {
+      DIContainer.seasonRepository = new MongooseSeasonRepository();
+    }
+    return DIContainer.seasonRepository;
   }
 
   static getSimulationRepository(): SimulationRepository {
@@ -220,6 +238,47 @@ export class DIContainer {
     return DIContainer.upsertMatchesUseCase;
   }
 
+  static async getUpsertLeaguesUseCase(): Promise<UpsertLeaguesUseCase> {
+    await DIContainer.initializeDatabaseConnection();
+    if (!DIContainer.upsertLeaguesUseCase) {
+      DIContainer.upsertLeaguesUseCase = new UpsertLeaguesUseCase(
+        DIContainer.getLeagueRepository()
+      );
+    }
+    return DIContainer.upsertLeaguesUseCase;
+  }
+
+  static async getClearLeaguesUseCase(): Promise<ClearLeaguesUseCase> {
+    await DIContainer.initializeDatabaseConnection();
+    if (!DIContainer.clearLeaguesUseCase) {
+      DIContainer.clearLeaguesUseCase = new ClearLeaguesUseCase(
+        DIContainer.getLeagueRepository()
+      );
+    }
+    return DIContainer.clearLeaguesUseCase;
+  }
+
+  static async getUpsertSeasonsUseCase(): Promise<UpsertSeasonsUseCase> {
+    await DIContainer.initializeDatabaseConnection();
+    if (!DIContainer.upsertSeasonsUseCase) {
+      DIContainer.upsertSeasonsUseCase = new UpsertSeasonsUseCase(
+        DIContainer.getLeagueRepository(),
+        DIContainer.getSeasonRepository()
+      );
+    }
+    return DIContainer.upsertSeasonsUseCase;
+  }
+
+  static async getClearSeasonsUseCase(): Promise<ClearSeasonsUseCase> {
+    await DIContainer.initializeDatabaseConnection();
+    if (!DIContainer.clearSeasonsUseCase) {
+      DIContainer.clearSeasonsUseCase = new ClearSeasonsUseCase(
+        DIContainer.getSeasonRepository()
+      );
+    }
+    return DIContainer.clearSeasonsUseCase;
+  }
+
   static async getClearSimulationsUseCase(): Promise<ClearSimulationsUseCase> {
     await DIContainer.initializeDatabaseConnection();
     if (!DIContainer.clearSimulationsUseCase) {
@@ -274,6 +333,7 @@ export class DIContainer {
     DIContainer.leagueRepository = null as unknown as LeagueRepository;
     DIContainer.matchRepository = null as unknown as MatchRepository;
     DIContainer.playerRepository = null as unknown as PlayerRepository;
+    DIContainer.seasonRepository = null as unknown as SeasonRepository;
     DIContainer.shotRepository = null as unknown as ShotRepository;
     DIContainer.simulationRepository = null as unknown as SimulationRepository;
     DIContainer.teamRepository = null as unknown as TeamRepository;
@@ -294,6 +354,10 @@ export class DIContainer {
       null as unknown as FindSimulationByMatchIdUseCase;
     DIContainer.upsertTeamsUseCase = null as unknown as UpsertTeamsUseCase;
     DIContainer.upsertMatchesUseCase = null as unknown as UpsertMatchesUseCase;
+    DIContainer.upsertLeaguesUseCase = null as unknown as UpsertLeaguesUseCase;
+    DIContainer.clearLeaguesUseCase = null as unknown as ClearLeaguesUseCase;
+    DIContainer.upsertSeasonsUseCase = null as unknown as UpsertSeasonsUseCase;
+    DIContainer.clearSeasonsUseCase = null as unknown as ClearSeasonsUseCase;
     DIContainer.clearSimulationsUseCase =
       null as unknown as ClearSimulationsUseCase;
     DIContainer.clearShotsUseCase = null as unknown as ClearShotsUseCase;
