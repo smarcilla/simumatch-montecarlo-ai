@@ -45,3 +45,4 @@ src/infrastructure/scripts/comps.yaml
 .github/instructions/
 .github/prompts/
 docs/
+.vscode/settings.json
