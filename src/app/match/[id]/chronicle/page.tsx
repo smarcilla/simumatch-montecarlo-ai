@@ -136,6 +136,286 @@ function getTeamName(
     : chronicle.relatedSimulation.awayTeam;
 }
 
+interface TopScorer {
+  playerShortName: string;
+  goalProbability: string;
+  home: ChronicleAccent;
+}
+
+interface MostLikelyScoreline {
+  home: number;
+  away: number;
+  percentage: string;
+}
+
+interface ChronicleHeroProps {
+  chronicle: ChronicleResult;
+  matchHome: string;
+  matchAway: string;
+  mostLikelyScoreline: MostLikelyScoreline | null;
+  topScorer: TopScorer | null;
+  mostDecisivePulse: MomentumInsight | null;
+}
+
+function ChronicleHero({
+  chronicle,
+  matchHome,
+  matchAway,
+  mostLikelyScoreline,
+  topScorer,
+  mostDecisivePulse,
+}: Readonly<ChronicleHeroProps>) {
+  return (
+    <>
+      <section className="chronicle-hero">
+        <div className="chronicle-hero-copy">
+          <span className="chronicle-kicker">{chronicle.kicker}</span>
+          <h1 className="chronicle-title">{chronicle.title}</h1>
+          <p className="chronicle-summary">{chronicle.summary}</p>
+          <div className="chronicle-meta-list">
+            <span>
+              {matchHome} vs {matchAway}
+            </span>
+            <span>{chronicle.author}</span>
+            <span>{chronicle.sourceLabel}</span>
+            <span>{formatDate(chronicle.generatedAt)}</span>
+          </div>
+
+          <div className="chronicle-hero-insights">
+            {mostLikelyScoreline ? (
+              <article className="chronicle-hero-insight is-neutral">
+                <span className="chronicle-hero-insight-label">
+                  Marcador dominante
+                </span>
+                <strong className="chronicle-hero-insight-value">
+                  {mostLikelyScoreline.home}-{mostLikelyScoreline.away}
+                </strong>
+                <p>{mostLikelyScoreline.percentage}% de las simulaciones</p>
+              </article>
+            ) : null}
+
+            {topScorer ? (
+              <article
+                className={`chronicle-hero-insight ${getAccentClass(topScorer.home)}`}
+              >
+                <span className="chronicle-hero-insight-label">
+                  Amenaza principal
+                </span>
+                <strong className="chronicle-hero-insight-value">
+                  {topScorer.playerShortName}
+                </strong>
+                <p>{topScorer.goalProbability}% de probabilidad de gol</p>
+              </article>
+            ) : null}
+
+            {mostDecisivePulse ? (
+              <article
+                className={`chronicle-hero-insight ${getAccentClass(mostDecisivePulse.accent)}`}
+              >
+                <span className="chronicle-hero-insight-label">
+                  Punto de máxima tensión
+                </span>
+                <strong className="chronicle-hero-insight-value">
+                  {`${mostDecisivePulse.minute}'`}
+                </strong>
+                <p>
+                  {formatPercent(mostDecisivePulse.value)} de inclinación máxima
+                </p>
+              </article>
+            ) : null}
+          </div>
+        </div>
+      </section>
+
+      <section className="chronicle-highlights" aria-label="Momentos clave">
+        {chronicle.highlights.map((highlight) => (
+          <article
+            key={`${highlight.label}-${highlight.value}`}
+            className={`chronicle-highlight-card ${getAccentClass(highlight.accent)}`}
+          >
+            <span className="chronicle-highlight-label">{highlight.label}</span>
+            <strong className="chronicle-highlight-value">
+              {highlight.value}
+            </strong>
+          </article>
+        ))}
+      </section>
+    </>
+  );
+}
+
+interface ChronicleSidebarProps {
+  chronicle: ChronicleResult;
+  matchHome: string;
+  matchAway: string;
+  topPlayers: SimulationPlayerStat[];
+  topScorelines: ScoreDistributionItemData[];
+  momentumInsights: MomentumInsight[];
+}
+
+function ChronicleSidebar({
+  chronicle,
+  matchHome,
+  matchAway,
+  topPlayers,
+  topScorelines,
+  momentumInsights,
+}: Readonly<ChronicleSidebarProps>) {
+  return (
+    <aside className="chronicle-sidebar">
+      <section className="chronicle-sidebar-card">
+        <h2 className="chronicle-sidebar-title">Claves de lectura</h2>
+        <div className="chronicle-key-stats">
+          {chronicle.keyStats.map((stat) => (
+            <article
+              key={`${stat.label}-${stat.value}`}
+              className={`chronicle-key-stat ${getAccentClass(stat.accent)}`}
+            >
+              <span className="chronicle-key-stat-label">{stat.label}</span>
+              <strong className="chronicle-key-stat-value">{stat.value}</strong>
+              <p className="chronicle-key-stat-context">{stat.context}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {chronicle.relatedSimulation ? (
+        <section className="chronicle-sidebar-card">
+          <h2 className="chronicle-sidebar-title">Apoyo de simulación</h2>
+          <div className="chronicle-simulation-grid">
+            <article className="chronicle-simulation-item is-home">
+              <span className="chronicle-simulation-label">
+                {chronicle.relatedSimulation.homeTeam}
+              </span>
+              <strong>
+                {formatPercent(chronicle.relatedSimulation.homeWinProbability)}
+              </strong>
+              <p>xPts {chronicle.relatedSimulation.xPtsHome.toFixed(2)}</p>
+            </article>
+            <article className="chronicle-simulation-item is-neutral">
+              <span className="chronicle-simulation-label">Empate</span>
+              <strong>
+                {formatPercent(chronicle.relatedSimulation.drawProbability)}
+              </strong>
+              <p>Ventana de equilibrio del modelo</p>
+            </article>
+            <article className="chronicle-simulation-item is-away">
+              <span className="chronicle-simulation-label">
+                {chronicle.relatedSimulation.awayTeam}
+              </span>
+              <strong>
+                {formatPercent(chronicle.relatedSimulation.awayWinProbability)}
+              </strong>
+              <p>xPts {chronicle.relatedSimulation.xPtsAway.toFixed(2)}</p>
+            </article>
+          </div>
+
+          {momentumInsights.length > 0 ? (
+            <div className="chronicle-momentum-list">
+              {momentumInsights.map((insight) => (
+                <article
+                  key={`${insight.label}-${insight.minute}`}
+                  className={`chronicle-momentum-item ${getAccentClass(insight.accent)}`}
+                >
+                  <div>
+                    <span className="chronicle-key-stat-label">
+                      {insight.label}
+                    </span>
+                    <strong className="chronicle-key-stat-value">
+                      {`${insight.minute}'`}
+                    </strong>
+                  </div>
+                  <div>
+                    <p className="chronicle-key-stat-context">
+                      {insight.description}
+                    </p>
+                    <p className="chronicle-momentum-value">
+                      {formatPercent(insight.value)}
+                    </p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : null}
+        </section>
+      ) : null}
+
+      {topPlayers.length > 0 ? (
+        <section className="chronicle-sidebar-card">
+          <h2 className="chronicle-sidebar-title">Amenazas ofensivas</h2>
+          <div className="chronicle-player-list">
+            {topPlayers.map((player) => (
+              <article
+                key={player.playerId}
+                className={`chronicle-player-row ${getAccentClass(player.isHome ? "home" : "away")}`}
+              >
+                <div className="chronicle-player-copy">
+                  <strong>{player.playerShortName}</strong>
+                  <span className="chronicle-player-team">
+                    {getTeamName(
+                      chronicle,
+                      player.isHome,
+                      player.isHome ? matchHome : matchAway
+                    )}
+                  </span>
+                </div>
+                <div className="chronicle-player-metrics">
+                  <span className="chronicle-player-metric">
+                    Gol {player.goalProbability.toFixed(2)}%
+                  </span>
+                  <span className="chronicle-player-metric">
+                    SGA {formatSignedNumber(player.sga)}
+                  </span>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {topScorelines.length > 0 ? (
+        <section className="chronicle-sidebar-card">
+          <h2 className="chronicle-sidebar-title">Marcadores más probables</h2>
+          <div className="chronicle-score-list">
+            {topScorelines.map((scoreline) => (
+              <article
+                key={`${scoreline.home}-${scoreline.away}-${scoreline.count}`}
+                className="chronicle-score-row"
+              >
+                <strong className="chronicle-score-badge">
+                  {scoreline.home}-{scoreline.away}
+                </strong>
+                <div className="chronicle-score-copy">
+                  <span>{scoreline.percentage.toFixed(2)}% del total</span>
+                  <p>{scoreline.count} simulaciones</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <section className="chronicle-sidebar-card">
+        <h2 className="chronicle-sidebar-title">Timeline editorial</h2>
+        <div className="chronicle-timeline">
+          {chronicle.timeline.map((item) => (
+            <article
+              key={`${item.minute}-${item.title}`}
+              className={`chronicle-timeline-item ${getAccentClass(item.accent)}`}
+            >
+              <span className="chronicle-timeline-minute">{item.minute}</span>
+              <div className="chronicle-timeline-copy">
+                <strong>{item.title}</strong>
+                <p>{item.description}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    </aside>
+  );
+}
+
 function renderSections(chronicle: ChronicleResult) {
   return chronicle.sections.map((section) => (
     <section key={section.id} className="chronicle-article-section">
@@ -182,14 +462,14 @@ export default async function ChroniclePage({
   const momentumInsights = chronicle.relatedSimulation
     ? getMomentumInsights(chronicle.relatedSimulation.momentumTimeline)
     : [];
-  const topScorer = topPlayers[0]
+  const topScorer: TopScorer | null = topPlayers[0]
     ? {
         playerShortName: topPlayers[0].playerShortName,
         goalProbability: topPlayers[0].goalProbability.toFixed(2),
         home: (topPlayers[0].isHome ? "home" : "away") as ChronicleAccent,
       }
     : null;
-  const mostLikelyScoreline = topScorelines[0]
+  const mostLikelyScoreline: MostLikelyScoreline | null = topScorelines[0]
     ? {
         home: topScorelines[0].home,
         away: topScorelines[0].away,
@@ -219,267 +499,28 @@ export default async function ChroniclePage({
 
         <MatchDetailCard match={match} />
 
-        <section className="chronicle-hero">
-          <div className="chronicle-hero-copy">
-            <span className="chronicle-kicker">{chronicle.kicker}</span>
-            <h1 className="chronicle-title">{chronicle.title}</h1>
-            <p className="chronicle-summary">{chronicle.summary}</p>
-            <div className="chronicle-meta-list">
-              <span>
-                {match.home} vs {match.away}
-              </span>
-              <span>{chronicle.author}</span>
-              <span>{chronicle.sourceLabel}</span>
-              <span>{formatDate(chronicle.generatedAt)}</span>
-            </div>
-
-            <div className="chronicle-hero-insights">
-              {mostLikelyScoreline ? (
-                <article className="chronicle-hero-insight is-neutral">
-                  <span className="chronicle-hero-insight-label">
-                    Marcador dominante
-                  </span>
-                  <strong className="chronicle-hero-insight-value">
-                    {mostLikelyScoreline.home}-{mostLikelyScoreline.away}
-                  </strong>
-                  <p>{mostLikelyScoreline.percentage}% de las simulaciones</p>
-                </article>
-              ) : null}
-
-              {topScorer ? (
-                <article
-                  className={`chronicle-hero-insight ${getAccentClass(
-                    topScorer.home
-                  )}`}
-                >
-                  <span className="chronicle-hero-insight-label">
-                    Amenaza principal
-                  </span>
-                  <strong className="chronicle-hero-insight-value">
-                    {topScorer.playerShortName}
-                  </strong>
-                  <p>{topScorer.goalProbability}% de probabilidad de gol</p>
-                </article>
-              ) : null}
-
-              {mostDecisivePulse ? (
-                <article
-                  className={`chronicle-hero-insight ${getAccentClass(
-                    mostDecisivePulse.accent
-                  )}`}
-                >
-                  <span className="chronicle-hero-insight-label">
-                    Punto de máxima tensión
-                  </span>
-                  <strong className="chronicle-hero-insight-value">
-                    {`${mostDecisivePulse.minute}'`}
-                  </strong>
-                  <p>
-                    {formatPercent(mostDecisivePulse.value)} de inclinación
-                    máxima
-                  </p>
-                </article>
-              ) : null}
-            </div>
-          </div>
-        </section>
-
-        <section className="chronicle-highlights" aria-label="Momentos clave">
-          {chronicle.highlights.map((highlight) => (
-            <article
-              key={`${highlight.label}-${highlight.value}`}
-              className={`chronicle-highlight-card ${getAccentClass(highlight.accent)}`}
-            >
-              <span className="chronicle-highlight-label">
-                {highlight.label}
-              </span>
-              <strong className="chronicle-highlight-value">
-                {highlight.value}
-              </strong>
-            </article>
-          ))}
-        </section>
+        <ChronicleHero
+          chronicle={chronicle}
+          matchHome={match.home}
+          matchAway={match.away}
+          mostLikelyScoreline={mostLikelyScoreline}
+          topScorer={topScorer}
+          mostDecisivePulse={mostDecisivePulse}
+        />
 
         <div className="chronicle-content-grid">
           <article className="chronicle-article">
             {renderSections(chronicle)}
           </article>
 
-          <aside className="chronicle-sidebar">
-            <section className="chronicle-sidebar-card">
-              <h2 className="chronicle-sidebar-title">Claves de lectura</h2>
-              <div className="chronicle-key-stats">
-                {chronicle.keyStats.map((stat) => (
-                  <article
-                    key={`${stat.label}-${stat.value}`}
-                    className={`chronicle-key-stat ${getAccentClass(stat.accent)}`}
-                  >
-                    <span className="chronicle-key-stat-label">
-                      {stat.label}
-                    </span>
-                    <strong className="chronicle-key-stat-value">
-                      {stat.value}
-                    </strong>
-                    <p className="chronicle-key-stat-context">{stat.context}</p>
-                  </article>
-                ))}
-              </div>
-            </section>
-
-            {chronicle.relatedSimulation ? (
-              <section className="chronicle-sidebar-card">
-                <h2 className="chronicle-sidebar-title">Apoyo de simulación</h2>
-                <div className="chronicle-simulation-grid">
-                  <article className="chronicle-simulation-item is-home">
-                    <span className="chronicle-simulation-label">
-                      {chronicle.relatedSimulation.homeTeam}
-                    </span>
-                    <strong>
-                      {formatPercent(
-                        chronicle.relatedSimulation.homeWinProbability
-                      )}
-                    </strong>
-                    <p>
-                      xPts {chronicle.relatedSimulation.xPtsHome.toFixed(2)}
-                    </p>
-                  </article>
-                  <article className="chronicle-simulation-item is-neutral">
-                    <span className="chronicle-simulation-label">Empate</span>
-                    <strong>
-                      {formatPercent(
-                        chronicle.relatedSimulation.drawProbability
-                      )}
-                    </strong>
-                    <p>Ventana de equilibrio del modelo</p>
-                  </article>
-                  <article className="chronicle-simulation-item is-away">
-                    <span className="chronicle-simulation-label">
-                      {chronicle.relatedSimulation.awayTeam}
-                    </span>
-                    <strong>
-                      {formatPercent(
-                        chronicle.relatedSimulation.awayWinProbability
-                      )}
-                    </strong>
-                    <p>
-                      xPts {chronicle.relatedSimulation.xPtsAway.toFixed(2)}
-                    </p>
-                  </article>
-                </div>
-
-                {momentumInsights.length > 0 ? (
-                  <div className="chronicle-momentum-list">
-                    {momentumInsights.map((insight) => (
-                      <article
-                        key={`${insight.label}-${insight.minute}`}
-                        className={`chronicle-momentum-item ${getAccentClass(
-                          insight.accent
-                        )}`}
-                      >
-                        <div>
-                          <span className="chronicle-key-stat-label">
-                            {insight.label}
-                          </span>
-                          <strong className="chronicle-key-stat-value">
-                            {`${insight.minute}'`}
-                          </strong>
-                        </div>
-                        <div>
-                          <p className="chronicle-key-stat-context">
-                            {insight.description}
-                          </p>
-                          <p className="chronicle-momentum-value">
-                            {formatPercent(insight.value)}
-                          </p>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                ) : null}
-              </section>
-            ) : null}
-
-            {topPlayers.length > 0 ? (
-              <section className="chronicle-sidebar-card">
-                <h2 className="chronicle-sidebar-title">Amenazas ofensivas</h2>
-                <div className="chronicle-player-list">
-                  {topPlayers.map((player) => (
-                    <article
-                      key={player.playerId}
-                      className={`chronicle-player-row ${getAccentClass(
-                        player.isHome ? "home" : "away"
-                      )}`}
-                    >
-                      <div className="chronicle-player-copy">
-                        <strong>{player.playerShortName}</strong>
-                        <span className="chronicle-player-team">
-                          {getTeamName(
-                            chronicle,
-                            player.isHome,
-                            player.isHome ? match.home : match.away
-                          )}
-                        </span>
-                      </div>
-                      <div className="chronicle-player-metrics">
-                        <span className="chronicle-player-metric">
-                          Gol {player.goalProbability.toFixed(2)}%
-                        </span>
-                        <span className="chronicle-player-metric">
-                          SGA {formatSignedNumber(player.sga)}
-                        </span>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </section>
-            ) : null}
-
-            {topScorelines.length > 0 ? (
-              <section className="chronicle-sidebar-card">
-                <h2 className="chronicle-sidebar-title">
-                  Marcadores más probables
-                </h2>
-                <div className="chronicle-score-list">
-                  {topScorelines.map((scoreline) => (
-                    <article
-                      key={`${scoreline.home}-${scoreline.away}-${scoreline.count}`}
-                      className="chronicle-score-row"
-                    >
-                      <strong className="chronicle-score-badge">
-                        {scoreline.home}-{scoreline.away}
-                      </strong>
-                      <div className="chronicle-score-copy">
-                        <span>
-                          {scoreline.percentage.toFixed(2)}% del total
-                        </span>
-                        <p>{scoreline.count} simulaciones</p>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </section>
-            ) : null}
-
-            <section className="chronicle-sidebar-card">
-              <h2 className="chronicle-sidebar-title">Timeline editorial</h2>
-              <div className="chronicle-timeline">
-                {chronicle.timeline.map((item) => (
-                  <article
-                    key={`${item.minute}-${item.title}`}
-                    className={`chronicle-timeline-item ${getAccentClass(item.accent)}`}
-                  >
-                    <span className="chronicle-timeline-minute">
-                      {item.minute}
-                    </span>
-                    <div className="chronicle-timeline-copy">
-                      <strong>{item.title}</strong>
-                      <p>{item.description}</p>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </section>
-          </aside>
+          <ChronicleSidebar
+            chronicle={chronicle}
+            matchHome={match.home}
+            matchAway={match.away}
+            topPlayers={topPlayers}
+            topScorelines={topScorelines}
+            momentumInsights={momentumInsights}
+          />
         </div>
       </div>
     </DashboardLayout>

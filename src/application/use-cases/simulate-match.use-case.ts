@@ -13,12 +13,21 @@ export class SimulateMatchUseCase {
     private readonly monteCarloSimulatorService: MonteCarloSimulatorService
   ) {}
 
-  async execute(matchId: string): Promise<SimulateMatchResult> {
+  async execute(matchId: string): Promise<SimulateMatchResult | null> {
+    const match = await this.matchRepository.findById(matchId);
+
+    if (!match?.canSimulate()) {
+      return null;
+    }
+
     const shots = await this.shotRepository.findAllByMatchId(matchId);
+
     const simulation = this.monteCarloSimulatorService.simulate(matchId, shots);
 
-    await this.simulationRepository.save(simulation);
-    await this.matchRepository.updateStatus(matchId, "simulated");
+    match.simulate();
+
+    await this.simulationRepository.upsert(simulation);
+    await this.matchRepository.upsert(match);
 
     return this.mapToResult(simulation);
   }

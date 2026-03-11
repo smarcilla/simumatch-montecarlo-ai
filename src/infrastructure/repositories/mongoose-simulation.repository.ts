@@ -9,7 +9,7 @@ import { MomentumPoint } from "@/domain/value-objects/momentum-point.value";
 import { Types } from "mongoose";
 
 export class MongooseSimulationRepository implements SimulationRepository {
-  async save(simulation: Simulation): Promise<void> {
+  async upsert(simulation: Simulation): Promise<void> {
     await SimulationModel.updateOne(
       { matchId: new Types.ObjectId(simulation.matchId) },
       {

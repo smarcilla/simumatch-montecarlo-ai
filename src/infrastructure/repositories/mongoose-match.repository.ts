@@ -120,7 +120,7 @@ export class MongooseMatchRepository implements MatchRepository {
           date: match.date.date,
           homeScore: match.score.home,
           awayScore: match.score.away,
-          status: match.status.value,
+          status: match.statusValue,
         },
       },
       { upsert: true }

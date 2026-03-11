@@ -6,7 +6,9 @@ import { AddShotsByShotRawUseCase } from "@/application/use-cases/add-shots-by-s
 import { FindShotsByMatchUseCase } from "@/application/use-cases/find-shots-by-match.use-case";
 import { FindShotStatsByMatchUseCase } from "@/application/use-cases/find-shot-stats-by-match.use-case";
 import { FindSimulationByMatchIdUseCase } from "@/application/use-cases/find-simulation-by-match-id.use-case";
+import { FindChronicleByMatchIdUseCase } from "@/application/use-cases/find-chronicle-by-match-id.use-case";
 import { SimulateMatchUseCase } from "@/application/use-cases/simulate-match.use-case";
+import { GenerateChronicleUseCase } from "@/application/use-cases/generate-chronicle.use-case";
 import { UpsertTeamsUseCase } from "@/application/use-cases/upsert-teams.use-case";
 import { UpsertMatchesUseCase } from "@/application/use-cases/upsert-matches.use-case";
 import { UpsertLeaguesUseCase } from "@/application/use-cases/upsert-leagues.use-case";
@@ -19,15 +21,19 @@ import { ClearPlayersUseCase } from "@/application/use-cases/clear-players.use-c
 import { ClearMatchesUseCase } from "@/application/use-cases/clear-matches.use-case";
 import { ClearTeamsUseCase } from "@/application/use-cases/clear-teams.use-case";
 import { LeagueRepository } from "@/domain/repositories/league.repository";
+import { ChronicleRepository } from "@/domain/repositories/chronicle.repository";
 import { MatchRepository } from "@/domain/repositories/match.repository";
 import { PlayerRepository } from "@/domain/repositories/player.repository";
 import { SeasonRepository } from "@/domain/repositories/season.repository";
 import { ShotRepository } from "@/domain/repositories/shot.repository";
 import { SimulationRepository } from "@/domain/repositories/simulation.repository";
 import { TeamRepository } from "@/domain/repositories/team.repository";
+import { ChronicleGenerator } from "@/application/ports/chronicle-generator.port";
 import { MonteCarloSimulatorService } from "@/domain/services/montecarlo-simulator.service";
 
+import { GenkitChronicleGenerator } from "./llm/genkit-chronicle.generator";
 import { MongooseLeagueRepository } from "./repositories/mongoose-league.repository";
+import { MongooseChronicleRepository } from "./repositories/mongoose-chronicle.repository";
 import { MongooseMatchRepository } from "./repositories/mongoose-match.repository";
 import { MongoosePlayerRepository } from "./repositories/mongoose-player.repository";
 import { MongooseSeasonRepository } from "./repositories/mongoose-season.repository";
@@ -38,6 +44,8 @@ import { connectionManager } from "@/infrastructure/db/connection-manager";
 import { FindMatchByIdUseCase } from "@/application/use-cases/find-match-by-id.use-case";
 
 export class DIContainer {
+  private static chronicleRepository: ChronicleRepository;
+  private static chronicleGenerator: ChronicleGenerator;
   private static leagueRepository: LeagueRepository;
   private static matchRepository: MatchRepository;
   private static playerRepository: PlayerRepository;
@@ -52,7 +60,9 @@ export class DIContainer {
   private static addShotsByShotRawUseCase: AddShotsByShotRawUseCase;
   private static findShotsByMatchUseCase: FindShotsByMatchUseCase;
   private static findShotStatsByMatchUseCase: FindShotStatsByMatchUseCase;
+  private static generateChronicleUseCase: GenerateChronicleUseCase;
   private static simulateMatchUseCase: SimulateMatchUseCase;
+  private static findChronicleByMatchIdUseCase: FindChronicleByMatchIdUseCase;
   private static findSimulationByMatchIdUseCase: FindSimulationByMatchIdUseCase;
   private static upsertTeamsUseCase: UpsertTeamsUseCase;
   private static upsertMatchesUseCase: UpsertMatchesUseCase;
@@ -75,6 +85,20 @@ export class DIContainer {
       DIContainer.leagueRepository = new MongooseLeagueRepository();
     }
     return DIContainer.leagueRepository;
+  }
+
+  static getChronicleRepository(): ChronicleRepository {
+    if (!DIContainer.chronicleRepository) {
+      DIContainer.chronicleRepository = new MongooseChronicleRepository();
+    }
+    return DIContainer.chronicleRepository;
+  }
+
+  static getChronicleGenerator(): ChronicleGenerator {
+    if (!DIContainer.chronicleGenerator) {
+      DIContainer.chronicleGenerator = new GenkitChronicleGenerator();
+    }
+    return DIContainer.chronicleGenerator;
   }
 
   static getMatchRepository(): MatchRepository {
@@ -192,6 +216,19 @@ export class DIContainer {
     return DIContainer.findShotStatsByMatchUseCase;
   }
 
+  static async getGenerateChronicleUseCase(): Promise<GenerateChronicleUseCase> {
+    await DIContainer.initializeDatabaseConnection();
+    if (!DIContainer.generateChronicleUseCase) {
+      DIContainer.generateChronicleUseCase = new GenerateChronicleUseCase(
+        DIContainer.getMatchRepository(),
+        DIContainer.getSimulationRepository(),
+        DIContainer.getChronicleRepository(),
+        DIContainer.getChronicleGenerator()
+      );
+    }
+    return DIContainer.generateChronicleUseCase;
+  }
+
   static async getSimulateMatchUseCase(): Promise<SimulateMatchUseCase> {
     await DIContainer.initializeDatabaseConnection();
     if (!DIContainer.simulateMatchUseCase) {
@@ -214,6 +251,15 @@ export class DIContainer {
         );
     }
     return DIContainer.findSimulationByMatchIdUseCase;
+  }
+
+  static async getFindChronicleByMatchIdUseCase(): Promise<FindChronicleByMatchIdUseCase> {
+    await DIContainer.initializeDatabaseConnection();
+    if (!DIContainer.findChronicleByMatchIdUseCase) {
+      DIContainer.findChronicleByMatchIdUseCase =
+        new FindChronicleByMatchIdUseCase(DIContainer.getChronicleRepository());
+    }
+    return DIContainer.findChronicleByMatchIdUseCase;
   }
 
   static async getUpsertTeamsUseCase(): Promise<UpsertTeamsUseCase> {
@@ -330,6 +376,8 @@ export class DIContainer {
   }
 
   static reset(): void {
+    DIContainer.chronicleRepository = null as unknown as ChronicleRepository;
+    DIContainer.chronicleGenerator = null as unknown as ChronicleGenerator;
     DIContainer.leagueRepository = null as unknown as LeagueRepository;
     DIContainer.matchRepository = null as unknown as MatchRepository;
     DIContainer.playerRepository = null as unknown as PlayerRepository;
@@ -349,7 +397,11 @@ export class DIContainer {
       null as unknown as FindShotsByMatchUseCase;
     DIContainer.findShotStatsByMatchUseCase =
       null as unknown as FindShotStatsByMatchUseCase;
+    DIContainer.generateChronicleUseCase =
+      null as unknown as GenerateChronicleUseCase;
     DIContainer.simulateMatchUseCase = null as unknown as SimulateMatchUseCase;
+    DIContainer.findChronicleByMatchIdUseCase =
+      null as unknown as FindChronicleByMatchIdUseCase;
     DIContainer.findSimulationByMatchIdUseCase =
       null as unknown as FindSimulationByMatchIdUseCase;
     DIContainer.upsertTeamsUseCase = null as unknown as UpsertTeamsUseCase;

@@ -48,7 +48,7 @@ export class FindMatchesByLeagueAndSeasonUseCase {
       awayColorSecondary: match.awayTeam.secondaryColor.hex,
       homeScore: match.score.home,
       awayScore: match.score.away,
-      status: match.status.value,
+      status: match.statusValue,
       league: match.league.id!,
       season: match.season.id!,
     };

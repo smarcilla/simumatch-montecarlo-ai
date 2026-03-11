@@ -1,5 +1,8 @@
 import { MatchDate } from "../value-objects/match-date.value";
-import { MatchStatus } from "../value-objects/match-status.value";
+import {
+  MatchStatus,
+  MatchStatusValue,
+} from "../value-objects/match-status.value";
 import { Score } from "../value-objects/score.value";
 import { League } from "./league.entity";
 import { Season } from "./season.entity";
@@ -13,10 +16,43 @@ export class Match {
     readonly season: Season,
     readonly date: MatchDate,
     readonly score: Score,
-    readonly status: MatchStatus,
+    private status: MatchStatus,
     readonly homeTeam: Team,
     readonly awayTeam: Team
   ) {}
+
+  canGenerateChronicle(): boolean {
+    return (
+      this.status.equals(MatchStatus.create("simulated")) ||
+      this.status.equals(MatchStatus.create("chronicle_generated"))
+    );
+  }
+
+  canSimulate(): boolean {
+    return this.status.equals(MatchStatus.create("finished"));
+  }
+
+  simulate(): void {
+    if (!this.canSimulate()) {
+      throw new Error("Match cannot be simulated in its current state.");
+    }
+
+    this.status = MatchStatus.create("simulated");
+  }
+
+  generateChronicle() {
+    if (!this.canGenerateChronicle()) {
+      throw new Error(
+        "Match cannot have a chronicle generated in its current state."
+      );
+    }
+
+    this.status = MatchStatus.create("chronicle_generated");
+  }
+
+  get statusValue(): MatchStatusValue {
+    return this.status.value;
+  }
 
   //   equals(other: Match): boolean {
   //     return (

@@ -1,55 +1,25 @@
 import {
-  MomentumPointData,
-  ScoreDistributionItemData,
-  SimulationPlayerStat,
-} from "@/domain/entities/simulation.types";
+  ChronicleHighlight,
+  ChronicleKeyStat,
+  ChronicleSection,
+  ChronicleSectionQuote,
+  ChronicleSimulationSnapshot,
+  ChronicleTimelineItem,
+} from "@/domain/entities/chronicle.entity";
 
-export type ChronicleAccent = "home" | "away" | "neutral";
+export type { ChronicleAccent } from "@/domain/entities/chronicle.entity";
 
-export interface ChronicleSectionQuoteResult {
-  text: string;
-  attribution: string;
-}
+export type ChronicleSectionQuoteResult = ChronicleSectionQuote;
 
-export interface ChronicleSectionResult {
-  id: string;
-  title: string;
-  paragraphs: string[];
-  quote?: ChronicleSectionQuoteResult;
-}
+export type ChronicleSectionResult = ChronicleSection;
 
-export interface ChronicleHighlightResult {
-  label: string;
-  value: string;
-  accent: ChronicleAccent;
-}
+export type ChronicleHighlightResult = ChronicleHighlight;
 
-export interface ChronicleKeyStatResult {
-  label: string;
-  value: string;
-  context: string;
-  accent: ChronicleAccent;
-}
+export type ChronicleKeyStatResult = ChronicleKeyStat;
 
-export interface ChronicleTimelineItemResult {
-  minute: string;
-  title: string;
-  description: string;
-  accent: ChronicleAccent;
-}
+export type ChronicleTimelineItemResult = ChronicleTimelineItem;
 
-export interface ChronicleSimulationSnapshotResult {
-  homeWinProbability: number;
-  drawProbability: number;
-  awayWinProbability: number;
-  momentumTimeline: MomentumPointData[];
-  playerStats: SimulationPlayerStat[];
-  scoreDistribution: ScoreDistributionItemData[];
-  xPtsHome: number;
-  xPtsAway: number;
-  homeTeam: string;
-  awayTeam: string;
-}
+export type ChronicleSimulationSnapshotResult = ChronicleSimulationSnapshot;
 
 export interface ChronicleResult {
   matchId: string;
