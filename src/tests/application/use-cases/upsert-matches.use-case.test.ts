@@ -41,7 +41,7 @@ describe("UpsertMatchesUseCase", () => {
     expect(match!.season.id).toBe(season._id.toString());
     expect(match!.score.home).toBe(2);
     expect(match!.score.away).toBe(1);
-    expect(match!.status.value).toBe("finished");
+    expect(match!.statusValue).toBe("finished");
   });
 
   it("should update an existing match when executed again with same externalId", async () => {

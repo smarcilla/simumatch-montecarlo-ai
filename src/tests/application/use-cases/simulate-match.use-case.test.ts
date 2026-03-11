@@ -13,6 +13,14 @@ describe("SimulateMatchUseCase", () => {
   let useCase: SimulateMatchUseCase;
   let matchId: string;
 
+  const requireSimulationResult = <T>(result: T | null): T => {
+    if (!result) {
+      throw new Error("Expected a simulation result.");
+    }
+
+    return result;
+  };
+
   beforeEach(async () => {
     useCase = await DIContainer.getSimulateMatchUseCase();
     const league = await buildLeague();
@@ -30,7 +38,7 @@ describe("SimulateMatchUseCase", () => {
   });
 
   it("should return a simulation result with expected fields", async () => {
-    const result = await useCase.execute(matchId);
+    const result = requireSimulationResult(await useCase.execute(matchId));
 
     expect(result.matchId).toBe(matchId);
     expect(result).toHaveProperty("homeWinProbability");
@@ -45,7 +53,7 @@ describe("SimulateMatchUseCase", () => {
   });
 
   it("should return probabilities that sum to 1", async () => {
-    const result = await useCase.execute(matchId);
+    const result = requireSimulationResult(await useCase.execute(matchId));
     const total =
       result.homeWinProbability +
       result.drawProbability +
@@ -54,7 +62,7 @@ describe("SimulateMatchUseCase", () => {
   });
 
   it("should return probabilities within valid range", async () => {
-    const result = await useCase.execute(matchId);
+    const result = requireSimulationResult(await useCase.execute(matchId));
     expect(result.homeWinProbability).toBeGreaterThanOrEqual(0);
     expect(result.homeWinProbability).toBeLessThanOrEqual(1);
     expect(result.drawProbability).toBeGreaterThanOrEqual(0);
@@ -80,7 +88,7 @@ describe("SimulateMatchUseCase", () => {
   });
 
   it("should return score distribution with valid structure", async () => {
-    const result = await useCase.execute(matchId);
+    const result = requireSimulationResult(await useCase.execute(matchId));
     expect(result.scoreDistribution.length).toBeGreaterThan(0);
     result.scoreDistribution.forEach((item) => {
       expect(item.home).toBeGreaterThanOrEqual(0);
@@ -91,7 +99,7 @@ describe("SimulateMatchUseCase", () => {
   });
 
   it("should return player stats for all shot takers", async () => {
-    const result = await useCase.execute(matchId);
+    const result = requireSimulationResult(await useCase.execute(matchId));
     expect(result.playerStats.length).toBeGreaterThan(0);
     result.playerStats.forEach((ps) => {
       expect(ps).toHaveProperty("playerId");
