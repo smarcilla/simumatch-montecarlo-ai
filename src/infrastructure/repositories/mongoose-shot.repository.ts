@@ -2,13 +2,13 @@ import { Shot } from "@/domain/entities/shot.entity";
 import { ShotRepository } from "@/domain/repositories/shot.repository";
 import { ShotModel } from "../db/models/shot.model";
 import { Types } from "mongoose";
-import { PaginationOptions } from "@/application/options/pagination.options";
-import { ShotFilterOptions } from "@/application/options/shot-filter.options";
-import { PaginatedResult } from "@/application/results/paginated.result";
+
 import { Player } from "@/domain/entities/player.entity";
 import { ShotType } from "@/domain/value-objects/shot-type.value";
 import { ShotSituation } from "@/domain/value-objects/shot-situation.value";
 import { BodyPart } from "@/domain/value-objects/body-part.value";
+import { PaginatedResult, PaginationOptions } from "@/domain/types/pagination";
+import { ShotFilterOptions } from "@/domain/types/shot-filter";
 
 interface IPlayerPopulated {
   _id: Types.ObjectId;

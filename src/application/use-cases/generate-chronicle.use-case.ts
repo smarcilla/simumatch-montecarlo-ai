@@ -23,24 +23,20 @@ export class GenerateChronicleUseCase {
       return null;
     }
 
-    if (!match.canGenerateChronicle()) {
-      return null;
-    }
-
     const simulation = await this.simulationRepository.findByMatchId(matchId);
 
-    if (!simulation) {
+    if (!match.canGenerateChronicle(!!simulation)) {
       return null;
     }
 
     const generationContext = ChronicleGenerationContext.create(
       match,
-      simulation
+      simulation!
     );
     const chronicle = await this.chronicleGenerator.generate(generationContext);
 
     await this.chronicleRepository.upsert(chronicle);
-    match.generateChronicle();
+    match.generateChronicle(true);
     await this.matchRepository.upsert(match);
 
     return this.mapToResult(chronicle);

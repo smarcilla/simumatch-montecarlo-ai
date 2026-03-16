@@ -5,8 +5,6 @@ import { IMatchPopulated, MatchModel } from "../db/models/match.model";
 import { TeamModel } from "../db/models/team.model";
 import { LeagueModel } from "../db/models/league.model";
 import { SeasonModel } from "../db/models/season.model";
-import { PaginationOptions } from "@/application/options/pagination.options";
-import { MatchFilterOptions } from "@/application/options/match-filter.options";
 import { Types } from "mongoose";
 import { League } from "@/domain/entities/league.entity";
 import { SeasonYear } from "@/domain/value-objects/season-year.value";
@@ -19,7 +17,8 @@ import {
   MatchStatus,
   MatchStatusValue,
 } from "@/domain/value-objects/match-status.value";
-import { PaginatedResult } from "@/application/results/paginated.result";
+import { MatchFilterOptions } from "@/domain/types/match-filter";
+import { PaginatedResult, PaginationOptions } from "@/domain/types/pagination";
 
 export class MongooseMatchRepository implements MatchRepository {
   private static readonly REGISTERED_MODELS = Object.freeze({

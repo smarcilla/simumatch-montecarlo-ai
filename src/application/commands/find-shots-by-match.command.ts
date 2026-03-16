@@ -6,7 +6,7 @@ import {
   ShotSituation,
   ShotSituationValue,
 } from "@/domain/value-objects/shot-situation.value";
-import { PaginationOptions } from "../options/pagination.options";
+import { PaginationOptions } from "@/domain/types/pagination";
 
 export interface FindShotsByMatchCommand {
   matchId: string;

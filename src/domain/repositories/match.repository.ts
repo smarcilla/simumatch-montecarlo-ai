@@ -1,9 +1,8 @@
 // src/domain/repositories/match.repository.ts
 import { Match } from "../entities/match.entity";
 import { MatchStatusValue } from "../value-objects/match-status.value";
-import { PaginationOptions } from "@/application/options/pagination.options";
-import { MatchFilterOptions } from "@/application/options/match-filter.options";
-import { PaginatedResult } from "@/application/results/paginated.result";
+import { PaginationOptions, PaginatedResult } from "@/domain/types/pagination";
+import { MatchFilterOptions } from "@/domain/types/match-filter";
 
 export interface MatchRepository {
   findByLeagueAndSeason(

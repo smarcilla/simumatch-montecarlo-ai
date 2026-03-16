@@ -5,9 +5,10 @@ import { FindMatchByLeagueAndSeasonResult } from "@/application/results/find-mat
 import { FindMatchByIdResult } from "@/application/results/find-match-by-id.result";
 import { FindShotResult } from "@/application/results/find-shots-by-match.result";
 import { ShotMatchStatsResult } from "@/application/results/shot-match-stats.result";
-import { PaginatedResult } from "@/application/results/paginated.result";
+
 import { FindShotsByMatchCommand } from "@/application/commands/find-shots-by-match.command";
 import { createFindMatchesByLeagueAndSeasonCommand } from "@/application/commands/find-matches-by-league-and-season.comand";
+import { PaginatedResult } from "@/domain/types/pagination";
 
 export async function getMatchesByLeagueAndSeason(
   leagueId: string,

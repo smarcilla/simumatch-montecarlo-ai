@@ -21,10 +21,11 @@ export class Match {
     readonly awayTeam: Team
   ) {}
 
-  canGenerateChronicle(): boolean {
+  canGenerateChronicle(hasSimulation: boolean): boolean {
     return (
-      this.status.equals(MatchStatus.create("simulated")) ||
-      this.status.equals(MatchStatus.create("chronicle_generated"))
+      hasSimulation &&
+      (this.status.equals(MatchStatus.create("simulated")) ||
+        this.status.equals(MatchStatus.create("chronicle_generated")))
     );
   }
 
@@ -40,8 +41,8 @@ export class Match {
     this.status = MatchStatus.create("simulated");
   }
 
-  generateChronicle() {
-    if (!this.canGenerateChronicle()) {
+  generateChronicle(hasSimulation: boolean) {
+    if (!this.canGenerateChronicle(hasSimulation)) {
       throw new Error(
         "Match cannot have a chronicle generated in its current state."
       );

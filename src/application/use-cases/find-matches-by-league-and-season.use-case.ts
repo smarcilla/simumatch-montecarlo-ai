@@ -2,8 +2,10 @@ import { Match } from "@/domain/entities/match.entity";
 import { MatchRepository } from "@/domain/repositories/match.repository";
 import { FindMatchesByLeagueAndSeasonCommand } from "../commands/find-matches-by-league-and-season.comand";
 import { FindMatchByLeagueAndSeasonResult } from "../results/find-matches-by-league-and-season.result";
-import { PaginatedResult } from "../results/paginated.result";
-import { MatchFilterOptions } from "../options/match-filter.options";
+
+import { createMatchFilterOptions } from "../options/match-filter.options";
+import { createPaginationOptions } from "../options/pagination.options";
+import { PaginatedResult } from "@/domain/types/pagination";
 
 export class FindMatchesByLeagueAndSeasonUseCase {
   constructor(private readonly matchRepository: MatchRepository) {}
@@ -11,22 +13,18 @@ export class FindMatchesByLeagueAndSeasonUseCase {
   async execute(
     command: FindMatchesByLeagueAndSeasonCommand
   ): Promise<PaginatedResult<FindMatchByLeagueAndSeasonResult>> {
-    const filters: MatchFilterOptions = {};
+    const filters = createMatchFilterOptions(
+      command.statuses,
+      command.dateFrom,
+      command.dateTo
+    );
 
-    if (command.statuses && command.statuses.length > 0) {
-      filters.statuses = command.statuses;
-    }
-    if (command.dateFrom) {
-      filters.dateFrom = command.dateFrom;
-    }
-    if (command.dateTo) {
-      filters.dateTo = command.dateTo;
-    }
+    const options = createPaginationOptions(command.page, command.pageSize);
 
     const result = await this.matchRepository.findByLeagueAndSeason(
       command.leagueId,
       command.seasonId,
-      { page: command.page ?? 0, pageSize: command.pageSize ?? 12 },
+      options,
       filters
     );
 

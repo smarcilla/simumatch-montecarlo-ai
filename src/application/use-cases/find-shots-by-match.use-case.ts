@@ -2,12 +2,10 @@ import { Shot } from "@/domain/entities/shot.entity";
 import { ShotRepository } from "@/domain/repositories/shot.repository";
 import { FindShotsByMatchCommand } from "../commands/find-shots-by-match.command";
 import { FindShotResult } from "../results/find-shots-by-match.result";
-import { PaginatedResult } from "../results/paginated.result";
-import {
-  createShotFilterOptions,
-  ShotFilterOptions,
-} from "../options/shot-filter.options";
+
+import { createShotFilterOptions } from "../options/shot-filter.options";
 import { createPaginationOptions } from "../options/pagination.options";
+import { PaginatedResult } from "@/domain/types/pagination";
 
 export class FindShotsByMatchUseCase {
   constructor(private readonly shotRepository: ShotRepository) {}
@@ -17,7 +15,7 @@ export class FindShotsByMatchUseCase {
   ): Promise<PaginatedResult<FindShotResult>> {
     const options = createPaginationOptions(command.page, command.pageSize);
 
-    const filters: ShotFilterOptions = createShotFilterOptions(
+    const filters = createShotFilterOptions(
       command.shotTypes,
       command.situations,
       command.isHome,

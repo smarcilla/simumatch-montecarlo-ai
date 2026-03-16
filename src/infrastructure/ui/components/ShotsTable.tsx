@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { FindShotResult } from "@/application/results/find-shots-by-match.result";
-import { PaginatedResult } from "@/application/results/paginated.result";
+
 import { getShotsByMatch } from "@/infrastructure/actions/match.actions";
 import { ShotTypeValue } from "@/domain/value-objects/shot-type.value";
 import { ShotSituationValue } from "@/domain/value-objects/shot-situation.value";
@@ -13,6 +13,7 @@ import {
   ShotTypeIcon,
   TableTeamShield,
 } from "@/infrastructure/ui/components/ShotIcons";
+import { PaginatedResult } from "@/domain/types/pagination";
 
 const SHOT_TYPE_LABELS: Record<ShotTypeValue, string> = {
   goal: "Gol",

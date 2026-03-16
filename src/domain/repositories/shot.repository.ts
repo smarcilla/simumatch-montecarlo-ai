@@ -1,7 +1,6 @@
 import { Shot } from "../entities/shot.entity";
-import { PaginationOptions } from "@/application/options/pagination.options";
-import { ShotFilterOptions } from "@/application/options/shot-filter.options";
-import { PaginatedResult } from "@/application/results/paginated.result";
+import { PaginationOptions, PaginatedResult } from "@/domain/types/pagination";
+import { ShotFilterOptions } from "@/domain/types/shot-filter";
 
 export interface ShotRepository {
   findByExternalId(externalId: number): Promise<Shot | null>;

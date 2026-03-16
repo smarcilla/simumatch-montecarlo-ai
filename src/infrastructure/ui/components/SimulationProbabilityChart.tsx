@@ -31,7 +31,7 @@ interface PieTooltipProps {
 
 function PieTooltip({ active, payload }: Readonly<PieTooltipProps>) {
   if (!active || !payload || payload.length === 0) return null;
-  const entry = payload[0]!;
+  const entry = payload[0];
   return (
     <div style={TOOLTIP_BOX}>
       <span
@@ -41,7 +41,7 @@ function PieTooltip({ active, payload }: Readonly<PieTooltipProps>) {
           fontSize: "1rem",
         }}
       >
-        {entry.name} {entry.value}%
+        {entry?.name} {entry?.value}%
       </span>
     </div>
   );

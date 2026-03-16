@@ -1,7 +1,4 @@
-export interface PaginationOptions {
-  page: number; // 0-indexed
-  pageSize: number; // items per page
-}
+import type { PaginationOptions } from "@/domain/types/pagination";
 
 export function createPaginationOptions(
   page?: number,
