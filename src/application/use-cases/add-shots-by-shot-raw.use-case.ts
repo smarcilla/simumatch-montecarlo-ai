@@ -114,8 +114,8 @@ export class AddShotsByShotRawUseCase {
       const shot = new Shot(
         "",
         command.externalId,
-        Number.isNaN(command.xg) ? 0 : command.xg,
-        Number.isNaN(command.xgot) ? 0 : command.xgot,
+        command.xg,
+        command.xgot,
         command.isHome,
         shotType,
         situation,

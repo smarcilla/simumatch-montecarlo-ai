@@ -10,7 +10,7 @@ import { MatchDetailCard } from "@/infrastructure/ui/components/MatchDetailCard"
 import { MatchActionsPanel } from "@/infrastructure/ui/components/MatchActionsPanel";
 import { ShotsTable } from "@/infrastructure/ui/components/ShotsTable";
 import { ShotStatsPanel } from "@/infrastructure/ui/components/ShotStatsPanel";
-import { createFindShotsByMatchCommand } from "@/application/commands/find-shots-by-match.command";
+import { createFindShotsByMatchCommand } from "@/infrastructure/mappers/find-shots-by-match.mapper";
 
 interface MatchPageProps {
   params: Promise<{ id: string }>;

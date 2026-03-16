@@ -6,7 +6,7 @@ import { FindShotResult } from "@/application/results/find-shots-by-match.result
 import { getShotsByMatch } from "@/infrastructure/actions/match.actions";
 import { ShotTypeValue } from "@/domain/value-objects/shot-type.value";
 import { ShotSituationValue } from "@/domain/value-objects/shot-situation.value";
-import { createFindShotsByMatchCommand } from "@/application/commands/find-shots-by-match.command";
+import { createFindShotsByMatchCommand } from "@/infrastructure/mappers/find-shots-by-match.mapper";
 import {
   BodyPartIcon,
   SituationIcon,

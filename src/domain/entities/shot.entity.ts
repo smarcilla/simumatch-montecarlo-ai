@@ -4,11 +4,14 @@ import { ShotType } from "../value-objects/shot-type.value";
 import { Player } from "./player.entity";
 
 export class Shot {
+  readonly xg: number;
+  readonly xgot: number;
+
   constructor(
     readonly id: string,
     readonly externalId: number,
-    readonly xg: number,
-    readonly xgot: number,
+    xg: number,
+    xgot: number,
     readonly isHome: boolean,
     readonly shotType: ShotType,
     readonly situation: ShotSituation,
@@ -17,7 +20,10 @@ export class Shot {
     readonly player: Player,
     readonly goalkeeper: Player | null,
     readonly matchId: string
-  ) {}
+  ) {
+    this.xg = Number.isNaN(xg) ? 0 : xg;
+    this.xgot = Number.isNaN(xgot) ? 0 : xgot;
+  }
 
   isGoal(): boolean {
     return this.shotType.value === "goal";
