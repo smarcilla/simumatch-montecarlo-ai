@@ -2,6 +2,7 @@ import { ShotMatchStatsResult } from "@/application/results/shot-match-stats.res
 import { ShotGoalkeeperStatsTable } from "./ShotGoalkeeperStatsTable";
 import { ShotPlayerStatsTable } from "./ShotPlayerStatsTable";
 import { ShotXgBar } from "./ShotXgBar";
+import { getTranslations } from "next-intl/server";
 
 interface ShotStatsPanelProps {
   readonly stats: ShotMatchStatsResult;
@@ -13,7 +14,7 @@ interface ShotStatsPanelProps {
   readonly awayColorSecondary: string;
 }
 
-export function ShotStatsPanel({
+export async function ShotStatsPanel({
   stats,
   homeTeam,
   awayTeam,
@@ -22,9 +23,10 @@ export function ShotStatsPanel({
   homeColorSecondary,
   awayColorSecondary,
 }: ShotStatsPanelProps) {
+  const t = await getTranslations("shots");
   return (
     <div className="shot-stats-panel">
-      <h3 className="shot-stats-title">Estadísticas de disparos</h3>
+      <h3 className="shot-stats-title">{t("title")}</h3>
 
       <ShotXgBar
         homeTeam={homeTeam}

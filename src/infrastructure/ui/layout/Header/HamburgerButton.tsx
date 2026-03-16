@@ -1,6 +1,9 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 export function HamburgerButton() {
+  const t = useTranslations("layout");
   const handleClick = () => {
     globalThis.dispatchEvent(new CustomEvent("toggle-mobile-menu"));
   };
@@ -9,7 +12,7 @@ export function HamburgerButton() {
     <button
       className="hamburger-button"
       onClick={handleClick}
-      aria-label="Abrir menú de competiciones"
+      aria-label={t("openCompetitionsMenu")}
     >
       <svg
         width="20"

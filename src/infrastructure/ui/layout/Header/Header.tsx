@@ -1,4 +1,5 @@
 import { HamburgerButton } from "./HamburgerButton";
+import { LanguageToggle } from "@/infrastructure/ui/components/LanguageToggle";
 
 export function Header() {
   return (
@@ -11,14 +12,7 @@ export function Header() {
           </div>
         </div>
         <div className="header-actions">
-          <div
-            style={{
-              fontSize: "var(--font-size-sm)",
-              color: "var(--text-tertiary)",
-            }}
-          >
-            Acciones | Usuario
-          </div>
+          <LanguageToggle />
           <HamburgerButton />
         </div>
       </div>

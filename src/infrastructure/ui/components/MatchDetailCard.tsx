@@ -1,9 +1,12 @@
+"use client";
+
+import { useLocale, useTranslations } from "next-intl";
 import { FindMatchByIdResult } from "@/application/results/find-match-by-id.result";
 
-const STATUS_LABELS: Record<string, string> = {
-  finished: "Finalizado",
-  simulated: "Simulado",
-  chronicle_generated: "Crónica generada",
+const STATUS_KEYS: Record<string, string> = {
+  finished: "finished",
+  simulated: "simulated",
+  chronicle_generated: "chronicle_generated",
 };
 
 function TeamShield({
@@ -49,6 +52,9 @@ interface MatchDetailCardProps {
 }
 
 export function MatchDetailCard({ match }: MatchDetailCardProps) {
+  const t = useTranslations("match.status");
+  const locale = useLocale();
+
   return (
     <div
       className="match-detail-card"
@@ -87,7 +93,7 @@ export function MatchDetailCard({ match }: MatchDetailCardProps) {
 
       <div className="match-detail-footer">
         <span className="match-detail-date">
-          {new Date(match.date).toLocaleDateString("es-ES", {
+          {new Date(match.date).toLocaleDateString(locale, {
             weekday: "long",
             day: "numeric",
             month: "long",
@@ -95,7 +101,9 @@ export function MatchDetailCard({ match }: MatchDetailCardProps) {
           })}
         </span>
         <span className="match-detail-status">
-          {STATUS_LABELS[match.status] ?? match.status}
+          {STATUS_KEYS[match.status]
+            ? t(STATUS_KEYS[match.status]!)
+            : match.status}
         </span>
       </div>
     </div>

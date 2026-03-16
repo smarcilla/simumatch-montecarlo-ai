@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { FindShotResult } from "@/application/results/find-shots-by-match.result";
 
 import { getShotsByMatch } from "@/infrastructure/actions/match.actions";
@@ -15,24 +16,23 @@ import {
 } from "@/infrastructure/ui/components/ShotIcons";
 import { PaginatedResult } from "@/domain/types/pagination";
 
-const SHOT_TYPE_LABELS: Record<ShotTypeValue, string> = {
-  goal: "Gol",
-  save: "Parada",
-  miss: "Fuera",
-  block: "Bloqueado",
-  post: "Poste",
-};
-
-const SITUATION_LABELS: Record<ShotSituationValue, string> = {
-  regular: "Jugada",
-  assisted: "Asistido",
-  corner: "Córner",
-  penalty: "Penalti",
-  "set-piece": "Balón parado",
-  "free-kick": "Falta",
-  "throw-in-set-piece": "Saque lateral",
-  "fast-break": "Contragolpe",
-};
+const SHOT_TYPE_KEYS: ShotTypeValue[] = [
+  "goal",
+  "save",
+  "miss",
+  "block",
+  "post",
+];
+const SITUATION_KEYS: ShotSituationValue[] = [
+  "regular",
+  "assisted",
+  "corner",
+  "penalty",
+  "set-piece",
+  "free-kick",
+  "throw-in-set-piece",
+  "fast-break",
+];
 
 interface ShotsTableProps {
   readonly matchId: string;
@@ -63,6 +63,8 @@ export function ShotsTable({
   const [sortBy, setSortBy] = useState<"timeSeconds" | "xg">("timeSeconds");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [isPending, startTransition] = useTransition();
+  const tShots = useTranslations("shots");
+  const tFilters = useTranslations("filters");
 
   const fetchPage = (
     page: number,
@@ -118,17 +120,13 @@ export function ShotsTable({
     return `${min}'`;
   };
 
-  const shotTypesOptions = (
-    Object.keys(SHOT_TYPE_LABELS) as ShotTypeValue[]
-  ).map((t) => ({
+  const shotTypesOptions = SHOT_TYPE_KEYS.map((t) => ({
     value: t,
-    label: SHOT_TYPE_LABELS[t],
+    label: tShots(`shotType.${t}`),
   }));
-  const situationsOptions = (
-    Object.keys(SITUATION_LABELS) as ShotSituationValue[]
-  ).map((s) => ({
+  const situationsOptions = SITUATION_KEYS.map((s) => ({
     value: s,
-    label: SITUATION_LABELS[s],
+    label: tShots(`situation.${s}`),
   }));
 
   return (
@@ -136,7 +134,7 @@ export function ShotsTable({
       <div className="shots-filters">
         <div className="filter-group">
           <label className="filter-label" htmlFor="shots-type-filter">
-            Resultado
+            {tFilters("result")}
           </label>
           <select
             id="shots-type-filter"
@@ -144,7 +142,7 @@ export function ShotsTable({
             value={shotTypesFilter}
             onChange={handleFilterChange(setShotTypesFilter, "shotTypesFilter")}
           >
-            <option value="">Todos</option>
+            <option value="">{tFilters("all")}</option>
             {shotTypesOptions.map((t) => (
               <option key={t.value} value={t.value}>
                 {t.label}
@@ -155,7 +153,7 @@ export function ShotsTable({
 
         <div className="filter-group">
           <label className="filter-label" htmlFor="shots-situation-filter">
-            Situación
+            {tFilters("situation")}
           </label>
           <select
             id="shots-situation-filter"
@@ -166,7 +164,7 @@ export function ShotsTable({
               "situationsFilter"
             )}
           >
-            <option value="">Todas</option>
+            <option value="">{tFilters("allFeminine")}</option>
             {situationsOptions.map((s) => (
               <option key={s.value} value={s.value}>
                 {s.label}
@@ -177,7 +175,7 @@ export function ShotsTable({
 
         <div className="filter-group">
           <label className="filter-label" htmlFor="shots-team-filter">
-            Equipo
+            {tFilters("team")}
           </label>
           <select
             id="shots-team-filter"
@@ -185,7 +183,7 @@ export function ShotsTable({
             value={teamFilter}
             onChange={handleFilterChange(setTeamFilter, "teamFilter")}
           >
-            <option value="">Ambos</option>
+            <option value="">{tFilters("both")}</option>
             <option value="true">{homeTeam}</option>
             <option value="false">{awayTeam}</option>
           </select>
@@ -202,15 +200,15 @@ export function ShotsTable({
                 className="shots-th shots-th-sortable"
                 onClick={() => handleSortChange("timeSeconds")}
               >
-                Jugador
+                {tShots("tableHeaders.player")}
                 {sortBy === "timeSeconds" && (
                   <span className="shots-sort-icon">
                     {sortOrder === "asc" ? " ↑" : " ↓"}
                   </span>
                 )}
               </th>
-              <th className="shots-th">Equipo</th>
-              <th className="shots-th">Situación</th>
+              <th className="shots-th">{tShots("tableHeaders.team")}</th>
+              <th className="shots-th">{tShots("tableHeaders.situation")}</th>
               <th
                 className="shots-th shots-th-sortable shots-th-right"
                 onClick={() => handleSortChange("xg")}
@@ -222,14 +220,14 @@ export function ShotsTable({
                   </span>
                 )}
               </th>
-              <th className="shots-th">Res.</th>
+              <th className="shots-th">{tShots("tableHeaders.resultShort")}</th>
             </tr>
           </thead>
           <tbody>
             {data.results.length === 0 ? (
               <tr>
                 <td colSpan={5} className="shots-empty">
-                  No hay disparos con los filtros aplicados
+                  {tShots("noShotsFound")}
                 </td>
               </tr>
             ) : (
@@ -253,11 +251,17 @@ export function ShotsTable({
                       name={shot.isHome ? homeTeam : awayTeam}
                     />
                     <span className="shots-td-sub">
-                      <BodyPartIcon value={shot.bodyPart} />
+                      <BodyPartIcon
+                        value={shot.bodyPart}
+                        label={tShots(`bodyPart.${shot.bodyPart}`)}
+                      />
                     </span>
                   </td>
                   <td className="shots-td">
-                    <SituationIcon value={shot.situation} />
+                    <SituationIcon
+                      value={shot.situation}
+                      label={tShots(`situation.${shot.situation}`)}
+                    />
                   </td>
                   <td className="shots-td shots-td-number">
                     <span>{shot.xg.toFixed(2)}</span>
@@ -269,7 +273,10 @@ export function ShotsTable({
                     <span
                       className={`shots-type-badge shots-type-${shot.shotType}`}
                     >
-                      <ShotTypeIcon value={shot.shotType} />
+                      <ShotTypeIcon
+                        value={shot.shotType}
+                        label={tShots(`shotType.${shot.shotType}`)}
+                      />
                     </span>
                   </td>
                 </tr>
@@ -286,7 +293,7 @@ export function ShotsTable({
             disabled={!data.hasPreviousPage || isPending}
             onClick={() => fetchPage(data.page - 1)}
           >
-            Anterior
+            {tShots("previous")}
           </button>
           <span className="shots-page-info">
             {data.page + 1} / {data.totalPages}
@@ -296,7 +303,7 @@ export function ShotsTable({
             disabled={!data.hasNextPage || isPending}
             onClick={() => fetchPage(data.page + 1)}
           >
-            Siguiente
+            {tShots("next")}
           </button>
         </div>
       )}

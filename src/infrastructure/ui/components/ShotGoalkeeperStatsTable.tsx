@@ -1,5 +1,6 @@
 import { GoalkeeperShotStatsResult } from "@/application/results/shot-match-stats.result";
 import { TableTeamShield } from "@/infrastructure/ui/components/ShotIcons";
+import { getTranslations } from "next-intl/server";
 
 interface ShotGoalkeeperStatsTableProps {
   readonly goalkeeperStats: GoalkeeperShotStatsResult[];
@@ -11,7 +12,7 @@ interface ShotGoalkeeperStatsTableProps {
   readonly awayColorSecondary: string;
 }
 
-export function ShotGoalkeeperStatsTable({
+export async function ShotGoalkeeperStatsTable({
   goalkeeperStats,
   homeTeam,
   awayTeam,
@@ -20,6 +21,7 @@ export function ShotGoalkeeperStatsTable({
   homeColorSecondary,
   awayColorSecondary,
 }: ShotGoalkeeperStatsTableProps) {
+  const t = await getTranslations("shots");
   const tableData = goalkeeperStats.map((gk) => ({
     goalkeeperShortName: gk.goalkeeperShortName,
     primaryColor: gk.isHome ? homeColor : awayColor,
@@ -31,21 +33,24 @@ export function ShotGoalkeeperStatsTable({
   }));
   return (
     <div className="shot-stats-section">
-      <h4 className="shot-stats-section-title">Rendimiento de porteros</h4>
+      <h4 className="shot-stats-section-title">{t("goalkeeperPerformance")}</h4>
       <div className="shot-stats-table-scroll">
         <table className="shot-stats-table">
           <thead>
             <tr>
-              <th className="shot-stats-th">Portero</th>
-              <th className="shot-stats-th">Equipo</th>
+              <th className="shot-stats-th">{t("tableHeaders.goalkeeper")}</th>
+              <th className="shot-stats-th">{t("tableHeaders.team")}</th>
               <th
                 className="shot-stats-th shot-stats-th-right"
-                title="Expected Goals on Target recibidos / Goles encajados"
+                title={t("tableHeaders.xgotGoals")}
               >
-                xGOT/Goles
+                {t("tableHeaders.xgotGoalsShort")}
               </th>
-              <th className="shot-stats-th shot-stats-th-right" title="Paradas">
-                Paradas
+              <th
+                className="shot-stats-th shot-stats-th-right"
+                title={t("tableHeaders.savesTitle")}
+              >
+                {t("tableHeaders.savesShort")}
               </th>
             </tr>
           </thead>

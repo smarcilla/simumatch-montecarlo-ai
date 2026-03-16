@@ -1,4 +1,5 @@
 import { TableTeamShield } from "@/infrastructure/ui/components/ShotIcons";
+import { getTranslations } from "next-intl/server";
 
 interface ShotXgBarProps {
   readonly homeTeam: string;
@@ -13,7 +14,7 @@ interface ShotXgBarProps {
   readonly awayColorSecondary: string;
 }
 
-export function ShotXgBar({
+export async function ShotXgBar({
   homeTeam,
   awayTeam,
   homeXg,
@@ -25,6 +26,8 @@ export function ShotXgBar({
   homeColorSecondary,
   awayColorSecondary,
 }: ShotXgBarProps) {
+  const t = await getTranslations("common");
+  const tSim = await getTranslations("simulation");
   const homeXgFormatted = homeXg.toFixed(2);
   const awayXgFormatted = awayXg.toFixed(2);
   const homeXgRatio = homeXg > 0 ? (homeGoals / homeXg).toFixed(2) : "—";
@@ -50,8 +53,12 @@ export function ShotXgBar({
           <span className="shot-stats-xg-team-name">{homeTeam}</span>
         </div>
         <span className="shot-stats-xg-value">{homeXgFormatted} xG</span>
-        <span className="shot-stats-xg-goals">{homeGoals} goles</span>
-        <span className="shot-stats-xg-ratio">Ratio: {homeXgRatio}</span>
+        <span className="shot-stats-xg-goals">
+          {homeGoals} {t("goals")}
+        </span>
+        <span className="shot-stats-xg-ratio">
+          {tSim("ratio")}: {homeXgRatio}
+        </span>
       </div>
       <div className="shot-stats-xg-divider" />
       <div
@@ -72,8 +79,12 @@ export function ShotXgBar({
           />
         </div>
         <span className="shot-stats-xg-value">{awayXgFormatted} xG</span>
-        <span className="shot-stats-xg-goals">{awayGoals} goles</span>
-        <span className="shot-stats-xg-ratio">Ratio: {awayXgRatio}</span>
+        <span className="shot-stats-xg-goals">
+          {awayGoals} {t("goals")}
+        </span>
+        <span className="shot-stats-xg-ratio">
+          {tSim("ratio")}: {awayXgRatio}
+        </span>
       </div>
     </div>
   );

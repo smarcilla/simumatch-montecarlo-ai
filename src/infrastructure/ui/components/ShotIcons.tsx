@@ -519,83 +519,87 @@ function PostIcon({ className }: IconProps) {
 
 const BODY_PART_ICONS: Record<
   string,
-  { icon: (p: IconProps) => ReactElement; label: string }
+  { icon: (p: IconProps) => ReactElement; key: string }
 > = {
-  "right-foot": { icon: RightFootIcon, label: "Pie derecho" },
-  "left-foot": { icon: LeftFootIcon, label: "Pie izquierdo" },
-  head: { icon: HeadIcon, label: "Cabeza" },
-  other: { icon: OtherBodyPartIcon, label: "Otro" },
+  "right-foot": { icon: RightFootIcon, key: "right-foot" },
+  "left-foot": { icon: LeftFootIcon, key: "left-foot" },
+  head: { icon: HeadIcon, key: "head" },
+  other: { icon: OtherBodyPartIcon, key: "other" },
 };
 
 const SITUATION_ICONS: Record<
   string,
-  { icon: (p: IconProps) => ReactElement; label: string }
+  { icon: (p: IconProps) => ReactElement; key: string }
 > = {
-  regular: { icon: RegularIcon, label: "Jugada" },
-  assisted: { icon: AssistedIcon, label: "Asistido" },
-  corner: { icon: CornerIcon, label: "Córner" },
-  penalty: { icon: PenaltyIcon, label: "Penalti" },
-  "set-piece": { icon: SetPieceIcon, label: "Balón parado" },
-  "free-kick": { icon: SetPieceIcon, label: "Falta" },
-  "throw-in-set-piece": { icon: ThrowInIcon, label: "Saque lateral" },
-  "fast-break": { icon: FastBreakIcon, label: "Contragolpe" },
+  regular: { icon: RegularIcon, key: "regular" },
+  assisted: { icon: AssistedIcon, key: "assisted" },
+  corner: { icon: CornerIcon, key: "corner" },
+  penalty: { icon: PenaltyIcon, key: "penalty" },
+  "set-piece": { icon: SetPieceIcon, key: "set-piece" },
+  "free-kick": { icon: SetPieceIcon, key: "free-kick" },
+  "throw-in-set-piece": { icon: ThrowInIcon, key: "throw-in-set-piece" },
+  "fast-break": { icon: FastBreakIcon, key: "fast-break" },
 };
 
 const SHOT_TYPE_ICONS: Record<
   string,
-  { icon: (p: IconProps) => ReactElement; label: string }
+  { icon: (p: IconProps) => ReactElement; key: string }
 > = {
-  goal: { icon: GoalIcon, label: "Gol" },
-  save: { icon: SaveIcon, label: "Parada" },
-  miss: { icon: MissIcon, label: "Fuera" },
-  block: { icon: BlockIcon, label: "Bloqueado" },
-  post: { icon: PostIcon, label: "Poste" },
+  goal: { icon: GoalIcon, key: "goal" },
+  save: { icon: SaveIcon, key: "save" },
+  miss: { icon: MissIcon, key: "miss" },
+  block: { icon: BlockIcon, key: "block" },
+  post: { icon: PostIcon, key: "post" },
 };
 
 interface ShotIconProps {
   readonly value: string;
   readonly className?: string;
+  readonly label?: string;
 }
 
-export function BodyPartIcon({ value, className }: ShotIconProps) {
+export function BodyPartIcon({ value, className, label }: ShotIconProps) {
   const entry = BODY_PART_ICONS[value];
   if (!entry) return <span className={className}>{value}</span>;
   const Icon = entry.icon;
+  const displayLabel = label ?? value;
   return (
     <span
       className={`shot-icon-wrapper ${className ?? ""}`}
-      data-tooltip={entry.label}
-      title={entry.label}
+      data-tooltip={displayLabel}
+      title={displayLabel}
     >
       <Icon />
     </span>
   );
 }
 
-export function SituationIcon({ value, className }: ShotIconProps) {
+export function SituationIcon({ value, className, label }: ShotIconProps) {
   const entry = SITUATION_ICONS[value];
   if (!entry) return <span className={className}>{value}</span>;
   const Icon = entry.icon;
+  const displayLabel = label ?? value;
   return (
     <span
       className={`shot-icon-wrapper ${className ?? ""}`}
-      data-tooltip={entry.label}
-      title={entry.label}
+      data-tooltip={displayLabel}
+      title={displayLabel}
     >
       <Icon />
     </span>
   );
 }
 
-export function ShotTypeIcon({ value, className }: ShotIconProps) {
+export function ShotTypeIcon({ value, className, label }: ShotIconProps) {
   const entry = SHOT_TYPE_ICONS[value];
   if (!entry) return <span className={className}>{value}</span>;
   const Icon = entry.icon;
+  const displayLabel = label ?? value;
   return (
     <span
       className={`shot-icon-wrapper ${className ?? ""}`}
-      data-tooltip={entry.label}
-      title={entry.label}
+      data-tooltip={displayLabel}
+      title={displayLabel}
     >
       <Icon />
     </span>

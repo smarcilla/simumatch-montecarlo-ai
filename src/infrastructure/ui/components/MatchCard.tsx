@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { FindMatchByLeagueAndSeasonResult } from "@/application/results/find-matches-by-league-and-season.result";
 
-const STATUS_LABELS: Record<string, string> = {
-  finished: "Finalizado",
-  simulated: "Simulado",
-  chronicle_generated: "Crónica generada",
+const STATUS_KEYS: Record<string, string> = {
+  finished: "finished",
+  simulated: "simulated",
+  chronicle_generated: "chronicle_generated",
 };
 
 interface TeamShieldProps {
@@ -54,6 +55,8 @@ interface MatchCardProps {
 
 export function MatchCard({ match }: MatchCardProps) {
   const [tooltip, setTooltip] = useState<string | null>(null);
+  const t = useTranslations("match.status");
+  const locale = useLocale();
 
   return (
     <Link href={`/match/${match.id}`} className="match-card-link">
@@ -120,14 +123,16 @@ export function MatchCard({ match }: MatchCardProps) {
 
         <div className="match-footer">
           <span className="match-date">
-            {new Date(match.date).toLocaleDateString("es-ES", {
+            {new Date(match.date).toLocaleDateString(locale, {
               day: "numeric",
               month: "short",
               year: "numeric",
             })}
           </span>
           <span className="match-status">
-            {STATUS_LABELS[match.status] ?? match.status}
+            {STATUS_KEYS[match.status]
+              ? t(STATUS_KEYS[match.status]!)
+              : match.status}
           </span>
         </div>
       </div>

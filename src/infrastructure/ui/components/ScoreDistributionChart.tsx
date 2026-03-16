@@ -11,6 +11,7 @@ import {
 } from "recharts";
 import { ScoreDistributionItemData } from "@/domain/entities/simulation.types";
 import { TableTeamShield } from "@/infrastructure/ui/components/ShotIcons";
+import { useTranslations } from "next-intl";
 
 const ITERATIONS = 10_000;
 const NEUTRAL_COLOR = "#5C6370";
@@ -55,21 +56,8 @@ function CustomTooltip({
   if (!active || !payload || payload.length === 0) return null;
   const value = payload[0]?.value ?? 0;
   return (
-    <div
-      style={{
-        background: "var(--bg-elevated)",
-        border: "1px solid var(--border-default)",
-        borderRadius: "8px",
-        padding: "8px 12px",
-      }}
-    >
-      <span
-        style={{
-          color: "var(--text-primary)",
-          fontWeight: 700,
-          fontSize: "1rem",
-        }}
-      >
+    <div className="chart-tooltip">
+      <span className="chart-tooltip-label">
         {label} ({value}%)
       </span>
     </div>
@@ -108,6 +96,8 @@ export function ScoreDistributionChart({
   homeColorSecondary,
   awayColorSecondary,
 }: ScoreDistributionChartProps) {
+  const t = useTranslations("simulation");
+  const tCommon = useTranslations("common");
   const totalSimulations = ITERATIONS;
 
   const chartData = scoreDistribution.map((item) => {
@@ -135,7 +125,7 @@ export function ScoreDistributionChart({
 
   return (
     <div className="simulation-card">
-      <h3 className="simulation-section-title">Distribución de marcadores</h3>
+      <h3 className="simulation-section-title">{t("scoreDistribution")}</h3>
       <div className="simulation-score-legend">
         <span
           className="simulation-score-legend-item"
@@ -146,7 +136,7 @@ export function ScoreDistributionChart({
             } as React.CSSProperties
           }
         >
-          {homeTeam} gana
+          {t("wins", { team: homeTeam })}
         </span>
         <span
           className="simulation-score-legend-item"
@@ -157,7 +147,7 @@ export function ScoreDistributionChart({
             } as React.CSSProperties
           }
         >
-          Empate
+          {tCommon("draw")}
         </span>
         <span
           className="simulation-score-legend-item"
@@ -168,7 +158,7 @@ export function ScoreDistributionChart({
             } as React.CSSProperties
           }
         >
-          {awayTeam} gana
+          {t("wins", { team: awayTeam })}
         </span>
       </div>
       <ResponsiveContainer width="100%" height={300}>
@@ -207,37 +197,38 @@ export function ScoreDistributionChart({
         <table className="simulation-table">
           <thead>
             <tr>
-              <th>Marcador</th>
-              <th title={`Total: ${totalSimulations} simulaciones`}>
-                Frecuencia
+              <th>{t("score")}</th>
+              <th title={t("totalSimulations", { total: totalSimulations })}>
+                {t("frequency")}
               </th>
-              <th title="Porcentaje de simulaciones con este resultado">%</th>
+              <th title={t("percentageOfSimulations")}>%</th>
             </tr>
           </thead>
           <tbody>
             {tableData.map((item) => (
               <tr key={item.score}>
-                <td
-                  style={{ display: "flex", alignItems: "center", gap: "6px" }}
-                >
+                <td className="score-cell-flex">
                   <TableTeamShield
                     primary={homeColor}
                     secondary={homeColorSecondary}
                     name={homeTeam}
                   />
-                  <span style={{ fontWeight: 700 }}>{item.score}</span>
+                  <span className="score-cell-bold">{item.score}</span>
                   <TableTeamShield
                     primary={awayColor}
                     secondary={awayColorSecondary}
                     name={awayTeam}
                   />
                 </td>
-                <td title={`${item.count} de ${totalSimulations} simulaciones`}>
+                <td
+                  title={t("countOfSimulations", {
+                    count: item.count,
+                    total: totalSimulations,
+                  })}
+                >
                   {item.count}
                 </td>
-                <td title="Porcentaje de simulaciones con este resultado">
-                  {item.percentage}%
-                </td>
+                <td title={t("percentageOfSimulations")}>{item.percentage}%</td>
               </tr>
             ))}
           </tbody>

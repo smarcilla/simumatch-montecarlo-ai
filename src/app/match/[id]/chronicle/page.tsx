@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { getTranslations, getLocale } from "next-intl/server";
 import { getMatchById } from "@/infrastructure/actions/match.actions";
 import { getChronicleByMatchId } from "@/infrastructure/actions/simulation.actions";
 import { DashboardLayout } from "@/infrastructure/ui/layout/DashboardLayout";
@@ -24,8 +25,8 @@ function getAccentClass(accent: ChronicleAccent): string {
   return "is-neutral";
 }
 
-function formatDate(value: string): string {
-  return new Intl.DateTimeFormat("es-ES", {
+function formatDate(value: string, locale: string): string {
+  return new Intl.DateTimeFormat(locale, {
     dateStyle: "long",
     timeStyle: "short",
   }).format(new Date(value));
@@ -67,7 +68,17 @@ interface MomentumInsight {
   description: string;
 }
 
-function getMomentumInsights(timeline: MomentumPointData[]): MomentumInsight[] {
+function getMomentumInsights(
+  timeline: MomentumPointData[],
+  labels: {
+    peakHome: string;
+    peakHomeDescription: string;
+    peakAway: string;
+    peakAwayDescription: string;
+    maxEquilibrium: string;
+    maxEquilibriumDescription: string;
+  }
+): MomentumInsight[] {
   const [initialPoint, ...restOfTimeline] = timeline;
 
   if (!initialPoint) {
@@ -98,26 +109,25 @@ function getMomentumInsights(timeline: MomentumPointData[]): MomentumInsight[] {
 
   return [
     {
-      label: "Pico local",
+      label: labels.peakHome,
       minute: peakHome.minute,
       value: peakHome.homeWinProbability,
       accent: "home",
-      description: "Máxima confianza del modelo a favor del equipo local.",
+      description: labels.peakHomeDescription,
     },
     {
-      label: "Pico visitante",
+      label: labels.peakAway,
       minute: peakAway.minute,
       value: peakAway.awayWinProbability,
       accent: "away",
-      description:
-        "Momento de mayor inclinación del pronóstico hacia el visitante.",
+      description: labels.peakAwayDescription,
     },
     {
-      label: "Equilibrio máximo",
+      label: labels.maxEquilibrium,
       minute: peakDraw.minute,
       value: peakDraw.drawProbability,
       accent: "neutral",
-      description: "Tramo donde el partido pareció más cerrado para el modelo.",
+      description: labels.maxEquilibriumDescription,
     },
   ];
 }
@@ -155,6 +165,16 @@ interface ChronicleHeroProps {
   mostLikelyScoreline: MostLikelyScoreline | null;
   topScorer: TopScorer | null;
   mostDecisivePulse: MomentumInsight | null;
+  locale: string;
+  labels: {
+    dominantScore: string;
+    percentOfSimulations: (v: string) => string;
+    mainThreat: string;
+    percentGoalProbability: (v: string) => string;
+    peakTensionPoint: string;
+    maxTilt: (v: string) => string;
+    keyMoments: string;
+  };
 }
 
 function ChronicleHero({
@@ -164,6 +184,8 @@ function ChronicleHero({
   mostLikelyScoreline,
   topScorer,
   mostDecisivePulse,
+  locale,
+  labels,
 }: Readonly<ChronicleHeroProps>) {
   return (
     <>
@@ -178,19 +200,21 @@ function ChronicleHero({
             </span>
             <span>{chronicle.author}</span>
             <span>{chronicle.sourceLabel}</span>
-            <span>{formatDate(chronicle.generatedAt)}</span>
+            <span>{formatDate(chronicle.generatedAt, locale)}</span>
           </div>
 
           <div className="chronicle-hero-insights">
             {mostLikelyScoreline ? (
               <article className="chronicle-hero-insight is-neutral">
                 <span className="chronicle-hero-insight-label">
-                  Marcador dominante
+                  {labels.dominantScore}
                 </span>
                 <strong className="chronicle-hero-insight-value">
                   {mostLikelyScoreline.home}-{mostLikelyScoreline.away}
                 </strong>
-                <p>{mostLikelyScoreline.percentage}% de las simulaciones</p>
+                <p>
+                  {labels.percentOfSimulations(mostLikelyScoreline.percentage)}
+                </p>
               </article>
             ) : null}
 
@@ -199,12 +223,14 @@ function ChronicleHero({
                 className={`chronicle-hero-insight ${getAccentClass(topScorer.home)}`}
               >
                 <span className="chronicle-hero-insight-label">
-                  Amenaza principal
+                  {labels.mainThreat}
                 </span>
                 <strong className="chronicle-hero-insight-value">
                   {topScorer.playerShortName}
                 </strong>
-                <p>{topScorer.goalProbability}% de probabilidad de gol</p>
+                <p>
+                  {labels.percentGoalProbability(topScorer.goalProbability)}
+                </p>
               </article>
             ) : null}
 
@@ -213,21 +239,19 @@ function ChronicleHero({
                 className={`chronicle-hero-insight ${getAccentClass(mostDecisivePulse.accent)}`}
               >
                 <span className="chronicle-hero-insight-label">
-                  Punto de máxima tensión
+                  {labels.peakTensionPoint}
                 </span>
                 <strong className="chronicle-hero-insight-value">
                   {`${mostDecisivePulse.minute}'`}
                 </strong>
-                <p>
-                  {formatPercent(mostDecisivePulse.value)} de inclinación máxima
-                </p>
+                <p>{labels.maxTilt(formatPercent(mostDecisivePulse.value))}</p>
               </article>
             ) : null}
           </div>
         </div>
       </section>
 
-      <section className="chronicle-highlights" aria-label="Momentos clave">
+      <section className="chronicle-highlights" aria-label={labels.keyMoments}>
         {chronicle.highlights.map((highlight) => (
           <article
             key={`${highlight.label}-${highlight.value}`}
@@ -251,6 +275,18 @@ interface ChronicleSidebarProps {
   topPlayers: SimulationPlayerStat[];
   topScorelines: ScoreDistributionItemData[];
   momentumInsights: MomentumInsight[];
+  labels: {
+    readingKeys: string;
+    simulationSupport: string;
+    draw: string;
+    modelEquilibriumWindow: string;
+    offensiveThreats: string;
+    goalLabel: (v: string) => string;
+    mostLikelyScores: string;
+    percentOfTotal: (v: string) => string;
+    simulationCount: (count: number) => string;
+    editorialTimeline: string;
+  };
 }
 
 function ChronicleSidebar({
@@ -260,11 +296,12 @@ function ChronicleSidebar({
   topPlayers,
   topScorelines,
   momentumInsights,
+  labels,
 }: Readonly<ChronicleSidebarProps>) {
   return (
     <aside className="chronicle-sidebar">
       <section className="chronicle-sidebar-card">
-        <h2 className="chronicle-sidebar-title">Claves de lectura</h2>
+        <h2 className="chronicle-sidebar-title">{labels.readingKeys}</h2>
         <div className="chronicle-key-stats">
           {chronicle.keyStats.map((stat) => (
             <article
@@ -281,7 +318,9 @@ function ChronicleSidebar({
 
       {chronicle.relatedSimulation ? (
         <section className="chronicle-sidebar-card">
-          <h2 className="chronicle-sidebar-title">Apoyo de simulación</h2>
+          <h2 className="chronicle-sidebar-title">
+            {labels.simulationSupport}
+          </h2>
           <div className="chronicle-simulation-grid">
             <article className="chronicle-simulation-item is-home">
               <span className="chronicle-simulation-label">
@@ -293,11 +332,11 @@ function ChronicleSidebar({
               <p>xPts {chronicle.relatedSimulation.xPtsHome.toFixed(2)}</p>
             </article>
             <article className="chronicle-simulation-item is-neutral">
-              <span className="chronicle-simulation-label">Empate</span>
+              <span className="chronicle-simulation-label">{labels.draw}</span>
               <strong>
                 {formatPercent(chronicle.relatedSimulation.drawProbability)}
               </strong>
-              <p>Ventana de equilibrio del modelo</p>
+              <p>{labels.modelEquilibriumWindow}</p>
             </article>
             <article className="chronicle-simulation-item is-away">
               <span className="chronicle-simulation-label">
@@ -342,7 +381,7 @@ function ChronicleSidebar({
 
       {topPlayers.length > 0 ? (
         <section className="chronicle-sidebar-card">
-          <h2 className="chronicle-sidebar-title">Amenazas ofensivas</h2>
+          <h2 className="chronicle-sidebar-title">{labels.offensiveThreats}</h2>
           <div className="chronicle-player-list">
             {topPlayers.map((player) => (
               <article
@@ -361,7 +400,7 @@ function ChronicleSidebar({
                 </div>
                 <div className="chronicle-player-metrics">
                   <span className="chronicle-player-metric">
-                    Gol {player.goalProbability.toFixed(2)}%
+                    {labels.goalLabel(player.goalProbability.toFixed(2) + "%")}
                   </span>
                   <span className="chronicle-player-metric">
                     SGA {formatSignedNumber(player.sga)}
@@ -375,7 +414,7 @@ function ChronicleSidebar({
 
       {topScorelines.length > 0 ? (
         <section className="chronicle-sidebar-card">
-          <h2 className="chronicle-sidebar-title">Marcadores más probables</h2>
+          <h2 className="chronicle-sidebar-title">{labels.mostLikelyScores}</h2>
           <div className="chronicle-score-list">
             {topScorelines.map((scoreline) => (
               <article
@@ -386,8 +425,10 @@ function ChronicleSidebar({
                   {scoreline.home}-{scoreline.away}
                 </strong>
                 <div className="chronicle-score-copy">
-                  <span>{scoreline.percentage.toFixed(2)}% del total</span>
-                  <p>{scoreline.count} simulaciones</p>
+                  <span>
+                    {labels.percentOfTotal(scoreline.percentage.toFixed(2))}
+                  </span>
+                  <p>{labels.simulationCount(scoreline.count)}</p>
                 </div>
               </article>
             ))}
@@ -396,7 +437,7 @@ function ChronicleSidebar({
       ) : null}
 
       <section className="chronicle-sidebar-card">
-        <h2 className="chronicle-sidebar-title">Timeline editorial</h2>
+        <h2 className="chronicle-sidebar-title">{labels.editorialTimeline}</h2>
         <div className="chronicle-timeline">
           {chronicle.timeline.map((item) => (
             <article
@@ -453,6 +494,12 @@ export default async function ChroniclePage({
     redirect(`/match/${id}`);
   }
 
+  const [t, tCommon, locale] = await Promise.all([
+    getTranslations("chronicle"),
+    getTranslations("common"),
+    getLocale(),
+  ]);
+
   const topPlayers = chronicle.relatedSimulation
     ? getTopPlayers(chronicle.relatedSimulation.playerStats)
     : [];
@@ -460,7 +507,14 @@ export default async function ChroniclePage({
     ? getTopScorelines(chronicle.relatedSimulation.scoreDistribution)
     : [];
   const momentumInsights = chronicle.relatedSimulation
-    ? getMomentumInsights(chronicle.relatedSimulation.momentumTimeline)
+    ? getMomentumInsights(chronicle.relatedSimulation.momentumTimeline, {
+        peakHome: t("peakHome"),
+        peakHomeDescription: t("peakHomeDescription"),
+        peakAway: t("peakAway"),
+        peakAwayDescription: t("peakAwayDescription"),
+        maxEquilibrium: t("maxEquilibrium"),
+        maxEquilibriumDescription: t("maxEquilibriumDescription"),
+      })
     : [];
   const topScorer: TopScorer | null = topPlayers[0]
     ? {
@@ -494,7 +548,7 @@ export default async function ChroniclePage({
         }
       >
         <Link href={`/match/${id}`} className="match-detail-back">
-          ← Volver al partido
+          {tCommon("backToMatch")}
         </Link>
 
         <MatchDetailCard match={match} />
@@ -506,6 +560,18 @@ export default async function ChroniclePage({
           mostLikelyScoreline={mostLikelyScoreline}
           topScorer={topScorer}
           mostDecisivePulse={mostDecisivePulse}
+          locale={locale}
+          labels={{
+            dominantScore: t("dominantScore"),
+            percentOfSimulations: (v: string) =>
+              t("percentOfSimulations", { value: v }),
+            mainThreat: t("mainThreat"),
+            percentGoalProbability: (v: string) =>
+              t("percentGoalProbability", { value: v }),
+            peakTensionPoint: t("peakTensionPoint"),
+            maxTilt: (v: string) => t("maxTilt", { value: v }),
+            keyMoments: t("keyMoments"),
+          }}
         />
 
         <div className="chronicle-content-grid">
@@ -520,6 +586,19 @@ export default async function ChroniclePage({
             topPlayers={topPlayers}
             topScorelines={topScorelines}
             momentumInsights={momentumInsights}
+            labels={{
+              readingKeys: t("readingKeys"),
+              simulationSupport: t("simulationSupport"),
+              draw: tCommon("draw"),
+              modelEquilibriumWindow: t("modelEquilibriumWindow"),
+              offensiveThreats: t("offensiveThreats"),
+              goalLabel: (v: string) => t("goalLabel", { value: v }),
+              mostLikelyScores: t("mostLikelyScores"),
+              percentOfTotal: (v: string) => t("percentOfTotal", { value: v }),
+              simulationCount: (count: number) =>
+                t("simulationCount", { count }),
+              editorialTimeline: t("editorialTimeline"),
+            }}
           />
         </div>
       </div>

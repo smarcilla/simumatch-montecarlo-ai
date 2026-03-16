@@ -1,0 +1,137 @@
+{
+  "common": {
+    "processing": "Processing...",
+    "draw": "Draw",
+    "goals": "goals",
+    "backToMatches": "← Back to matches",
+    "backToMatch": "← Back to match"
+  },
+  "layout": {
+    "title": "SimuMatch AI - Monte Carlo Football Simulations",
+    "description": "Discover what could have happened with 100,000 advanced simulations",
+    "competitions": "Competitions",
+    "openCompetitionsMenu": "Open competitions menu",
+    "pagination": "Pagination"
+  },
+  "match": {
+    "welcome": "Welcome to SimuMatch",
+    "selectCompetition": "Select a competition to view matches",
+    "matchesList": "Match List",
+    "loading": "Loading...",
+    "matches": "matches",
+    "defaultLeague": "League",
+    "status": {
+      "finished": "Finished",
+      "simulated": "Simulated",
+      "chronicle_generated": "Chronicle generated"
+    },
+    "actions": {
+      "simulate": "Simulate match",
+      "viewSimulation": "View simulation",
+      "writeChronicle": "Write chronicle",
+      "readChronicle": "Read chronicle"
+    }
+  },
+  "shots": {
+    "title": "Shot statistics",
+    "xgPerPlayer": "xG per player",
+    "goalkeeperPerformance": "Goalkeeper performance",
+    "noShotsFound": "No shots found with the applied filters",
+    "shotType": {
+      "goal": "Goal",
+      "save": "Save",
+      "miss": "Miss",
+      "block": "Block",
+      "post": "Post"
+    },
+    "situation": {
+      "regular": "Open play",
+      "assisted": "Assisted",
+      "corner": "Corner",
+      "penalty": "Penalty",
+      "set-piece": "Set piece",
+      "free-kick": "Free kick",
+      "throw-in-set-piece": "Throw-in",
+      "fast-break": "Fast break"
+    },
+    "bodyPart": {
+      "right-foot": "Right foot",
+      "left-foot": "Left foot",
+      "head": "Head",
+      "other": "Other"
+    },
+    "tableHeaders": {
+      "player": "Player",
+      "team": "Team",
+      "situation": "Situation",
+      "result": "Result",
+      "resultShort": "Res.",
+      "goalkeeper": "Goalkeeper",
+      "shotsGoals": "Shots / Goals",
+      "shotsGoalsShort": "Shots/Goals",
+      "saves": "Saves",
+      "xgotGoals": "Expected Goals on Target faced / Goals conceded",
+      "xgotGoalsShort": "xGOT/Goals",
+      "savesTitle": "Saves",
+      "savesShort": "Saves"
+    },
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "filters": {
+    "result": "Result",
+    "all": "All",
+    "allFeminine": "All",
+    "situation": "Situation",
+    "team": "Team",
+    "both": "Both",
+    "status": "Status",
+    "period": "Period",
+    "selectPeriod": "Select period",
+    "clearDates": "Clear dates",
+    "since": "Since",
+    "page": "Page {current} of {total}"
+  },
+  "simulation": {
+    "scoreDistribution": "Score distribution",
+    "matchProbabilities": "Match probabilities",
+    "matchEvolution": "Match evolution",
+    "goalProbabilityByPlayer": "Goal probability by player",
+    "expectedPoints": "Expected points (xPts)",
+    "score": "Score",
+    "totalSimulations": "Total: {total} simulations",
+    "percentageOfSimulations": "Percentage of simulations with this result",
+    "countOfSimulations": "{count} of {total} simulations",
+    "frequency": "Frequency",
+    "wins": "{team} wins",
+    "goalProbabilityTitle": "Probability of scoring at least one goal in the simulation",
+    "goalProbabilityShort": "Goal Prob",
+    "sgaTitle": "Shot-Creating Actions: actions that generate shots on target",
+    "min": "Min.",
+    "ratio": "Ratio"
+  },
+  "chronicle": {
+    "dominantScore": "Dominant score",
+    "percentOfSimulations": "{value}% of simulations",
+    "mainThreat": "Main threat",
+    "percentGoalProbability": "{value}% goal probability",
+    "peakTensionPoint": "Peak tension point",
+    "maxTilt": "{value} maximum tilt",
+    "keyMoments": "Key moments",
+    "readingKeys": "Reading keys",
+    "simulationSupport": "Simulation support",
+    "modelEquilibriumWindow": "Model equilibrium window",
+    "offensiveThreats": "Offensive threats",
+    "goalLabel": "Goal {value}",
+    "mostLikelyScores": "Most likely scores",
+    "percentOfTotal": "{value}% of total",
+    "simulationCount": "{count} simulations",
+    "editorialTimeline": "Editorial timeline",
+    "peakHome": "Home peak",
+    "peakHomeDescription": "Maximum model confidence in favor of the home team.",
+    "peakAway": "Away peak",
+    "peakAwayDescription": "Moment of greatest forecast tilt towards the visitor.",
+    "maxEquilibrium": "Maximum equilibrium",
+    "maxEquilibriumDescription": "Stretch where the match seemed closest for the model."
+  }
+}

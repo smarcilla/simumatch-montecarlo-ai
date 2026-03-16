@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 interface PaginationProps {
   readonly currentPage: number;
@@ -21,6 +22,9 @@ export function Pagination({
   dateFromRaw,
   dateToRaw,
 }: PaginationProps) {
+  const t = useTranslations("layout");
+  const tFilters = useTranslations("filters");
+
   if (totalPages <= 1) return null;
 
   const buildUrl = (page: number) => {
@@ -65,23 +69,20 @@ export function Pagination({
   const isLastPage = currentPage === totalPages - 1;
 
   return (
-    <nav className="pagination" aria-label="Paginación">
+    <nav className="pagination" aria-label={t("pagination")}>
       <div className="pagination-container">
-        {/* Primera página */}
         {!isFirstPage && (
           <Link href={buildUrl(0)} className="pagination-button">
             ‹‹
           </Link>
         )}
 
-        {/* Anterior */}
         {!isFirstPage && (
           <Link href={buildUrl(currentPage - 1)} className="pagination-button">
             ‹
           </Link>
         )}
 
-        {/* Números de página */}
         {pageNumbers.map((pageNum) => (
           <Link
             key={pageNum}
@@ -95,14 +96,12 @@ export function Pagination({
           </Link>
         ))}
 
-        {/* Siguiente */}
         {!isLastPage && (
           <Link href={buildUrl(currentPage + 1)} className="pagination-button">
             ›
           </Link>
         )}
 
-        {/* Última página */}
         {!isLastPage && (
           <Link href={buildUrl(totalPages - 1)} className="pagination-button">
             ››
@@ -110,9 +109,8 @@ export function Pagination({
         )}
       </div>
 
-      {/* Info de página */}
       <div className="pagination-info">
-        Página {currentPage + 1} de {totalPages}
+        {tFilters("page", { current: currentPage + 1, total: totalPages })}
       </div>
     </nav>
   );

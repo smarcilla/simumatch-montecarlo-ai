@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import {
   getMatchById,
   getShotsByMatch,
@@ -31,6 +32,8 @@ export default async function MatchPage({ params }: Readonly<MatchPageProps>) {
     notFound();
   }
 
+  const t = await getTranslations("common");
+
   return (
     <DashboardLayout>
       <div
@@ -48,7 +51,7 @@ export default async function MatchPage({ params }: Readonly<MatchPageProps>) {
           href={`/?league=${match.league}&season=${match.season}`}
           className="match-detail-back"
         >
-          ← Volver a partidos
+          {t("backToMatches")}
         </Link>
         <MatchDetailCard match={match} />
         <MatchActionsPanel match={match} />

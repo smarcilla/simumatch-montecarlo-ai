@@ -1,6 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { DIContainer } from "@/infrastructure/di-container";
 import { SimulateMatchResult } from "@/application/results/simulate-match.result";
 import { ChronicleResult } from "@/application/results/chronicle.result";
@@ -10,10 +9,6 @@ export async function simulateMatch(
 ): Promise<SimulateMatchResult | null> {
   const useCase = await DIContainer.getSimulateMatchUseCase();
   return useCase.execute(id);
-}
-
-export async function viewSimulation(id: string): Promise<void> {
-  redirect(`/match/${id}/simulation`);
 }
 
 export async function getSimulationByMatchId(
@@ -33,8 +28,4 @@ export async function getChronicleByMatchId(
 ): Promise<ChronicleResult | null> {
   const useCase = await DIContainer.getFindChronicleByMatchIdUseCase();
   return useCase.execute(matchId);
-}
-
-export async function readChronicle(id: string): Promise<void> {
-  redirect(`/match/${id}/chronicle`);
 }

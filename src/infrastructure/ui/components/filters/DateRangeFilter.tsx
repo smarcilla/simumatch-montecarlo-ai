@@ -6,6 +6,7 @@ import { DayPicker } from "react-day-picker";
 import type { DateRange } from "react-day-picker";
 import "react-day-picker/style.css";
 import { getDefaultDateForSeason } from "@/infrastructure/ui/utils/season-default-date";
+import { useTranslations, useLocale } from "next-intl";
 
 function toDate(s: string): Date | undefined {
   if (!s) return undefined;
@@ -17,9 +18,9 @@ function fromDateStr(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-function fmt(d: Date | undefined): string {
+function fmt(d: Date | undefined, locale: string): string {
   if (!d) return "";
-  return d.toLocaleDateString("es-ES", {
+  return d.toLocaleDateString(locale, {
     day: "2-digit",
     month: "short",
     year: "numeric",
@@ -66,6 +67,8 @@ interface DateRangeFilterProps {
 }
 
 export function DateRangeFilter({ seasonYear }: DateRangeFilterProps) {
+  const t = useTranslations("filters");
+  const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
   const fromStr = searchParams.get("dateFrom") ?? "";
@@ -135,9 +138,10 @@ export function DateRangeFilter({ seasonYear }: DateRangeFilterProps) {
   const displayRange = open ? pickerRange : committedRange;
   const hasSelection = !!(committedFrom || committedTo);
   const getLabel = (): string => {
-    if (!committedFrom) return "Seleccionar período";
-    if (committedTo) return `${fmt(committedFrom)} – ${fmt(committedTo)}`;
-    return `Desde ${fmt(committedFrom)}`;
+    if (!committedFrom) return t("selectPeriod");
+    if (committedTo)
+      return `${fmt(committedFrom, locale)} – ${fmt(committedTo, locale)}`;
+    return `${t("since")} ${fmt(committedFrom, locale)}`;
   };
   const label = getLabel();
 
@@ -145,7 +149,7 @@ export function DateRangeFilter({ seasonYear }: DateRangeFilterProps) {
 
   return (
     <div className="filter-group filter-date-picker" ref={containerRef}>
-      <span className="filter-label">Período</span>
+      <span className="filter-label">{t("period")}</span>
       <div className="filter-date-trigger-row">
         <button
           type="button"
@@ -160,7 +164,7 @@ export function DateRangeFilter({ seasonYear }: DateRangeFilterProps) {
             type="button"
             className="filter-clear-btn"
             onClick={handleClear}
-            aria-label="Limpiar fechas"
+            aria-label={t("clearDates")}
           >
             <CloseIcon />
           </button>

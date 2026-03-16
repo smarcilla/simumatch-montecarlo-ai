@@ -12,19 +12,10 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { MomentumPointData } from "@/domain/entities/simulation.types";
+import { useTranslations } from "next-intl";
 
 const NEUTRAL_COLOR = "#5C6370";
 const NEUTRAL_SECONDARY = "#8B92A8";
-
-const TOOLTIP_BOX = {
-  background: "var(--bg-elevated)",
-  border: "1px solid var(--border-default)",
-  borderRadius: "8px",
-  padding: "8px 12px",
-  display: "flex" as const,
-  flexDirection: "column" as const,
-  gap: "4px",
-};
 
 interface AreaTooltipProps {
   active?: boolean;
@@ -32,6 +23,8 @@ interface AreaTooltipProps {
   label?: string | number;
   homeTeam: string;
   awayTeam: string;
+  drawLabel: string;
+  minLabel: string;
 }
 
 const AreaTooltip = ({
@@ -40,34 +33,30 @@ const AreaTooltip = ({
   label,
   homeTeam,
   awayTeam,
+  drawLabel,
+  minLabel,
 }: Readonly<AreaTooltipProps>) => {
   if (!active || !payload || payload.length === 0) return null;
   const nameMap: Record<string, string> = {
     home: homeTeam,
-    draw: "Empate",
+    draw: drawLabel,
     away: awayTeam,
   };
   return (
-    <div style={TOOLTIP_BOX}>
+    <div
+      className="chart-tooltip"
+      style={{ display: "flex", flexDirection: "column", gap: "4px" }}
+    >
       {label !== undefined && (
-        <span
-          style={{
-            color: "var(--text-secondary)",
-            fontWeight: 500,
-            fontSize: "0.8rem",
-          }}
-        >
-          Min. {label}
+        <span className="chart-tooltip-sublabel">
+          {minLabel} {label}
         </span>
       )}
       {[...payload].reverse().map((entry) => (
         <span
           key={entry.dataKey}
-          style={{
-            color: "var(--text-primary)",
-            fontWeight: 600,
-            fontSize: "0.9rem",
-          }}
+          className="chart-tooltip-label"
+          style={{ fontWeight: 600, fontSize: "0.9rem" }}
         >
           {nameMap[entry.dataKey] ?? entry.dataKey}{" "}
           {(entry.value ?? 0).toFixed(1)}%
@@ -91,33 +80,36 @@ interface MomentumLegendLabelProps {
   readonly value: string;
   readonly homeTeam: string;
   readonly awayTeam: string;
+  readonly drawLabel: string;
 }
 
 function MomentumLegendLabel({
   value,
   homeTeam,
   awayTeam,
+  drawLabel,
 }: Readonly<MomentumLegendLabelProps>) {
   const labelMap: Record<string, string> = {
     home: homeTeam,
-    draw: "Empate",
+    draw: drawLabel,
     away: awayTeam,
   };
   const label = labelMap[value] ?? value;
-  return (
-    <span style={{ color: "var(--text-primary)", fontSize: "0.875rem" }}>
-      {label}
-    </span>
-  );
+  return <span className="chart-legend-label">{label}</span>;
 }
 
-function makeLegendFormatter(homeTeam: string, awayTeam: string) {
+function makeLegendFormatter(
+  homeTeam: string,
+  awayTeam: string,
+  drawLabel: string
+) {
   return function legendFormatter(value: string) {
     return (
       <MomentumLegendLabel
         value={value}
         homeTeam={homeTeam}
         awayTeam={awayTeam}
+        drawLabel={drawLabel}
       />
     );
   };
@@ -132,6 +124,10 @@ export function MomentumTimelineChart({
   homeColorSecondary,
   awayColorSecondary,
 }: MomentumTimelineChartProps) {
+  const t = useTranslations("simulation");
+  const tCommon = useTranslations("common");
+  const drawLabel = tCommon("draw");
+  const minLabel = t("min");
   const data = momentumTimeline.map((point) => ({
     minute: point.minute,
     home: Math.round(point.homeWinProbability * 1000) / 10,
@@ -140,13 +136,13 @@ export function MomentumTimelineChart({
   }));
 
   const legendFormatter = useMemo(
-    () => makeLegendFormatter(homeTeam, awayTeam),
-    [homeTeam, awayTeam]
+    () => makeLegendFormatter(homeTeam, awayTeam, drawLabel),
+    [homeTeam, awayTeam, drawLabel]
   );
 
   return (
     <div className="simulation-card">
-      <h3 className="simulation-section-title">Evolución del partido</h3>
+      <h3 className="simulation-section-title">{t("matchEvolution")}</h3>
       <ResponsiveContainer width="100%" height={300}>
         <AreaChart
           data={data}
@@ -170,7 +166,14 @@ export function MomentumTimelineChart({
             tick={{ fill: "var(--text-secondary)", fontSize: 12 }}
           />
           <Tooltip
-            content={<AreaTooltip homeTeam={homeTeam} awayTeam={awayTeam} />}
+            content={
+              <AreaTooltip
+                homeTeam={homeTeam}
+                awayTeam={awayTeam}
+                drawLabel={drawLabel}
+                minLabel={minLabel}
+              />
+            }
           />
           <Legend formatter={legendFormatter} />
           <Area

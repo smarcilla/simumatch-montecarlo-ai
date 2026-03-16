@@ -1,3 +1,5 @@
+import { getTranslations } from "next-intl/server";
+
 interface SimulationXptsCardsProps {
   readonly xPtsHome: number;
   readonly xPtsAway: number;
@@ -9,7 +11,7 @@ interface SimulationXptsCardsProps {
   readonly awayColorSecondary: string;
 }
 
-export function SimulationXptsCards({
+export async function SimulationXptsCards({
   xPtsHome,
   xPtsAway,
   homeTeam,
@@ -19,11 +21,12 @@ export function SimulationXptsCards({
   homeColorSecondary,
   awayColorSecondary,
 }: SimulationXptsCardsProps) {
+  const t = await getTranslations("simulation");
   const formattedXPtsHome = xPtsHome.toFixed(2);
   const formattedXPtsAway = xPtsAway.toFixed(2);
   return (
     <div className="simulation-card">
-      <h3 className="simulation-section-title">Puntos esperados (xPts)</h3>
+      <h3 className="simulation-section-title">{t("expectedPoints")}</h3>
       <div className="simulation-xpts-cards">
         <div
           className="simulation-xpts-card"

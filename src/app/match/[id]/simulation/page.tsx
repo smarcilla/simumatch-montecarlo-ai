@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { getMatchById } from "@/infrastructure/actions/match.actions";
 import { getSimulationByMatchId } from "@/infrastructure/actions/simulation.actions";
 import { DashboardLayout } from "@/infrastructure/ui/layout/DashboardLayout";
@@ -27,6 +28,8 @@ export default async function SimulationPage({
   if (!match) notFound();
   if (!simulation) redirect(`/match/${id}`);
 
+  const t = await getTranslations("common");
+
   return (
     <DashboardLayout>
       <div
@@ -41,7 +44,7 @@ export default async function SimulationPage({
         }
       >
         <Link href={`/match/${id}`} className="match-detail-back">
-          ← Volver al partido
+          {t("backToMatch")}
         </Link>
         <MatchDetailCard match={match} />
         <SimulationProbabilityChart

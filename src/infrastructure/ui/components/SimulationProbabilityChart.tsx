@@ -1,6 +1,7 @@
 "use client";
 
 import { PieChart, Pie, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { useTranslations } from "next-intl";
 
 interface SimulationProbabilityChartProps {
   readonly homeWinProbability: number;
@@ -17,13 +18,6 @@ interface SimulationProbabilityChartProps {
 const NEUTRAL_COLOR = "#5C6370";
 const NEUTRAL_SECONDARY = "#8B92A8";
 
-const TOOLTIP_BOX = {
-  background: "var(--bg-elevated)",
-  border: "1px solid var(--border-default)",
-  borderRadius: "8px",
-  padding: "8px 12px",
-};
-
 interface PieTooltipProps {
   active?: boolean;
   payload?: { name: string; value: number }[];
@@ -33,14 +27,8 @@ function PieTooltip({ active, payload }: Readonly<PieTooltipProps>) {
   if (!active || !payload || payload.length === 0) return null;
   const entry = payload[0];
   return (
-    <div style={TOOLTIP_BOX}>
-      <span
-        style={{
-          color: "var(--text-primary)",
-          fontWeight: 700,
-          fontSize: "1rem",
-        }}
-      >
+    <div className="chart-tooltip">
+      <span className="chart-tooltip-label">
         {entry?.name} {entry?.value}%
       </span>
     </div>
@@ -48,11 +36,7 @@ function PieTooltip({ active, payload }: Readonly<PieTooltipProps>) {
 }
 
 function LegendLabel({ value }: Readonly<{ value: string }>) {
-  return (
-    <span style={{ color: "var(--text-primary)", fontSize: "0.875rem" }}>
-      {value}
-    </span>
-  );
+  return <span className="chart-legend-label">{value}</span>;
 }
 
 function formatLegendLabel(value: string) {
@@ -70,6 +54,8 @@ export function SimulationProbabilityChart({
   homeColorSecondary,
   awayColorSecondary,
 }: SimulationProbabilityChartProps) {
+  const t = useTranslations("simulation");
+  const tCommon = useTranslations("common");
   const data = [
     {
       name: homeTeam,
@@ -78,7 +64,7 @@ export function SimulationProbabilityChart({
       stroke: homeColorSecondary,
     },
     {
-      name: "Empate",
+      name: tCommon("draw"),
       value: Math.round(drawProbability * 1000) / 10,
       fill: NEUTRAL_COLOR,
       stroke: NEUTRAL_SECONDARY,
@@ -93,7 +79,7 @@ export function SimulationProbabilityChart({
 
   return (
     <div className="simulation-card">
-      <h3 className="simulation-section-title">Probabilidades del partido</h3>
+      <h3 className="simulation-section-title">{t("matchProbabilities")}</h3>
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie

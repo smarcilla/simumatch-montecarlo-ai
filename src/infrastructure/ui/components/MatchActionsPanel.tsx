@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { FindMatchByIdResult } from "@/application/results/find-match-by-id.result";
 import {
   simulateMatch,
-  viewSimulation,
   writeChronicle,
-  readChronicle,
 } from "@/infrastructure/actions/simulation.actions";
 
 interface MatchActionsPanelProps {
@@ -18,6 +17,8 @@ export function MatchActionsPanel({ match }: MatchActionsPanelProps) {
   const [isPending, setIsPending] = useState(false);
   const { id, status } = match;
   const router = useRouter();
+  const t = useTranslations("match.actions");
+  const tCommon = useTranslations("common");
 
   const handleAction = async (action: (id: string) => Promise<unknown>) => {
     setIsPending(true);
@@ -37,7 +38,7 @@ export function MatchActionsPanel({ match }: MatchActionsPanelProps) {
           disabled={isPending}
           onClick={() => handleAction(simulateMatch)}
         >
-          {isPending ? "Procesando..." : "Simular partido"}
+          {isPending ? tCommon("processing") : t("simulate")}
         </button>
       )}
 
@@ -45,9 +46,9 @@ export function MatchActionsPanel({ match }: MatchActionsPanelProps) {
         <button
           className="match-action-btn secondary"
           disabled={isPending}
-          onClick={() => handleAction(viewSimulation)}
+          onClick={() => router.push(`/match/${id}/simulation`)}
         >
-          {isPending ? "Procesando..." : "Ver simulación"}
+          {t("viewSimulation")}
         </button>
       )}
 
@@ -57,7 +58,7 @@ export function MatchActionsPanel({ match }: MatchActionsPanelProps) {
           disabled={isPending}
           onClick={() => handleAction(writeChronicle)}
         >
-          {isPending ? "Procesando..." : "Escribir crónica"}
+          {isPending ? tCommon("processing") : t("writeChronicle")}
         </button>
       )}
 
@@ -65,9 +66,9 @@ export function MatchActionsPanel({ match }: MatchActionsPanelProps) {
         <button
           className="match-action-btn secondary"
           disabled={isPending}
-          onClick={() => handleAction(readChronicle)}
+          onClick={() => router.push(`/match/${id}/chronicle`)}
         >
-          {isPending ? "Procesando..." : "Leer crónica"}
+          {t("readChronicle")}
         </button>
       )}
     </div>

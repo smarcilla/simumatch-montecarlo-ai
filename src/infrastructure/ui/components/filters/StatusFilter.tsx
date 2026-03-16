@@ -1,13 +1,8 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { MatchStatusValue } from "@/domain/value-objects/match-status.value";
-
-const STATUS_LABELS: Record<MatchStatusValue, string> = {
-  finished: "Finalizado",
-  simulated: "Simulado",
-  chronicle_generated: "Crónica generada",
-};
 
 const ALL_STATUSES: MatchStatusValue[] = [
   "finished",
@@ -16,6 +11,8 @@ const ALL_STATUSES: MatchStatusValue[] = [
 ];
 
 export function StatusFilter() {
+  const t = useTranslations("filters");
+  const tStatus = useTranslations("match.status");
   const router = useRouter();
   const searchParams = useSearchParams();
   const statusesParam = searchParams.get("statuses") ?? "";
@@ -40,7 +37,7 @@ export function StatusFilter() {
 
   return (
     <div className="filter-group">
-      <span className="filter-label">Estado</span>
+      <span className="filter-label">{t("status")}</span>
       <div className="filter-checkbox-group">
         {ALL_STATUSES.map((status) => (
           <label key={status} className="filter-checkbox-item">
@@ -50,7 +47,7 @@ export function StatusFilter() {
               checked={selectedStatuses.includes(status)}
               onChange={(e) => handleChange(status, e.target.checked)}
             />
-            <span>{STATUS_LABELS[status]}</span>
+            <span>{tStatus(status)}</span>
           </label>
         ))}
       </div>

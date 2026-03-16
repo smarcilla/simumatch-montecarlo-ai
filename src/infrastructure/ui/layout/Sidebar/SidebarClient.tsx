@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { FindLeagueResult } from "@/application/results/find-leagues.result";
 
 interface SidebarProps {
@@ -9,6 +10,7 @@ interface SidebarProps {
 }
 
 export function SidebarClient({ leagues }: SidebarProps) {
+  const t = useTranslations("layout");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -65,7 +67,7 @@ export function SidebarClient({ leagues }: SidebarProps) {
         className={`dashboard-sidebar${isOpen ? " sidebar-drawer-open" : ""}`}
       >
         <div className="sidebar-header">
-          <h2 className="sidebar-title">Competiciones</h2>
+          <h2 className="sidebar-title">{t("competitions")}</h2>
         </div>
 
         <nav>

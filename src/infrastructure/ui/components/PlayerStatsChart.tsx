@@ -12,13 +12,7 @@ import {
 } from "recharts";
 import { SimulationPlayerStat } from "@/domain/entities/simulation.types";
 import { TableTeamShield } from "@/infrastructure/ui/components/ShotIcons";
-
-const TOOLTIP_BOX = {
-  background: "var(--bg-elevated)",
-  border: "1px solid var(--border-default)",
-  borderRadius: "8px",
-  padding: "8px 12px",
-};
+import { useTranslations } from "next-intl";
 
 interface PlayerBarShape {
   x?: number;
@@ -64,14 +58,8 @@ function BarTooltip({ active, payload, label }: Readonly<BarTooltipProps>) {
   if (!active || !payload || payload.length === 0) return null;
   const value = payload[0]?.value ?? 0;
   return (
-    <div style={TOOLTIP_BOX}>
-      <span
-        style={{
-          color: "var(--text-primary)",
-          fontWeight: 700,
-          fontSize: "1rem",
-        }}
-      >
+    <div className="chart-tooltip">
+      <span className="chart-tooltip-label">
         {label} {value}%
       </span>
     </div>
@@ -97,6 +85,8 @@ export function PlayerStatsChart({
   homeColorSecondary,
   awayColorSecondary,
 }: PlayerStatsChartProps) {
+  const t = useTranslations("simulation");
+  const tShots = useTranslations("shots");
   const sorted = [...playerStats].sort(
     (a, b) => b.goalProbability - a.goalProbability
   );
@@ -130,7 +120,7 @@ export function PlayerStatsChart({
   return (
     <div className="simulation-card">
       <h3 className="simulation-section-title">
-        Probabilidad de gol por jugador
+        {t("goalProbabilityByPlayer")}
       </h3>
       <ResponsiveContainer width="100%" height={chartHeight}>
         <BarChart
@@ -165,14 +155,12 @@ export function PlayerStatsChart({
         <table className="simulation-table">
           <thead>
             <tr>
-              <th>Jugador</th>
-              <th>Equipo</th>
-              <th title="Probabilidad de marcar al menos un gol en la simulación">
-                Prob Gol
+              <th>{tShots("tableHeaders.player")}</th>
+              <th>{tShots("tableHeaders.team")}</th>
+              <th title={t("goalProbabilityTitle")}>
+                {t("goalProbabilityShort")}
               </th>
-              <th title="Shot-Creating Actions: acciones que generan disparos a portería">
-                SGA
-              </th>
+              <th title={t("sgaTitle")}>SGA</th>
             </tr>
           </thead>
           <tbody>

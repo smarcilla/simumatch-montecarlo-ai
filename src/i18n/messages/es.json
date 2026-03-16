@@ -1,0 +1,137 @@
+{
+  "common": {
+    "processing": "Procesando...",
+    "draw": "Empate",
+    "goals": "goles",
+    "backToMatches": "← Volver a partidos",
+    "backToMatch": "← Volver al partido"
+  },
+  "layout": {
+    "title": "SimuMatch AI - Simulaciones de Monte Carlo para fútbol",
+    "description": "Descubre qué hubiera pasado con 100.000 simulaciones avanzadas",
+    "competitions": "Competiciones",
+    "openCompetitionsMenu": "Abrir menú de competiciones",
+    "pagination": "Paginación"
+  },
+  "match": {
+    "welcome": "Bienvenido a SimuMatch",
+    "selectCompetition": "Selecciona una competición para ver los partidos",
+    "matchesList": "Listado de Partidos",
+    "loading": "Cargando...",
+    "matches": "partidos",
+    "defaultLeague": "Liga",
+    "status": {
+      "finished": "Finalizado",
+      "simulated": "Simulado",
+      "chronicle_generated": "Crónica generada"
+    },
+    "actions": {
+      "simulate": "Simular partido",
+      "viewSimulation": "Ver simulación",
+      "writeChronicle": "Escribir crónica",
+      "readChronicle": "Leer crónica"
+    }
+  },
+  "shots": {
+    "title": "Estadísticas de disparos",
+    "xgPerPlayer": "xG por jugador",
+    "goalkeeperPerformance": "Rendimiento de porteros",
+    "noShotsFound": "No hay disparos con los filtros aplicados",
+    "shotType": {
+      "goal": "Gol",
+      "save": "Parada",
+      "miss": "Fuera",
+      "block": "Bloqueado",
+      "post": "Poste"
+    },
+    "situation": {
+      "regular": "Jugada",
+      "assisted": "Asistido",
+      "corner": "Córner",
+      "penalty": "Penalti",
+      "set-piece": "Balón parado",
+      "free-kick": "Falta",
+      "throw-in-set-piece": "Saque lateral",
+      "fast-break": "Contragolpe"
+    },
+    "bodyPart": {
+      "right-foot": "Pie derecho",
+      "left-foot": "Pie izquierdo",
+      "head": "Cabeza",
+      "other": "Otro"
+    },
+    "tableHeaders": {
+      "player": "Jugador",
+      "team": "Equipo",
+      "situation": "Situación",
+      "result": "Resultado",
+      "resultShort": "Res.",
+      "goalkeeper": "Portero",
+      "shotsGoals": "Disparos / Goles",
+      "shotsGoalsShort": "Disp./Goles",
+      "saves": "Paradas",
+      "xgotGoals": "Expected Goals on Target recibidos / Goles encajados",
+      "xgotGoalsShort": "xGOT/Goles",
+      "savesTitle": "Paradas",
+      "savesShort": "Paradas"
+    },
+    "previous": "Anterior",
+    "next": "Siguiente"
+  },
+  "filters": {
+    "result": "Resultado",
+    "all": "Todos",
+    "allFeminine": "Todas",
+    "situation": "Situación",
+    "team": "Equipo",
+    "both": "Ambos",
+    "status": "Estado",
+    "period": "Período",
+    "selectPeriod": "Seleccionar período",
+    "clearDates": "Limpiar fechas",
+    "since": "Desde",
+    "page": "Página {current} de {total}"
+  },
+  "simulation": {
+    "scoreDistribution": "Distribución de marcadores",
+    "matchProbabilities": "Probabilidades del partido",
+    "matchEvolution": "Evolución del partido",
+    "goalProbabilityByPlayer": "Probabilidad de gol por jugador",
+    "expectedPoints": "Puntos esperados (xPts)",
+    "score": "Marcador",
+    "totalSimulations": "Total: {total} simulaciones",
+    "percentageOfSimulations": "Porcentaje de simulaciones con este resultado",
+    "countOfSimulations": "{count} de {total} simulaciones",
+    "frequency": "Frecuencia",
+    "wins": "{team} gana",
+    "goalProbabilityTitle": "Probabilidad de marcar al menos un gol en la simulación",
+    "goalProbabilityShort": "Prob Gol",
+    "sgaTitle": "Shot-Creating Actions: acciones que generan disparos a portería",
+    "min": "Min.",
+    "ratio": "Ratio"
+  },
+  "chronicle": {
+    "dominantScore": "Marcador dominante",
+    "percentOfSimulations": "{value}% de las simulaciones",
+    "mainThreat": "Amenaza principal",
+    "percentGoalProbability": "{value}% de probabilidad de gol",
+    "peakTensionPoint": "Punto de máxima tensión",
+    "maxTilt": "{value} de inclinación máxima",
+    "keyMoments": "Momentos clave",
+    "readingKeys": "Claves de lectura",
+    "simulationSupport": "Apoyo de simulación",
+    "modelEquilibriumWindow": "Ventana de equilibrio del modelo",
+    "offensiveThreats": "Amenazas ofensivas",
+    "goalLabel": "Gol {value}",
+    "mostLikelyScores": "Marcadores más probables",
+    "percentOfTotal": "{value}% del total",
+    "simulationCount": "{count} simulaciones",
+    "editorialTimeline": "Timeline editorial",
+    "peakHome": "Pico local",
+    "peakHomeDescription": "Máxima confianza del modelo a favor del equipo local.",
+    "peakAway": "Pico visitante",
+    "peakAwayDescription": "Momento de mayor inclinación del pronóstico hacia el visitante.",
+    "maxEquilibrium": "Equilibrio máximo",
+    "maxEquilibriumDescription": "Tramo donde el partido pareció más cerrado para el modelo."
+  }
+}

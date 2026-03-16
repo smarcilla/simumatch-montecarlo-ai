@@ -307,6 +307,110 @@ button {
   padding: 0 var(--spacing-lg);
 }
 
+.dashboard-footer p {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+}
+
+/* Info Banner */
+.info-banner {
+  background: var(--bg-surface);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-2xl);
+  text-align: center;
+}
+
+.info-banner h2 {
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--spacing-xs);
+}
+
+.text-muted {
+  color: var(--text-secondary);
+}
+
+/* Skeleton Loading */
+.skeleton-card {
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  height: 140px;
+}
+
+.skeleton-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+
+/* Chart Tooltip */
+.chart-tooltip {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.chart-tooltip-label {
+  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.chart-tooltip-sublabel {
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+.chart-legend-label {
+  color: var(--text-primary);
+  font-size: 0.875rem;
+}
+
+/* Score Table Cell */
+.score-cell-flex {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.score-cell-bold {
+  font-weight: 700;
+}
+
+/* Language Toggle */
+.language-toggle {
+  display: flex;
+  gap: 2px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-default);
+}
+
+.language-toggle-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.language-toggle-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.language-toggle-btn.active {
+  background: var(--accent-primary);
+  color: white;
+  cursor: default;
+}
+
 /* ============================================
    COMPONENTS
    ============================================ */
