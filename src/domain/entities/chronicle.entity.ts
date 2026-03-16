@@ -8,6 +8,20 @@ import { Simulation } from "./simulation.entity";
 
 export type ChronicleAccent = "home" | "away" | "neutral";
 
+const VALID_ACCENTS: ReadonlySet<string> = new Set(["home", "away", "neutral"]);
+const VALID_SECTION_IDS: readonly string[] = [
+  "pulse",
+  "turning-point",
+  "closing",
+];
+const REQUIRED_SECTIONS_COUNT = 3;
+const REQUIRED_HIGHLIGHTS_COUNT = 3;
+const REQUIRED_KEY_STATS_COUNT = 3;
+const REQUIRED_TIMELINE_COUNT = 3;
+const MIN_PARAGRAPHS = 2;
+const MAX_PARAGRAPHS = 3;
+const TIMELINE_MINUTE_PATTERN = /^\d+'$/;
+
 export interface ChronicleSectionQuote {
   text: string;
   attribution: string;
@@ -163,6 +177,8 @@ export class Chronicle {
     generatedContent: ChronicleGeneratedContent,
     id: string | null = null
   ): Chronicle {
+    Chronicle.validateGeneratedContent(generatedContent);
+
     return new Chronicle(
       id,
       generationContext.matchId,
@@ -204,5 +220,72 @@ export class Chronicle {
       generatedContent.generatedAt,
       generationContext.toSimulationSnapshot()
     );
+  }
+
+  private static validateGeneratedContent(
+    content: ChronicleGeneratedContent
+  ): void {
+    if (content.sections.length !== REQUIRED_SECTIONS_COUNT) {
+      throw new Error(
+        `Chronicle must have exactly ${REQUIRED_SECTIONS_COUNT} sections, got ${content.sections.length}.`
+      );
+    }
+
+    const sectionIds = content.sections.map((s) => s.id);
+    if (!VALID_SECTION_IDS.every((id, i) => sectionIds[i] === id)) {
+      throw new Error(
+        `Chronicle section ids must be [${VALID_SECTION_IDS.join(", ")}] in order, got [${sectionIds.join(", ")}].`
+      );
+    }
+
+    for (const section of content.sections) {
+      if (
+        section.paragraphs.length < MIN_PARAGRAPHS ||
+        section.paragraphs.length > MAX_PARAGRAPHS
+      ) {
+        throw new Error(
+          `Section "${section.id}" must have between ${MIN_PARAGRAPHS} and ${MAX_PARAGRAPHS} paragraphs, got ${section.paragraphs.length}.`
+        );
+      }
+    }
+
+    if (content.highlights.length !== REQUIRED_HIGHLIGHTS_COUNT) {
+      throw new Error(
+        `Chronicle must have exactly ${REQUIRED_HIGHLIGHTS_COUNT} highlights, got ${content.highlights.length}.`
+      );
+    }
+
+    if (content.keyStats.length !== REQUIRED_KEY_STATS_COUNT) {
+      throw new Error(
+        `Chronicle must have exactly ${REQUIRED_KEY_STATS_COUNT} key stats, got ${content.keyStats.length}.`
+      );
+    }
+
+    if (content.timeline.length !== REQUIRED_TIMELINE_COUNT) {
+      throw new Error(
+        `Chronicle must have exactly ${REQUIRED_TIMELINE_COUNT} timeline items, got ${content.timeline.length}.`
+      );
+    }
+
+    const allAccents: string[] = [
+      ...content.highlights.map((h) => h.accent),
+      ...content.keyStats.map((k) => k.accent),
+      ...content.timeline.map((t) => t.accent),
+    ];
+    for (const accent of allAccents) {
+      if (!VALID_ACCENTS.has(accent)) {
+        throw new Error(
+          `Invalid accent value: "${accent}". Must be "home", "away" or "neutral".`
+        );
+      }
+    }
+
+    for (const item of content.timeline) {
+      if (!TIMELINE_MINUTE_PATTERN.test(item.minute)) {
+        throw new Error(
+          String.raw`Invalid timeline minute format: "${item.minute}". Must match pattern "\d+'".`
+        );
+      }
+    }
   }
 }

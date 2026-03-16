@@ -1,7 +1,5 @@
 import { z } from "genkit";
 
-const AccentSchema = z.enum(["neutral", "home", "away"]);
-
 const MomentumPointSchema = z.object({
   minute: z.number().int().min(0).max(130),
   homeWinProbability: z.number().min(0).max(1),
@@ -31,30 +29,30 @@ const QuoteSchema = z.object({
 });
 
 const SectionSchema = z.object({
-  id: z.enum(["pulse", "turning-point", "closing"]),
+  id: z.string(),
   title: z.string(),
-  paragraphs: z.array(z.string()).min(2).max(3),
+  paragraphs: z.array(z.string()),
   quote: QuoteSchema.optional(),
 });
 
 const HighlightSchema = z.object({
   label: z.string(),
   value: z.string(),
-  accent: AccentSchema,
+  accent: z.string(),
 });
 
 const KeyStatSchema = z.object({
   label: z.string(),
   value: z.string(),
   context: z.string(),
-  accent: AccentSchema,
+  accent: z.string(),
 });
 
 const TimelineEntrySchema = z.object({
-  minute: z.string().regex(/^\d+'$/),
+  minute: z.string(),
   title: z.string(),
   description: z.string(),
-  accent: AccentSchema,
+  accent: z.string(),
 });
 
 export const ChronicleInputSchema = z.object({
@@ -79,11 +77,11 @@ export const GeneratedChronicleSchema = z.object({
   kicker: z.string(),
   title: z.string(),
   summary: z.string(),
-  sections: z.array(SectionSchema).length(3),
-  highlights: z.array(HighlightSchema).length(3),
-  keyStats: z.array(KeyStatSchema).length(3),
-  timeline: z.array(TimelineEntrySchema).length(3),
+  sections: z.array(SectionSchema),
+  highlights: z.array(HighlightSchema),
+  keyStats: z.array(KeyStatSchema),
+  timeline: z.array(TimelineEntrySchema),
   author: z.string(),
   sourceLabel: z.string(),
-  generatedAt: z.string().datetime(),
+  generatedAt: z.string(),
 });
