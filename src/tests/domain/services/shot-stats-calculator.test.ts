@@ -53,8 +53,10 @@ const gkHome = makePlayer("10", "Ter Stegen", "Ter Stegen");
 const gkAway = makePlayer("11", "Courtois", "Courtois");
 
 describe("ShotStatsCalculator", () => {
+  const calculator = new ShotStatsCalculator();
+
   it("should return zero stats for empty shots array", () => {
-    const stats = ShotStatsCalculator.compute([]);
+    const stats = calculator.compute([]);
     expect(stats.homeXg).toBe(0);
     expect(stats.awayXg).toBe(0);
     expect(stats.homeGoals).toBe(0);
@@ -98,7 +100,7 @@ describe("ShotStatsCalculator", () => {
         goalkeeper: gkHome,
       }),
     ];
-    const stats = ShotStatsCalculator.compute(shots);
+    const stats = calculator.compute(shots);
     expect(stats.homeXg).toBe(1);
     expect(stats.awayXg).toBe(0.5);
   });
@@ -139,7 +141,7 @@ describe("ShotStatsCalculator", () => {
         goalkeeper: gkHome,
       }),
     ];
-    const stats = ShotStatsCalculator.compute(shots);
+    const stats = calculator.compute(shots);
     expect(stats.homeGoals).toBe(2);
     expect(stats.awayGoals).toBe(1);
   });
@@ -179,7 +181,7 @@ describe("ShotStatsCalculator", () => {
         goalkeeper: gkHome,
       }),
     ];
-    const stats = ShotStatsCalculator.compute(shots);
+    const stats = calculator.compute(shots);
     const messiStats = stats.playerStats.find(
       (p) => p.playerName === "Lionel Messi"
     );
@@ -236,7 +238,7 @@ describe("ShotStatsCalculator", () => {
         goalkeeper: gkAway,
       }),
     ];
-    const stats = ShotStatsCalculator.compute(shots);
+    const stats = calculator.compute(shots);
     const courtoisStats = stats.goalkeeperStats.find(
       (gk) => gk.goalkeeperName === "Courtois"
     );
@@ -271,7 +273,7 @@ describe("ShotStatsCalculator", () => {
         goalkeeper: gkAway,
       }),
     ];
-    const stats = ShotStatsCalculator.compute(shots);
+    const stats = calculator.compute(shots);
     expect(stats.goalkeeperStats).toHaveLength(0);
   });
 
@@ -289,7 +291,7 @@ describe("ShotStatsCalculator", () => {
         goalkeeper: gkAway,
       }),
     ];
-    const stats = ShotStatsCalculator.compute(shots);
+    const stats = calculator.compute(shots);
     const gkStats = stats.goalkeeperStats[0];
     expect(gkStats).toBeDefined();
     expect(gkStats!.isHome).toBe(false);
@@ -318,7 +320,7 @@ describe("ShotStatsCalculator", () => {
         player: playerA,
       }),
     ];
-    const stats = ShotStatsCalculator.compute(shots);
+    const stats = calculator.compute(shots);
     expect(stats.homeXg).toBe(0.58);
   });
 });

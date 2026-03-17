@@ -18,6 +18,8 @@ const LeagueSchema = new Schema<ILeagueDocument>(
   { timestamps: true }
 );
 
+LeagueSchema.index({ numericExternalId: 1 });
+
 export const LeagueModel =
   mongoose.models.League ||
   mongoose.model<ILeagueDocument>("League", LeagueSchema);

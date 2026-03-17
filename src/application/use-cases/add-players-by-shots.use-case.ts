@@ -1,19 +1,14 @@
 import { Player } from "@/domain/entities/player.entity";
 import { PlayerRepository } from "@/domain/repositories/player.repository";
 import { AddPlayerByShotCommand } from "../commands/add-player-by-shot.command";
+import { BATCH_SIZE } from "../constants/batch.constants";
 
 export class AddPlayersByShotsUseCase {
-  private static readonly BATCH_SIZE = 10;
-
   constructor(private readonly playerRepository: PlayerRepository) {}
 
   async execute(commands: AddPlayerByShotCommand[]): Promise<void> {
-    for (
-      let i = 0;
-      i < commands.length;
-      i += AddPlayersByShotsUseCase.BATCH_SIZE
-    ) {
-      const batch = commands.slice(i, i + AddPlayersByShotsUseCase.BATCH_SIZE);
+    for (let i = 0; i < commands.length; i += BATCH_SIZE) {
+      const batch = commands.slice(i, i + BATCH_SIZE);
       await Promise.allSettled(
         batch.map((command) => this.processCommand(command))
       );

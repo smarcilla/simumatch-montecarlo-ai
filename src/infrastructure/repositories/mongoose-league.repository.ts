@@ -25,7 +25,7 @@ interface ILeagueDocument {
 }
 
 export class MongooseLeagueRepository implements LeagueRepository {
-  async getLeagues(): Promise<League[]> {
+  async findAllWithSeasons(): Promise<League[]> {
     const leaguesWithSeasons = await LeagueModel.aggregate<ILeagueWithSeasons>([
       {
         $lookup: {

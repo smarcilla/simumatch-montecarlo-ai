@@ -8,10 +8,9 @@ import { BodyPart } from "@/domain/value-objects/body-part.value";
 import { ShotSituation } from "@/domain/value-objects/shot-situation.value";
 import { ShotType } from "@/domain/value-objects/shot-type.value";
 import { AddShotByShotRawCommand } from "../commands/add-shot-by-shot-raw.command";
+import { BATCH_SIZE } from "../constants/batch.constants";
 
 export class AddShotsByShotRawUseCase {
-  private static readonly BATCH_SIZE = 10;
-
   constructor(
     private readonly playerRepository: PlayerRepository,
     private readonly matchRepository: MatchRepository,
@@ -22,12 +21,8 @@ export class AddShotsByShotRawUseCase {
     const playerCache = new Map<number, Promise<Player | null>>();
     const matchCache = new Map<number, Promise<Match | null>>();
 
-    for (
-      let i = 0;
-      i < commands.length;
-      i += AddShotsByShotRawUseCase.BATCH_SIZE
-    ) {
-      const batch = commands.slice(i, i + AddShotsByShotRawUseCase.BATCH_SIZE);
+    for (let i = 0; i < commands.length; i += BATCH_SIZE) {
+      const batch = commands.slice(i, i + BATCH_SIZE);
       await Promise.allSettled(
         batch.map((command) =>
           this.processCommand(command, playerCache, matchCache)

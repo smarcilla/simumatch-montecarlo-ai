@@ -30,6 +30,7 @@ import { SimulationRepository } from "@/domain/repositories/simulation.repositor
 import { TeamRepository } from "@/domain/repositories/team.repository";
 import { ChronicleGenerator } from "@/application/ports/chronicle-generator.port";
 import { MonteCarloSimulatorService } from "@/domain/services/montecarlo-simulator.service";
+import { ShotStatsCalculator } from "@/domain/services/shot-stats-calculator";
 
 import { GenkitChronicleGenerator } from "./llm/genkit-chronicle.generator";
 import { MongooseLeagueRepository } from "./repositories/mongoose-league.repository";
@@ -210,7 +211,8 @@ export class DIContainer {
     await DIContainer.initializeDatabaseConnection();
     if (!DIContainer.findShotStatsByMatchUseCase) {
       DIContainer.findShotStatsByMatchUseCase = new FindShotStatsByMatchUseCase(
-        DIContainer.getShotRepository()
+        DIContainer.getShotRepository(),
+        new ShotStatsCalculator()
       );
     }
     return DIContainer.findShotStatsByMatchUseCase;

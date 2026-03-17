@@ -2,15 +2,14 @@ import { Team } from "@/domain/entities/team.entity";
 import { TeamRepository } from "@/domain/repositories/team.repository";
 import { Color } from "@/domain/value-objects/color.value";
 import { UpsertTeamCommand } from "../commands/upsert-team.command";
+import { BATCH_SIZE } from "../constants/batch.constants";
 
 export class UpsertTeamsUseCase {
-  private static readonly BATCH_SIZE = 10;
-
   constructor(private readonly teamRepository: TeamRepository) {}
 
   async execute(commands: UpsertTeamCommand[]): Promise<void> {
-    for (let i = 0; i < commands.length; i += UpsertTeamsUseCase.BATCH_SIZE) {
-      const batch = commands.slice(i, i + UpsertTeamsUseCase.BATCH_SIZE);
+    for (let i = 0; i < commands.length; i += BATCH_SIZE) {
+      const batch = commands.slice(i, i + BATCH_SIZE);
       await Promise.allSettled(
         batch.map((command) => this.processCommand(command))
       );

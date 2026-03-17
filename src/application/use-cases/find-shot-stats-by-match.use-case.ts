@@ -10,11 +10,14 @@ import {
 } from "../results/shot-match-stats.result";
 
 export class FindShotStatsByMatchUseCase {
-  constructor(private readonly shotRepository: ShotRepository) {}
+  constructor(
+    private readonly shotRepository: ShotRepository,
+    private readonly shotStatsCalculator: ShotStatsCalculator
+  ) {}
 
   async execute(matchId: string): Promise<ShotMatchStatsResult> {
     const shots = await this.shotRepository.findAllByMatchId(matchId);
-    const stats = ShotStatsCalculator.compute(shots);
+    const stats = this.shotStatsCalculator.compute(shots);
     return this.mapToResult(stats);
   }
 

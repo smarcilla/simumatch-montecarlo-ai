@@ -29,7 +29,7 @@ export class UpsertMatchesUseCase {
   }
 
   private async loadLeaguesAndSeasons(): Promise<void> {
-    const leagues = await this.leagueRepository.getLeagues();
+    const leagues = await this.leagueRepository.findAllWithSeasons();
     this.leagueMap = new Map(
       leagues
         .filter((l) => l.externalId !== undefined)

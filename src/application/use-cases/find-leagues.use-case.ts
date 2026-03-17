@@ -6,7 +6,7 @@ export class FindLeaguesUseCase {
   constructor(private readonly leagueRepository: LeagueRepository) {}
 
   async execute(): Promise<FindLeagueResult[]> {
-    const leagues = await this.leagueRepository.getLeagues();
+    const leagues = await this.leagueRepository.findAllWithSeasons();
     return leagues.map(this.mapToResult);
   }
 

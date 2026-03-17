@@ -6,10 +6,9 @@ import {
   filterValidUpsertSeasonCommands,
   UpsertSeasonCommand,
 } from "../commands/upsert-season.command";
+import { BATCH_SIZE } from "../constants/batch.constants";
 
 export class UpsertSeasonsUseCase {
-  private static readonly BATCH_SIZE = 10;
-
   constructor(
     private readonly leagueRepository: LeagueRepository,
     private readonly seasonRepository: SeasonRepository
@@ -23,12 +22,8 @@ export class UpsertSeasonsUseCase {
 
     const validCommands = filterValidUpsertSeasonCommands(commands, leagueMap);
 
-    for (
-      let i = 0;
-      i < validCommands.length;
-      i += UpsertSeasonsUseCase.BATCH_SIZE
-    ) {
-      const batch = validCommands.slice(i, i + UpsertSeasonsUseCase.BATCH_SIZE);
+    for (let i = 0; i < validCommands.length; i += BATCH_SIZE) {
+      const batch = validCommands.slice(i, i + BATCH_SIZE);
       await Promise.allSettled(
         batch.map((command) =>
           this.processCommand(command, leagueMap.get(command.leagueExternalId)!)

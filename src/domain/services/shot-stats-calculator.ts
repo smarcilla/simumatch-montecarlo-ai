@@ -57,7 +57,7 @@ export interface ShotMatchStats {
 }
 
 export class ShotStatsCalculator {
-  static compute(shots: Shot[]): ShotMatchStats {
+  compute(shots: Shot[]): ShotMatchStats {
     let homeXg = 0;
     let awayXg = 0;
     let homeGoals = 0;
@@ -100,7 +100,7 @@ export class ShotStatsCalculator {
     };
   }
 
-  private static updateTeamStats(
+  private updateTeamStats(
     shot: Shot,
     stats: {
       homeXg: number;
@@ -123,7 +123,7 @@ export class ShotStatsCalculator {
     };
   }
 
-  private static updatePlayerStats(
+  private updatePlayerStats(
     shot: Shot,
     existing: PlayerShotStats | undefined
   ): PlayerShotStats {
@@ -139,7 +139,7 @@ export class ShotStatsCalculator {
     return createPlayerShotStats(shot);
   }
 
-  private static updateGoalkeeperStats(
+  private updateGoalkeeperStats(
     shot: Shot,
     existing: GoalkeeperShotStats | undefined
   ): GoalkeeperShotStats {
