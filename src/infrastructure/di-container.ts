@@ -43,6 +43,7 @@ import { MongooseSimulationRepository } from "./repositories/mongoose-simulation
 import { MongooseTeamRepository } from "./repositories/mongoose-team.repository";
 import { connectionManager } from "@/infrastructure/db/connection-manager";
 import { FindMatchByIdUseCase } from "@/application/use-cases/find-match-by-id.use-case";
+import { MongooseIdGeneratorService } from "./db/services/mongoose-id-generator.service";
 
 export class DIContainer {
   private static chronicleRepository: ChronicleRepository;
@@ -191,7 +192,8 @@ export class DIContainer {
       DIContainer.addShotsByShotRawUseCase = new AddShotsByShotRawUseCase(
         DIContainer.getPlayerRepository(),
         DIContainer.getMatchRepository(),
-        DIContainer.getShotRepository()
+        DIContainer.getShotRepository(),
+        new MongooseIdGeneratorService()
       );
     }
     return DIContainer.addShotsByShotRawUseCase;

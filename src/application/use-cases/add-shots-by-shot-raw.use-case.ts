@@ -9,12 +9,14 @@ import { ShotSituation } from "@/domain/value-objects/shot-situation.value";
 import { ShotType } from "@/domain/value-objects/shot-type.value";
 import { AddShotByShotRawCommand } from "../commands/add-shot-by-shot-raw.command";
 import { BATCH_SIZE } from "../constants/batch.constants";
+import { IdGeneratorService } from "@/domain/services/id-generator.service";
 
 export class AddShotsByShotRawUseCase {
   constructor(
     private readonly playerRepository: PlayerRepository,
     private readonly matchRepository: MatchRepository,
-    private readonly shotRepository: ShotRepository
+    private readonly shotRepository: ShotRepository,
+    private readonly idGeneratorService: IdGeneratorService
   ) {}
 
   async execute(commands: AddShotByShotRawCommand[]): Promise<void> {
@@ -107,7 +109,7 @@ export class AddShotsByShotRawUseCase {
       }
 
       const shot = new Shot(
-        "",
+        this.idGeneratorService.generateId(),
         command.externalId,
         command.xg,
         command.xgot,

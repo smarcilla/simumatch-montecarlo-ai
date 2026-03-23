@@ -4,6 +4,14 @@ echo "Running pre-push checks..."
 echo "Running tests..."
 pnpm test:ci || exit 1
 
+# e2e tests
+echo "Running e2e tests..."
+pnpm test:e2e || exit 1
+
+# Coverage
+echo "Checking coverage..."
+pnpm test:coverage || exit 1
+
 # Build
 echo "Building..."
 pnpm build || exit 1

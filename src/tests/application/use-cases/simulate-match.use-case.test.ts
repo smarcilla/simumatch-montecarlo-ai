@@ -58,7 +58,7 @@ describe("SimulateMatchUseCase", () => {
       result.homeWinProbability +
       result.drawProbability +
       result.awayWinProbability;
-    expect(total).toBeCloseTo(1, 1);
+    expect(total).toBeCloseTo(1, 2);
   });
 
   it("should return probabilities within valid range", async () => {

@@ -54,37 +54,4 @@ export class Match {
   get statusValue(): MatchStatusValue {
     return this.status.value;
   }
-
-  //   equals(other: Match): boolean {
-  //     return (
-  //       this.identityIsSameAs(other) &&
-  //       this.teamsAreSameAs(other) &&
-  //       this.dateIsSameAs(other) &&
-  //       this.statusIsSameAs(other) &&
-  //       this.scoreIsSameAs(other)
-  //     );
-  //   }
-
-  //   identityIsSameAs(other: Match): boolean {
-  //     return this.id === other.id && this.externalId === other.externalId;
-  //   }
-
-  //   teamsAreSameAs(other: Match): boolean {
-  //     return (
-  //       this.homeTeam.equals(other.homeTeam) &&
-  //       this.awayTeam.equals(other.awayTeam)
-  //     );
-  //   }
-
-  //   dateIsSameAs(other: Match): boolean {
-  //     return this.date.equals(other.date);
-  //   }
-
-  //   statusIsSameAs(other: Match): boolean {
-  //     return this.status.equals(other.status);
-  //   }
-
-  //   scoreIsSameAs(other: Match): boolean {
-  //     return this.score.equals(other.score);
-  //   }
 }

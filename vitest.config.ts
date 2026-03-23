@@ -7,6 +7,7 @@ export default defineConfig({
     globalSetup: ["src/tests/setup/global.setup.ts"],
     setupFiles: ["src/tests/setup/vitest.setup.ts"],
     fileParallelism: false,
+    exclude: ["e2e/**", "node_modules/**", ".next/**", "playwright.config.ts"],
     env: {
       MONGODB_NAME: "test",
     },
@@ -15,10 +16,10 @@ export default defineConfig({
       reporter: ["text", "json", "html"],
       thresholds: {
         global: {
-          lines: 10,
-          functions: 10,
-          branches: 10,
-          statements: 10,
+          lines: 40,
+          functions: 40,
+          branches: 40,
+          statements: 40,
         },
         "./src/application/use-cases": {
           lines: 80,

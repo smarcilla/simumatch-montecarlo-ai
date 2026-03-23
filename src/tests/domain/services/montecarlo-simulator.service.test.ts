@@ -77,7 +77,7 @@ describe("MonteCarloSimulatorService", () => {
       result.homeWinProbability +
       result.drawProbability +
       result.awayWinProbability;
-    expect(total).toBeCloseTo(1, 1);
+    expect(total).toBeCloseTo(1, 2);
   });
 
   it("should return probabilities between 0 and 1", () => {
@@ -188,8 +188,8 @@ describe("MonteCarloSimulatorService", () => {
     expect(result.scoreDistribution[0]!.away).toBe(0);
     expect(result.playerStats).toHaveLength(0);
     expect(result.momentumTimeline).toHaveLength(0);
-    expect(result.homeWinProbability).toBeCloseTo(0, 1);
-    expect(result.drawProbability).toBeCloseTo(1, 1);
-    expect(result.awayWinProbability).toBeCloseTo(0, 1);
+    expect(result.homeWinProbability).toBeCloseTo(0, 2);
+    expect(result.drawProbability).toBeCloseTo(1, 2);
+    expect(result.awayWinProbability).toBeCloseTo(0, 2);
   });
 });
