@@ -5,10 +5,16 @@ dotenv.config();
 
 import { connectionManager } from "../db/connection-manager";
 import { DIContainer } from "../di-container";
+import { UpsertLeagueCommand } from "@/application/commands/upsert-league.command";
+import { UpsertSeasonCommand } from "@/application/commands/upsert-season.command";
 import { UpsertTeamCommand } from "@/application/commands/upsert-team.command";
 import { UpsertMatchCommand } from "@/application/commands/upsert-match.command";
 import { AddPlayerByShotCommand } from "@/application/commands/add-player-by-shot.command";
 import { AddShotByShotRawCommand } from "@/application/commands/add-shot-by-shot-raw.command";
+import leaguesData from "./data/leagues.json";
+import seasonsRawData from "./data/seasons_raw.json";
+import matchesRawData from "./data/league_matches_raw.json";
+import shotsRawData from "./data/match_shots_raw.json";
 
 interface TeamData {
   name: string;
@@ -31,6 +37,12 @@ interface MatchRawDocument {
   startTimestamp: number;
   homeScore: { display: number };
   awayScore: { display: number };
+}
+
+interface SeasonRawDocument {
+  league_external_id: string;
+  season_name: string;
+  season_id: number;
 }
 
 interface RawPlayerData {
@@ -67,6 +79,45 @@ try {
   if (!db) {
     throw new Error("Database connection not established");
   }
+
+  console.log("Importing raw data from JSON files...");
+  const rawCollections = [
+    { name: "seasons_raw", data: seasonsRawData },
+    { name: "league_matches_raw", data: matchesRawData },
+    { name: "match_shots_raw", data: shotsRawData },
+  ];
+  for (const { name, data } of rawCollections) {
+    const collection = db.collection(name);
+    await collection.drop().catch(() => {});
+    await collection.insertMany(data as Record<string, unknown>[]);
+    console.log(`Imported ${name}: ${data.length} documents`);
+  }
+
+  console.log("Seeding leagues...");
+  const leagueCommands: UpsertLeagueCommand[] = leaguesData.map((league) => ({
+    name: league.name,
+    country: league.country,
+    externalId: league.externalId,
+    numericExternalId: league.numericExternalId,
+  }));
+  const upsertLeagues = await DIContainer.getUpsertLeaguesUseCase();
+  await upsertLeagues.execute(leagueCommands);
+  console.log(`Leagues seeded: ${leagueCommands.length}`);
+
+  console.log("Seeding seasons...");
+  const seasonCommands: UpsertSeasonCommand[] = (
+    seasonsRawData as SeasonRawDocument[]
+  )
+    .filter((s) => s.league_external_id && s.season_id)
+    .map((s) => ({
+      name: s.season_name,
+      seasonYear: s.season_name,
+      leagueExternalId: s.league_external_id,
+      externalId: s.season_id,
+    }));
+  const upsertSeasons = await DIContainer.getUpsertSeasonsUseCase();
+  await upsertSeasons.execute(seasonCommands);
+  console.log(`Seasons seeded: ${seasonCommands.length}`);
 
   console.log("Reading league_matches_raw collection...");
   const matchesRaw = await db

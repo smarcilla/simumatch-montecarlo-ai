@@ -27,7 +27,9 @@
     "seed:shots": "tsx src/infrastructure/scripts/seed-shots.script.ts",
     "seed:all": "tsx src/infrastructure/scripts/seed-all.script.ts",
     "clear:collections": "tsx src/infrastructure/scripts/clear-collections.script.ts",
-    "reset:db": "tsx src/infrastructure/scripts/reset-db.script.ts"
+    "reset:db": "tsx src/infrastructure/scripts/reset-db.script.ts",
+    "db:start": "docker compose up -d",
+    "db:stop": "docker compose down"
   },
   "dependencies": {
     "@genkit-ai/google-genai": "^1.29.0",
