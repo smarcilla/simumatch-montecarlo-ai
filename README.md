@@ -135,6 +135,14 @@ sequenceDiagram
     end
 ```
 
+### Presentation slides
+
+The project slides are available as an interactive Canva presentation:
+
+[https://simumatch-montecarlo-ai.my.canva.site/](https://simumatch-montecarlo-ai.my.canva.site/)
+
+---
+
 ### Testing scripts
 
 | Command              | Description                                                      |
