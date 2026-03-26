@@ -46,5 +46,6 @@ src/infrastructure/scripts/comps.yaml
 .github/prompts/
 docs/
 .vscode/settings.json
-playwright-report/index.html
-test-results/.last-run.json
+playwright-report/
+test-results/
+
