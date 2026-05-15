@@ -111,6 +111,17 @@ describe("GenkitChronicleGenerator", () => {
     expect(promptModule.invokeChroniclePrompt).toHaveBeenCalledTimes(1);
   });
 
+  it("should throw a ChronicleGenerationError when the AI prompt returns no content", async () => {
+    promptModule.invokeChroniclePrompt.mockResolvedValue(null);
+
+    await expect(generator.generate(generationContext)).rejects.toMatchObject({
+      name: "ChronicleGenerationError",
+      attempts: 1,
+      statusCode: undefined,
+    });
+    expect(promptModule.invokeChroniclePrompt).toHaveBeenCalledTimes(1);
+  });
+
   it("should wrap exhausted retries with infrastructure context", async () => {
     promptModule.invokeChroniclePrompt.mockRejectedValue({
       status: 503,
