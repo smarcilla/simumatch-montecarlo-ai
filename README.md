@@ -45,8 +45,9 @@ Create a `.env` file at the project root with the following variables:
 MONGODB_URI=mongodb://localhost:27020
 MONGODB_NAME=simumatch
 MONGODB_MAX_POOL_SIZE=20           # optional, default: 20
-GOOGLE_GENAI_API_KEY=your-api-key  # required for AI chronicle generation
-GENKIT_CHRONICLE_MODEL=gemini-3.1-flash-lite-preview  # optional, default: gemini-3.1-flash-lite-preview
+GEMINI_API_KEY=your-api-key        # required for AI chronicle generation
+# GOOGLE_API_KEY or GOOGLE_GENAI_API_KEY may also be used if preferred
+GENKIT_CHRONICLE_MODEL=gemini-3.1-flash-lite  # optional, default: gemini-3.1-flash-lite
 ```
 
 ### Installation

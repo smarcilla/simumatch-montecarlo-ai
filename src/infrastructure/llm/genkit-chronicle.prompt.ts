@@ -10,14 +10,26 @@ import {
   GeneratedChronicleSchema,
 } from "@/infrastructure/llm/chronicle.schemas";
 
+export const CHRONICLE_DEFAULT_MODEL = "gemini-3.1-flash-lite";
+
+export function resolveChronicleApiKey(): string | false {
+  return (
+    process.env.GOOGLE_API_KEY ??
+    process.env.GEMINI_API_KEY ??
+    process.env.GOOGLE_GENAI_API_KEY ??
+    false
+  );
+}
+
+export function resolveChronicleModelName(): string {
+  return process.env.GENKIT_CHRONICLE_MODEL ?? CHRONICLE_DEFAULT_MODEL;
+}
+
 const ai = genkit({
-  plugins: [googleAI()],
-  model: googleAI.model(
-    process.env.GENKIT_CHRONICLE_MODEL ?? "gemini-3.1-flash-lite-preview",
-    {
-      temperature: 0.8,
-    }
-  ),
+  plugins: [googleAI({ apiKey: resolveChronicleApiKey() })],
+  model: googleAI.model(resolveChronicleModelName(), {
+    temperature: 0.8,
+  }),
   promptDir: path.resolve(process.cwd(), "src/infrastructure/llm/prompts"),
 });
 
