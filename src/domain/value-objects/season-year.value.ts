@@ -9,7 +9,8 @@ export class SeasonYear {
   }
 
   private isValidSeasonYear(value: string): boolean {
-    return /^\d{2}\/\d{2}$/.test(value);
+    //TODO: Modificar esta validacion para que también soporte formato "2022" o "2026"
+    return /^\d{2}\/\d{2}$/.test(value) || /^\d{4}$/.test(value);
   }
 
   equals(other: SeasonYear): boolean {
