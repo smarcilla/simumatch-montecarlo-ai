@@ -15,6 +15,7 @@ import { UpsertLeaguesUseCase } from "@/application/use-cases/upsert-leagues.use
 import { ClearLeaguesUseCase } from "@/application/use-cases/clear-leagues.use-case";
 import { UpsertSeasonsUseCase } from "@/application/use-cases/upsert-seasons.use-case";
 import { ClearSeasonsUseCase } from "@/application/use-cases/clear-seasons.use-case";
+import { ClearChroniclesUseCase } from "@/application/use-cases/clear-chronicles.use-case";
 import { ClearSimulationsUseCase } from "@/application/use-cases/clear-simulations.use-case";
 import { ClearShotsUseCase } from "@/application/use-cases/clear-shots.use-case";
 import { ClearPlayersUseCase } from "@/application/use-cases/clear-players.use-case";
@@ -72,6 +73,7 @@ export class DIContainer {
   private static clearLeaguesUseCase: ClearLeaguesUseCase;
   private static upsertSeasonsUseCase: UpsertSeasonsUseCase;
   private static clearSeasonsUseCase: ClearSeasonsUseCase;
+  private static clearChroniclesUseCase: ClearChroniclesUseCase;
   private static clearSimulationsUseCase: ClearSimulationsUseCase;
   private static clearShotsUseCase: ClearShotsUseCase;
   private static clearPlayersUseCase: ClearPlayersUseCase;
@@ -329,6 +331,16 @@ export class DIContainer {
     return DIContainer.clearSeasonsUseCase;
   }
 
+  static async getClearChroniclesUseCase(): Promise<ClearChroniclesUseCase> {
+    await DIContainer.initializeDatabaseConnection();
+    if (!DIContainer.clearChroniclesUseCase) {
+      DIContainer.clearChroniclesUseCase = new ClearChroniclesUseCase(
+        DIContainer.getChronicleRepository()
+      );
+    }
+    return DIContainer.clearChroniclesUseCase;
+  }
+
   static async getClearSimulationsUseCase(): Promise<ClearSimulationsUseCase> {
     await DIContainer.initializeDatabaseConnection();
     if (!DIContainer.clearSimulationsUseCase) {
@@ -414,6 +426,8 @@ export class DIContainer {
     DIContainer.clearLeaguesUseCase = null as unknown as ClearLeaguesUseCase;
     DIContainer.upsertSeasonsUseCase = null as unknown as UpsertSeasonsUseCase;
     DIContainer.clearSeasonsUseCase = null as unknown as ClearSeasonsUseCase;
+    DIContainer.clearChroniclesUseCase =
+      null as unknown as ClearChroniclesUseCase;
     DIContainer.clearSimulationsUseCase =
       null as unknown as ClearSimulationsUseCase;
     DIContainer.clearShotsUseCase = null as unknown as ClearShotsUseCase;
