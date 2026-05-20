@@ -1,5 +1,11 @@
 [
   {
+    "name": "La Liga",
+    "country": "Spain",
+    "externalId": "Spain La Liga",
+    "numericExternalId": 8
+  },
+  {
     "name": "FIFA World Cup",
     "country": "World",
     "externalId": "FIFA World Cup",

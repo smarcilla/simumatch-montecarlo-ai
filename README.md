@@ -74,17 +74,32 @@ pnpm db:stop
 
 ### Seed the database
 
-The `seed:all` script loads the entire database from scratch: it imports the raw data (JSON files included in the repository) and from them generates all domain model collections (leagues, seasons, teams, matches, players and shots).
+The data sync flow is split into two separate processes.
+
+1. Sync the master league catalogue from the repository:
 
 ```bash
-pnpm seed:all
+pnpm seed:leagues
 ```
 
-To reset the domain model collections (drop and re-populate from the already imported raw data):
+2. Populate or refresh the raw MongoDB collections (`seasons_raw`, `league_matches_raw`, `match_shots_raw`) with the external ingestion pipeline.
+3. Once the raw collections are ready, sync the derived domain collections:
+
+```bash
+pnpm seed:derived
+pnpm seed:derived --league "FIFA World Cup"
+pnpm seed:derived --league "FIFA World Cup" --season "2026" --season "2022"
+```
+
+To clear derived collections and re-sync them from the already imported raw data:
 
 ```bash
 pnpm reset:db
+pnpm reset:db --league "FIFA World Cup"
+pnpm reset:db --league "FIFA World Cup" --season "2026"
 ```
+
+`reset:db` always clears `chronicles` and `simulations`, then re-syncs only the seeded collections (`seasons`, `matches`, `shots`).
 
 ### Development
 
@@ -357,53 +372,54 @@ flowchart LR
 
 ### 4. Initial data loading
 
-The project includes a set of ingestion scripts located in `src/infrastructure/scripts/` that populate the database collections from static JSON files bundled in the repository (`data/`).
+The project includes a set of database scripts located in `src/infrastructure/scripts/` that separate master data synchronisation from derived collection synchronisation.
 
 The scripts are **completely agnostic to the MongoDB instance**: they connect via the `MONGODB_URI` environment variable, so they work identically against a local Docker instance, a self-hosted instance or the database hosted on MongoDB Atlas. Configuring the `.env` file is all that is needed.
 
 #### Data sources
 
-| JSON file                 | Target collection    |
-| ------------------------- | -------------------- |
-| `leagues.json`            | `leagues`            |
-| `seasons_raw.json`        | `seasons_raw`        |
-| `league_matches_raw.json` | `league_matches_raw` |
-| `match_shots_raw.json`    | `match_shots_raw`    |
+| Source                          | Role                                        | Target collection    |
+| ------------------------------- | ------------------------------------------- | -------------------- |
+| `leagues.json`                  | Master catalogue managed in this repository | `leagues`            |
+| External raw ingestion pipeline | Raw seasons payload                         | `seasons_raw`        |
+| External raw ingestion pipeline | Raw match payload                           | `league_matches_raw` |
+| External raw ingestion pipeline | Raw shot payload                            | `match_shots_raw`    |
 
 #### Synchronisation process
 
-The scripts do not write directly to the database: they invoke **use cases** through the dependency injection container (`DIContainer`), respecting the hexagonal architecture. Each use case receives a `Command` with the JSON data and performs an upsert operation on the corresponding domain collection.
+The scripts do not write directly to the database: they invoke **use cases** through the dependency injection container (`DIContainer`), respecting the hexagonal architecture. Each use case receives a `Command` and performs an upsert operation on the corresponding domain collection.
 
 The execution order matters due to dependencies between collections:
 
-1. `seed:leagues` — syncs leagues from `leagues.json`
-2. `seed:seasons` — syncs seasons from `seasons_raw.json`
-3. `seed:teams` + `seed:matches` — syncs teams and matches from `league_matches_raw.json`
-4. `seed:players` + `seed:shots` — syncs players and shots from `match_shots_raw.json`
+1. `seed:leagues` syncs the master league catalogue from `leagues.json`
+2. An external ingestion pipeline populates `seasons_raw`, `league_matches_raw`, and `match_shots_raw`
+3. `seed:derived` syncs `seasons`, `teams`, `matches`, `players`, and `shots` from the raw MongoDB collections
+4. `reset:db` clears `chronicles` and `simulations`, clears the seeded collections fully or by filter, then reuses the same derived sync pipeline
 
-The `seed:all` script runs all of the above steps in the correct order in a single call. The `reset:db` script re-syncs only the derived domain collections (teams, matches, players and shots) from the already-imported `*_raw` collections, without needing to reload the JSON files.
+The individual `seed:seasons`, `seed:teams`, `seed:matches`, `seed:players`, and `seed:shots` scripts remain available for targeted maintenance, but `seed:derived` is the recommended operational entry point for derived collections.
 
 ```mermaid
 flowchart TD
-    subgraph Files["📁 Static data (JSON)"]
+    subgraph Master["Master data"]
         LJ["leagues.json"]
-        SJ["seasons_raw.json"]
-        MJ["league_matches_raw.json"]
-        SHJ["match_shots_raw.json"]
-    end
-
-    subgraph Scripts["⚙️ Scripts (infrastructure/scripts/)"]
         SL["seed:leagues"]
-        SS["seed:seasons"]
-        ST["seed:teams"]
-        SM["seed:matches"]
-        SP["seed:players"]
-        SSH["seed:shots"]
-        SALL["seed:all (orchestrates all)"]
-        RESET["reset:db (re-syncs from *_raw)"]
+        CL["leagues"]
     end
 
-    subgraph UC["Use Cases (via DIContainer)"]
+    subgraph Raw["External raw ingestion"]
+        EXT["Python / ETL scripts"]
+        SR["seasons_raw"]
+        MR["league_matches_raw"]
+        SHR["match_shots_raw"]
+    end
+
+    subgraph Scripts["Sync scripts"]
+        SD["seed:derived (--league --season)"]
+        RESET["reset:db (--league --season)"]
+        CLEAR["clear chronicles + simulations"]
+    end
+
+    subgraph UC["Use Cases via DIContainer"]
         UCL["UpsertLeague"]
         UCS["UpsertSeason"]
         UCT["UpsertTeam"]
@@ -412,24 +428,35 @@ flowchart TD
         UCSH["AddShotByShotRaw"]
     end
 
-    subgraph MongoDB["🗄️ MongoDB (Atlas or local)"]
-        CL["leagues"]
+    subgraph MongoDB["MongoDB (Atlas or local)"]
         CS["seasons"]
         CT["teams"]
         CM["matches"]
         CP["players"]
         CSH["shots"]
+        CCH["chronicles"]
+        CSI["simulations"]
     end
 
     LJ --> SL --> UCL --> CL
-    SJ --> SS --> UCS --> CS
-    MJ --> ST --> UCT --> CT
-    MJ --> SM --> UCM --> CM
-    SHJ --> SP --> UCP --> CP
-    SHJ --> SSH --> UCSH --> CSH
+    EXT --> SR
+    EXT --> MR
+    EXT --> SHR
 
-    SALL -.->|runs in order| SL & SS & ST & SM & SP & SSH
-    RESET -.->|re-syncs from *_raw| ST & SM & SP & SSH
+    SR --> SD
+    MR --> SD
+    SHR --> SD
+    SD --> UCS --> CS
+    SD --> UCT --> CT
+    SD --> UCM --> CM
+    SD --> UCP --> CP
+    SD --> UCSH --> CSH
+
+    RESET -.->|always clears| CLEAR
+    CLEAR --> CCH
+    CLEAR --> CSI
+    RESET -.->|clears seeded collections| CS & CT & CM & CP & CSH
+    RESET -.->|reuses derived sync| SD
 ```
 
 ---

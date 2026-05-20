@@ -4,4 +4,5 @@ export interface SimulationRepository {
   upsert(simulation: Simulation): Promise<void>;
   findByMatchId(matchId: string): Promise<Simulation | null>;
   deleteAll(): Promise<void>;
+  deleteByMatchIds(matchIds: string[]): Promise<void>;
 }

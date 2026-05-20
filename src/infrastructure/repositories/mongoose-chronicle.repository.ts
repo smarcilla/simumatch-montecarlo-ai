@@ -42,6 +42,18 @@ export class MongooseChronicleRepository implements ChronicleRepository {
     await ChronicleModel.deleteMany({});
   }
 
+  async deleteByMatchIds(matchIds: string[]): Promise<void> {
+    if (matchIds.length === 0) {
+      return;
+    }
+
+    await ChronicleModel.deleteMany({
+      matchId: {
+        $in: matchIds.map((matchId) => new Types.ObjectId(matchId)),
+      },
+    });
+  }
+
   private mapToEntity(doc: IChronicleDocument): Chronicle {
     return new Chronicle(
       doc._id.toString(),

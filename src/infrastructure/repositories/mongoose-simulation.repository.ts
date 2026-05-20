@@ -41,6 +41,18 @@ export class MongooseSimulationRepository implements SimulationRepository {
     await SimulationModel.deleteMany({});
   }
 
+  async deleteByMatchIds(matchIds: string[]): Promise<void> {
+    if (matchIds.length === 0) {
+      return;
+    }
+
+    await SimulationModel.deleteMany({
+      matchId: {
+        $in: matchIds.map((matchId) => new Types.ObjectId(matchId)),
+      },
+    });
+  }
+
   private mapToEntity(doc: ISimulationDocument): Simulation {
     return new Simulation(
       doc._id.toString(),
