@@ -15,7 +15,9 @@ import { UpsertLeaguesUseCase } from "@/application/use-cases/upsert-leagues.use
 import { ClearLeaguesUseCase } from "@/application/use-cases/clear-leagues.use-case";
 import { UpsertSeasonsUseCase } from "@/application/use-cases/upsert-seasons.use-case";
 import { ClearSeasonsUseCase } from "@/application/use-cases/clear-seasons.use-case";
+import { ClearChroniclesByMatchIdsUseCase } from "@/application/use-cases/clear-chronicles-by-match-ids.use-case";
 import { ClearChroniclesUseCase } from "@/application/use-cases/clear-chronicles.use-case";
+import { ClearSimulationsByMatchIdsUseCase } from "@/application/use-cases/clear-simulations-by-match-ids.use-case";
 import { ClearSimulationsUseCase } from "@/application/use-cases/clear-simulations.use-case";
 import { ClearShotsUseCase } from "@/application/use-cases/clear-shots.use-case";
 import { ClearPlayersUseCase } from "@/application/use-cases/clear-players.use-case";
@@ -73,7 +75,9 @@ export class DIContainer {
   private static clearLeaguesUseCase: ClearLeaguesUseCase;
   private static upsertSeasonsUseCase: UpsertSeasonsUseCase;
   private static clearSeasonsUseCase: ClearSeasonsUseCase;
+  private static clearChroniclesByMatchIdsUseCase: ClearChroniclesByMatchIdsUseCase;
   private static clearChroniclesUseCase: ClearChroniclesUseCase;
+  private static clearSimulationsByMatchIdsUseCase: ClearSimulationsByMatchIdsUseCase;
   private static clearSimulationsUseCase: ClearSimulationsUseCase;
   private static clearShotsUseCase: ClearShotsUseCase;
   private static clearPlayersUseCase: ClearPlayersUseCase;
@@ -331,6 +335,17 @@ export class DIContainer {
     return DIContainer.clearSeasonsUseCase;
   }
 
+  static async getClearChroniclesByMatchIdsUseCase(): Promise<ClearChroniclesByMatchIdsUseCase> {
+    await DIContainer.initializeDatabaseConnection();
+    if (!DIContainer.clearChroniclesByMatchIdsUseCase) {
+      DIContainer.clearChroniclesByMatchIdsUseCase =
+        new ClearChroniclesByMatchIdsUseCase(
+          DIContainer.getChronicleRepository()
+        );
+    }
+    return DIContainer.clearChroniclesByMatchIdsUseCase;
+  }
+
   static async getClearChroniclesUseCase(): Promise<ClearChroniclesUseCase> {
     await DIContainer.initializeDatabaseConnection();
     if (!DIContainer.clearChroniclesUseCase) {
@@ -339,6 +354,17 @@ export class DIContainer {
       );
     }
     return DIContainer.clearChroniclesUseCase;
+  }
+
+  static async getClearSimulationsByMatchIdsUseCase(): Promise<ClearSimulationsByMatchIdsUseCase> {
+    await DIContainer.initializeDatabaseConnection();
+    if (!DIContainer.clearSimulationsByMatchIdsUseCase) {
+      DIContainer.clearSimulationsByMatchIdsUseCase =
+        new ClearSimulationsByMatchIdsUseCase(
+          DIContainer.getSimulationRepository()
+        );
+    }
+    return DIContainer.clearSimulationsByMatchIdsUseCase;
   }
 
   static async getClearSimulationsUseCase(): Promise<ClearSimulationsUseCase> {
@@ -426,8 +452,12 @@ export class DIContainer {
     DIContainer.clearLeaguesUseCase = null as unknown as ClearLeaguesUseCase;
     DIContainer.upsertSeasonsUseCase = null as unknown as UpsertSeasonsUseCase;
     DIContainer.clearSeasonsUseCase = null as unknown as ClearSeasonsUseCase;
+    DIContainer.clearChroniclesByMatchIdsUseCase =
+      null as unknown as ClearChroniclesByMatchIdsUseCase;
     DIContainer.clearChroniclesUseCase =
       null as unknown as ClearChroniclesUseCase;
+    DIContainer.clearSimulationsByMatchIdsUseCase =
+      null as unknown as ClearSimulationsByMatchIdsUseCase;
     DIContainer.clearSimulationsUseCase =
       null as unknown as ClearSimulationsUseCase;
     DIContainer.clearShotsUseCase = null as unknown as ClearShotsUseCase;
