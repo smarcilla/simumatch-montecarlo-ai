@@ -7,8 +7,9 @@ export function Header() {
       <div className="header-content">
         <div className="app-logo">
           <div>
-            <h1 className="app-title">SimuMatch AI</h1>
-            <p className="app-subtitle">Monte Carlo Simulations</p>
+            <span className="logo-expected">Expected</span>
+            <span className="logo-score">Score</span>
+            <span className="logo-domain">.app</span>
           </div>
         </div>
         <div className="header-actions">

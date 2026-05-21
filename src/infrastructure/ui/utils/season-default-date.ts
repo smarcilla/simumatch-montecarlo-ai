@@ -1,12 +1,28 @@
 export function getDefaultDateForSeason(seasonYear: string): Date {
   const today = new Date();
-  const parts = seasonYear.split("/");
-  const firstYY = parts[0];
-  const secondYY = parts[1];
-  const month = today.getMonth();
-  const yearSuffix = month <= 6 ? secondYY : firstYY;
-  const fullYear = 2000 + Number.parseInt(yearSuffix!, 10);
-  return new Date(fullYear, today.getMonth(), today.getDate());
+
+  if (!seasonYear) return today;
+
+  if (seasonYear.includes("/")) {
+    const parts = seasonYear.split("/");
+    const firstYY = parts[0];
+    const secondYY = parts[1];
+    const month = today.getMonth();
+    const yearSuffix = month <= 6 && secondYY ? secondYY : firstYY;
+    let fullYear = Number.parseInt(yearSuffix!, 10);
+    if (!Number.isNaN(fullYear)) {
+      if (fullYear < 100) fullYear += 2000;
+      return new Date(fullYear, today.getMonth(), today.getDate());
+    }
+  } else {
+    let fullYear = Number.parseInt(seasonYear, 10);
+    if (!Number.isNaN(fullYear)) {
+      if (fullYear < 100) fullYear += 2000;
+      return new Date(fullYear, today.getMonth(), today.getDate());
+    }
+  }
+
+  return today;
 }
 
 export function formatDateToInput(date: Date): string {

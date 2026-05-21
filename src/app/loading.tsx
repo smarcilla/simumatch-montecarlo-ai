@@ -2,7 +2,7 @@ export default function Loading() {
   return (
     <div className="main-content">
       <div className="info-banner">
-        <h2>SimuMatch AI</h2>
+        <h2>ExpectedScore.app</h2>
         <p className="text-muted">...</p>
       </div>
 

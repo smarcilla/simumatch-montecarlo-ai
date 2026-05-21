@@ -13,7 +13,7 @@ export class HomePage {
     this.sidebar = page.locator(".dashboard-sidebar");
     this.matchCards = page.locator(".match-card");
     this.pagination = page.locator("nav.pagination");
-    this.welcomeBanner = page.locator(".info-banner");
+    this.welcomeBanner = page.locator(".landing-hero");
     this.pageHeader = page.locator(".page-header");
   }
 

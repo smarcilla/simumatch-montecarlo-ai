@@ -15,26 +15,41 @@ El sistema SHALL limpiar todas las colecciones dependientes cuando se ejecuta si
 
 ### Requirement: Reset granular por liga
 
-El sistema SHALL permitir un reset limitado a una liga mediante el flag `--league <externalId>`. Las colecciones **frontend-generated** (`chronicles`, `simulations`) se borran siempre en su totalidad. Las colecciones **seeded** se borran y resincronizazan solo para esa liga.
+El sistema SHALL permitir un reset limitado a una liga mediante el flag `--league <externalId>`. Las colecciones `chronicles` y `simulations` se borran únicamente para los `matchId` pertenecientes a los partidos de esa liga. Las colecciones `players` y `teams` **no se eliminan** en un reset filtrado. Las colecciones **seeded** `shots` y `matches` se borran y resincronizazan solo para esa liga; `seasons` también.
 
-#### Scenario: Reset por liga borra frontend-generated y resincroniza solo esa liga
+#### Scenario: Reset por liga borra chronicles y simulations solo de esa liga
 
 - **WHEN** se ejecuta `pnpm reset:db --league "FIFA World Cup"`
-- **THEN** el script borra todos los `chronicles` y `simulations`, borra shots, players, matches, teams y seasons asociados a FIFA World Cup, y los resincroniza desde los raw correspondientes
+- **THEN** el script borra únicamente los `chronicles` y `simulations` cuyo `matchId` pertenece a un partido de FIFA World Cup, y deja intactos los de otras ligas
+
+#### Scenario: Reset por liga no elimina players ni teams
+
+- **WHEN** se ejecuta `pnpm reset:db --league "FIFA World Cup"`
+- **THEN** ningún documento de la colección `players` ni de la colección `teams` es eliminado
+
+#### Scenario: Reset por liga borra y resincroniza shots, matches y seasons de esa liga
+
+- **WHEN** se ejecuta `pnpm reset:db --league "FIFA World Cup"`
+- **THEN** el script borra shots, matches y seasons asociados a FIFA World Cup, y los resincroniza desde los raw correspondientes
 
 ### Requirement: Reset granular por liga y temporada
 
-El sistema SHALL permitir un reset limitado a una liga y una o varias temporadas mediante los flags `--league` y `--season`. Las colecciones **frontend-generated** (`chronicles`, `simulations`) se borran siempre en su totalidad. Las colecciones **seeded** se borran y resincronizazan solo para esa liga+temporada.
+El sistema SHALL permitir un reset limitado a una liga y una o varias temporadas mediante los flags `--league` y `--season`. Las colecciones `chronicles` y `simulations` se borran únicamente para los `matchId` pertenecientes a los partidos de esa liga+temporada. Las colecciones `players` y `teams` **no se eliminan**. Las colecciones **seeded** `shots`, `matches` y `seasons` se borran y resincronizazan solo para esa liga+temporada.
 
-#### Scenario: Reset por liga y temporada única
+#### Scenario: Reset por liga y temporada única no borra data de otras ligas
 
 - **WHEN** se ejecuta `pnpm reset:db --league "Spain La Liga" --season "25/26"`
-- **THEN** el script borra todos los `chronicles` y `simulations`, borra shots, players, matches, teams y seasons de La Liga temporada "25/26" y los resincroniza
+- **THEN** el script borra solo los `chronicles`, `simulations` y datos seeded de La Liga temporada "25/26", sin afectar datos de otras ligas o temporadas
 
 #### Scenario: Reset por liga y múltiples temporadas
 
 - **WHEN** se ejecuta `pnpm reset:db --league "FIFA World Cup" --season "2026" --season "2022"`
-- **THEN** el script borra todos los `chronicles` y `simulations`, y borra y resincroniza los datos de FIFA World Cup para las temporadas 2026 y 2022
+- **THEN** el script borra y resincroniza los datos de FIFA World Cup para las temporadas 2026 y 2022, sin eliminar players ni teams
+
+#### Scenario: Reset por liga y temporada no elimina players ni teams
+
+- **WHEN** se ejecuta `pnpm reset:db --league "FIFA World Cup" --season "2022"`
+- **THEN** ningún documento de la colección `players` ni de la colección `teams` es eliminado
 
 ### Requirement: Misma interfaz de filtros que seed:derived
 
@@ -45,19 +60,29 @@ El sistema SHALL usar exactamente la misma interfaz CLI (`--league`, `--season`)
 - **WHEN** se consulta la ayuda o documentación de `reset:db`
 - **THEN** los flags `--league` y `--season` se comportan igual que en `seed:derived`
 
-### Requirement: Las colecciones frontend-generated se borran siempre en su totalidad
+### Requirement: Las colecciones frontend-generated se borran de forma segura
 
-El sistema SHALL borrar siempre la totalidad de las colecciones `chronicles` y `simulations` durante cualquier reset (con o sin filtros), ya que estas colecciones son generadas por el frontend y dependen de `matches` que pueden cambiar. No se resincronizazan: la UI las regenera bajo demanda.
+El sistema SHALL borrar `chronicles` y `simulations` de manera segura durante cualquier reset:
 
-#### Scenario: Chronicles y simulations se borran en reset granular
+- En un **reset sin filtros**, se borran en su totalidad (comportamiento existente).
+- En un **reset filtrado** (con `--league` y/o `--season`), se borran únicamente aquellos documentos cuyo `matchId` pertenece a los partidos del scope del reset.
 
-- **WHEN** se ejecuta `pnpm reset:db` con cualquier combinación de filtros
+Estas colecciones no se resincronizazan: la UI las regenera bajo demanda.
+
+#### Scenario: Chronicles y simulations se borran en su totalidad en reset completo
+
+- **WHEN** se ejecuta `pnpm reset:db` sin argumentos
 - **THEN** las colecciones `chronicles` y `simulations` quedan vacías al finalizar el script
+
+#### Scenario: Chronicles y simulations se borran parcialmente en reset filtrado
+
+- **WHEN** se ejecuta `pnpm reset:db --league "FIFA World Cup" --season "2022"`
+- **THEN** solo los `chronicles` y `simulations` cuyo `matchId` pertenece a un partido de FIFA World Cup 2022 son eliminados; el resto permanece intacto
 
 #### Scenario: Chronicles y simulations NO se repueblan
 
 - **WHEN** finaliza la ejecución de `pnpm reset:db`
-- **THEN** las colecciones `chronicles` y `simulations` permanecen vacías (no hay reseed de estas colecciones)
+- **THEN** las colecciones `chronicles` y `simulations` no son repobladas por el script (las regenera la UI)
 
 ### Requirement: Advertencia en uso sin filtros
 
