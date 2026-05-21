@@ -7,15 +7,33 @@
     "backToMatch": "← Volver al partido"
   },
   "layout": {
-    "title": "SimuMatch AI - Simulaciones de Monte Carlo para fútbol",
-    "description": "Descubre qué hubiera pasado con 100.000 simulaciones avanzadas",
+    "title": "ExpectedScore.app | ¿Quién mereció ganar? Simulador de Justicia Estadística",
+    "description": "Simulamos cada partido 10.000 veces con los xG reales. Eliminamos el factor suerte para descubrir el marcador estadísticamente más justo.",
     "competitions": "Competiciones",
     "openCompetitionsMenu": "Abrir menú de competiciones",
-    "pagination": "Paginación"
+    "pagination": "Paginación",
+    "hero": {
+      "headline": "¿Quién mereció ganar realmente?",
+      "subtitle": "El marcador miente. Descubre el resultado más justo gracias a la estadística avanzada.",
+      "steps": {
+        "xg": {
+          "title": "1. Datos xG Reales",
+          "description": "Extraemos la calidad de cada ocasión (Expected Goals) de la base de datos."
+        },
+        "montecarlo": {
+          "title": "2. Simulación Monte Carlo",
+          "description": "Jugamos el partido 10.000 veces según la probabilidad de cada disparo para aislar el factor suerte."
+        },
+        "score": {
+          "title": "3. Marcador Justo",
+          "description": "Te mostramos el ExpectedScore: el resultado que mejor refleja el peligro generado por cada equipo."
+        }
+      }
+    }
   },
   "match": {
-    "welcome": "Bienvenido a SimuMatch",
-    "selectCompetition": "Selecciona una competición para ver los partidos",
+    "welcome": "Audita los Resultados de la Jornada",
+    "selectCompetition": "El marcador final no siempre cuenta la historia completa. Selecciona una liga para descubrir qué partidos se ganaron por puro azar y cuáles por mérito real.",
     "matchesList": "Listado de Partidos",
     "loading": "Cargando...",
     "matches": "partidos",

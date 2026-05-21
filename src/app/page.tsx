@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { DashboardLayout } from "@/infrastructure/ui/layout/DashboardLayout";
+import { LandingHero } from "@/infrastructure/ui/components/LandingHero";
 import { getMatchesByLeagueAndSeason } from "@/infrastructure/actions/match.actions";
 import { getLeagues } from "@/infrastructure/actions/league.actions";
 import { Pagination } from "@/infrastructure/ui/components/Pagination";
@@ -27,14 +28,10 @@ export default async function Home(props: PageProps) {
   const dateToRaw = searchParams.dateTo;
 
   if (!leagueId || !seasonId) {
-    const t = await getTranslations("match");
     return (
       <DashboardLayout>
         <div className="main-content">
-          <div className="info-banner">
-            <h2>{t("welcome")}</h2>
-            <p className="text-muted">{t("selectCompetition")}</p>
-          </div>
+          <LandingHero />
         </div>
       </DashboardLayout>
     );
