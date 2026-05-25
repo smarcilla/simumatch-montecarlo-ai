@@ -76,6 +76,8 @@ export default async function SimulationPage({
           awayColor={match.awayColorPrimary}
           homeColorSecondary={match.homeColorSecondary}
           awayColorSecondary={match.awayColorSecondary}
+          homeFlag={match.homeFlag}
+          awayFlag={match.awayFlag}
         />
         <PlayerStatsChart
           playerStats={simulation.playerStats}
@@ -85,6 +87,8 @@ export default async function SimulationPage({
           awayColor={match.awayColorPrimary}
           homeColorSecondary={match.homeColorSecondary}
           awayColorSecondary={match.awayColorSecondary}
+          homeFlag={match.homeFlag}
+          awayFlag={match.awayFlag}
         />
         <MomentumTimelineChart
           momentumTimeline={simulation.momentumTimeline}

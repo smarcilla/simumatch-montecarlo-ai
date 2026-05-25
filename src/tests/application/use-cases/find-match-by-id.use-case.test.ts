@@ -19,8 +19,8 @@ describe("FindMatchByIdUseCase", () => {
   it("should return a match with all expected fields", async () => {
     const league = await buildLeague();
     const season = await buildSeason(league._id);
-    const homeTeam = await buildTeam();
-    const awayTeam = await buildTeam();
+    const homeTeam = await buildTeam({ flagUrl: "https://flagcdn.com/es.svg" });
+    const awayTeam = await buildTeam({ flagUrl: "https://flagcdn.com/fr.svg" });
     const match = await buildMatch(
       league._id,
       season._id,
@@ -42,6 +42,8 @@ describe("FindMatchByIdUseCase", () => {
     expect(result!).toHaveProperty("homeColorSecondary");
     expect(result!).toHaveProperty("awayColorPrimary");
     expect(result!).toHaveProperty("awayColorSecondary");
+    expect(result!.homeFlag).toBe("https://flagcdn.com/es.svg");
+    expect(result!.awayFlag).toBe("https://flagcdn.com/fr.svg");
     expect(result!).toHaveProperty("homeScore");
     expect(result!).toHaveProperty("awayScore");
   });

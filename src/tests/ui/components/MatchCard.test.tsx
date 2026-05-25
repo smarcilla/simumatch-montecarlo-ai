@@ -37,6 +37,8 @@ function buildMatch(
     homeColorSecondary: "#004D98",
     awayColorPrimary: "#FFFFFF",
     awayColorSecondary: "#000000",
+    homeFlag: undefined,
+    awayFlag: undefined,
     homeScore: 2,
     awayScore: 1,
     status: "finished",
@@ -108,6 +110,23 @@ describe("MatchCard", () => {
     const { container } = render(<MatchCard match={buildMatch()} />);
     const svgs = container.querySelectorAll("svg.team-shield-svg");
     expect(svgs.length).toBe(2);
+  });
+
+  it("should render flags when match has homeFlag and awayFlag", () => {
+    render(
+      <MatchCard
+        match={buildMatch({
+          homeFlag: "https://flagcdn.com/es.svg",
+          awayFlag: "https://flagcdn.com/fr.svg",
+        })}
+      />
+    );
+
+    const homeFlag = screen.getByAltText("FC Barcelona") as HTMLImageElement;
+    const awayFlag = screen.getByAltText("Real Madrid") as HTMLImageElement;
+
+    expect(homeFlag.getAttribute("src")).toContain("flagcdn.com/es.svg");
+    expect(awayFlag.getAttribute("src")).toContain("flagcdn.com/fr.svg");
   });
 
   it("should apply team colors as CSS variables", () => {

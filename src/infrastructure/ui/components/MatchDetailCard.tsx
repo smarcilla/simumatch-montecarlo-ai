@@ -2,50 +2,13 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { FindMatchByIdResult } from "@/application/results/find-match-by-id.result";
+import { TeamBadge } from "@/infrastructure/ui/components/TeamBadge";
 
 const STATUS_KEYS: Record<string, string> = {
   finished: "finished",
   simulated: "simulated",
   chronicle_generated: "chronicle_generated",
 };
-
-function TeamShield({
-  primary,
-  secondary,
-}: {
-  readonly primary: string;
-  readonly secondary: string;
-}) {
-  return (
-    <svg
-      width="64"
-      height="74"
-      viewBox="0 0 40 46"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path
-        d="M20 2L4 8V22C4 32 11.5 40.5 20 44C28.5 40.5 36 32 36 22V8L20 2Z"
-        fill={primary}
-        stroke="rgba(0,0,0,0.25)"
-        strokeWidth="1"
-      />
-      <clipPath id={`clip-${primary.replace("#", "")}-detail`}>
-        <path d="M20 2L4 8V22C4 32 11.5 40.5 20 44C28.5 40.5 36 32 36 22V8L20 2Z" />
-      </clipPath>
-      <rect
-        x="24"
-        y="0"
-        width="12"
-        height="46"
-        fill={secondary}
-        fillOpacity="0.75"
-        clipPath={`url(#clip-${primary.replace("#", "")}-detail)`}
-      />
-    </svg>
-  );
-}
 
 interface MatchDetailCardProps {
   readonly match: FindMatchByIdResult;
@@ -69,9 +32,12 @@ export function MatchDetailCard({ match }: MatchDetailCardProps) {
     >
       <div className="match-detail-teams">
         <div className="match-detail-team home">
-          <TeamShield
+          <TeamBadge
             primary={match.homeColorPrimary}
             secondary={match.homeColorSecondary}
+            teamName={match.home}
+            flagUrl={match.homeFlag}
+            size="detail"
           />
           <span className="match-detail-team-name">{match.home}</span>
         </div>
@@ -83,9 +49,12 @@ export function MatchDetailCard({ match }: MatchDetailCardProps) {
         </div>
 
         <div className="match-detail-team away">
-          <TeamShield
+          <TeamBadge
             primary={match.awayColorPrimary}
             secondary={match.awayColorSecondary}
+            teamName={match.away}
+            flagUrl={match.awayFlag}
+            size="detail"
           />
           <span className="match-detail-team-name">{match.away}</span>
         </div>

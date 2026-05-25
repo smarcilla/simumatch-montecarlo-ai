@@ -148,7 +148,8 @@ export class MongooseMatchRepository implements MatchRepository {
       doc.homeTeamId.slug,
       doc.homeTeamId.shortName,
       Color.create(doc.homeTeamId.primaryColor),
-      Color.create(doc.homeTeamId.secondaryColor)
+      Color.create(doc.homeTeamId.secondaryColor),
+      doc.homeTeamId.flagUrl
     );
 
     // Mapear Away Team
@@ -159,7 +160,8 @@ export class MongooseMatchRepository implements MatchRepository {
       doc.awayTeamId.slug,
       doc.awayTeamId.shortName,
       Color.create(doc.awayTeamId.primaryColor),
-      Color.create(doc.awayTeamId.secondaryColor)
+      Color.create(doc.awayTeamId.secondaryColor),
+      doc.awayTeamId.flagUrl
     );
 
     // Mapear Value Objects

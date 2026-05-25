@@ -8,7 +8,8 @@ export class Team {
     readonly slug: string,
     readonly shortName: string,
     readonly primaryColor: Color,
-    readonly secondaryColor: Color
+    readonly secondaryColor: Color,
+    readonly flagUrl?: string
   ) {}
 
   //   equals(other: Team): boolean {

@@ -7,6 +7,7 @@ export interface ITeamDocument extends Document {
   primaryColor: string;
   secondaryColor: string;
   externalId: number;
+  flagUrl?: string;
 }
 
 const TeamSchema = new Schema<ITeamDocument>(
@@ -17,6 +18,7 @@ const TeamSchema = new Schema<ITeamDocument>(
     primaryColor: { type: String, required: true },
     secondaryColor: { type: String, required: true },
     externalId: { type: Number, required: true, unique: true },
+    flagUrl: { type: String, required: false },
   },
   { timestamps: true }
 );

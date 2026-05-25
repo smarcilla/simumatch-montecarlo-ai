@@ -1,4 +1,4 @@
-import { TableTeamShield } from "@/infrastructure/ui/components/ShotIcons";
+import { TableTeamBadge } from "@/infrastructure/ui/components/ShotIcons";
 import { getTranslations } from "next-intl/server";
 
 interface ShotXgBarProps {
@@ -12,6 +12,8 @@ interface ShotXgBarProps {
   readonly awayColor: string;
   readonly homeColorSecondary: string;
   readonly awayColorSecondary: string;
+  readonly homeFlag: string | undefined;
+  readonly awayFlag: string | undefined;
 }
 
 export async function ShotXgBar({
@@ -25,6 +27,8 @@ export async function ShotXgBar({
   awayColor,
   homeColorSecondary,
   awayColorSecondary,
+  homeFlag,
+  awayFlag,
 }: ShotXgBarProps) {
   const t = await getTranslations("common");
   const tSim = await getTranslations("simulation");
@@ -45,10 +49,11 @@ export async function ShotXgBar({
         }
       >
         <div className="shot-stats-xg-team-header">
-          <TableTeamShield
+          <TableTeamBadge
             primary={homeColor}
             secondary={homeColorSecondary}
             name={homeTeam}
+            flagUrl={homeFlag}
           />
           <span className="shot-stats-xg-team-name">{homeTeam}</span>
         </div>
@@ -72,10 +77,11 @@ export async function ShotXgBar({
       >
         <div className="shot-stats-xg-team-header">
           <span className="shot-stats-xg-team-name">{awayTeam}</span>
-          <TableTeamShield
+          <TableTeamBadge
             primary={awayColor}
             secondary={awayColorSecondary}
             name={awayTeam}
+            flagUrl={awayFlag}
           />
         </div>
         <span className="shot-stats-xg-value">{awayXgFormatted} xG</span>

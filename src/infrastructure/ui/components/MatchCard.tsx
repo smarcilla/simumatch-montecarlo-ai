@@ -4,50 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { FindMatchByLeagueAndSeasonResult } from "@/application/results/find-matches-by-league-and-season.result";
+import { TeamBadge } from "@/infrastructure/ui/components/TeamBadge";
 
 const STATUS_KEYS: Record<string, string> = {
   finished: "finished",
   simulated: "simulated",
   chronicle_generated: "chronicle_generated",
 };
-
-interface TeamShieldProps {
-  readonly primary: string;
-  readonly secondary: string;
-}
-
-function TeamShield({ primary, secondary }: TeamShieldProps) {
-  return (
-    <svg
-      width="40"
-      height="46"
-      viewBox="0 0 40 46"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="team-shield-svg"
-      aria-hidden="true"
-    >
-      <path
-        d="M20 2L4 8V22C4 32 11.5 40.5 20 44C28.5 40.5 36 32 36 22V8L20 2Z"
-        fill={primary}
-        stroke="rgba(0,0,0,0.25)"
-        strokeWidth="1"
-      />
-      <clipPath id={`clip-${primary.replace("#", "")}`}>
-        <path d="M20 2L4 8V22C4 32 11.5 40.5 20 44C28.5 40.5 36 32 36 22V8L20 2Z" />
-      </clipPath>
-      <rect
-        x="24"
-        y="0"
-        width="12"
-        height="46"
-        fill={secondary}
-        fillOpacity="0.75"
-        clipPath={`url(#clip-${primary.replace("#", "")})`}
-      />
-    </svg>
-  );
-}
 
 interface MatchCardProps {
   readonly match: FindMatchByLeagueAndSeasonResult;
@@ -73,9 +36,11 @@ export function MatchCard({ match }: MatchCardProps) {
       >
         <div className="match-teams">
           <div className="team-side home">
-            <TeamShield
+            <TeamBadge
               primary={match.homeColorPrimary}
               secondary={match.homeColorSecondary}
+              teamName={match.home}
+              flagUrl={match.homeFlag}
             />
             <button
               className="team-name"
@@ -114,9 +79,11 @@ export function MatchCard({ match }: MatchCardProps) {
             {tooltip === match.away && (
               <div className="team-tooltip">{match.away}</div>
             )}
-            <TeamShield
+            <TeamBadge
               primary={match.awayColorPrimary}
               secondary={match.awayColorSecondary}
+              teamName={match.away}
+              flagUrl={match.awayFlag}
             />
           </div>
         </div>

@@ -43,6 +43,8 @@ const baseProps = {
   awayColor: "#FFFFFF",
   homeColorSecondary: "#004D98",
   awayColorSecondary: "#000000",
+  homeFlag: undefined,
+  awayFlag: undefined,
 };
 
 function buildStats(

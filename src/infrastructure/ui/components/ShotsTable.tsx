@@ -12,7 +12,7 @@ import {
   BodyPartIcon,
   SituationIcon,
   ShotTypeIcon,
-  TableTeamShield,
+  TableTeamBadge,
 } from "@/infrastructure/ui/components/ShotIcons";
 import { PaginatedResult } from "@/domain/types/pagination";
 
@@ -43,6 +43,8 @@ interface ShotsTableProps {
   readonly awayColor: string;
   readonly homeColorSecondary: string;
   readonly awayColorSecondary: string;
+  readonly homeFlag: string | undefined;
+  readonly awayFlag: string | undefined;
 }
 
 export function ShotsTable({
@@ -54,6 +56,8 @@ export function ShotsTable({
   awayColor,
   homeColorSecondary,
   awayColorSecondary,
+  homeFlag,
+  awayFlag,
 }: ShotsTableProps) {
   const [data, setData] =
     useState<PaginatedResult<FindShotResult>>(initialData);
@@ -243,12 +247,13 @@ export function ShotsTable({
                     </span>
                   </td>
                   <td className="shots-td">
-                    <TableTeamShield
+                    <TableTeamBadge
                       primary={shot.isHome ? homeColor : awayColor}
                       secondary={
                         shot.isHome ? homeColorSecondary : awayColorSecondary
                       }
                       name={shot.isHome ? homeTeam : awayTeam}
+                      flagUrl={shot.isHome ? homeFlag : awayFlag}
                     />
                     <span className="shots-td-sub">
                       <BodyPartIcon

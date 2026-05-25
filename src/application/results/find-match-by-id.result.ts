@@ -9,6 +9,8 @@ export interface FindMatchByIdResult {
   homeColorSecondary: string;
   awayColorPrimary: string;
   awayColorSecondary: string;
+  homeFlag: string | undefined;
+  awayFlag: string | undefined;
   homeScore: number;
   awayScore: number;
   status: MatchStatusValue;
