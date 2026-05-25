@@ -18,8 +18,8 @@ describe("FindMatchesByLeagueAndSeasonUseCase", () => {
   it("should return matches for a given league and season", async () => {
     const league = await buildLeague();
     const season = await buildSeason(league._id);
-    const homeTeam = await buildTeam();
-    const awayTeam = await buildTeam();
+    const homeTeam = await buildTeam({ flagUrl: "https://flagcdn.com/ar.svg" });
+    const awayTeam = await buildTeam({ flagUrl: "https://flagcdn.com/br.svg" });
     await buildMatch(league._id, season._id, homeTeam._id, awayTeam._id);
     await buildMatch(league._id, season._id, homeTeam._id, awayTeam._id);
 
@@ -36,6 +36,8 @@ describe("FindMatchesByLeagueAndSeasonUseCase", () => {
       expect(match).toHaveProperty("home");
       expect(match).toHaveProperty("away");
       expect(match).toHaveProperty("status");
+      expect(match.homeFlag).toBe("https://flagcdn.com/ar.svg");
+      expect(match.awayFlag).toBe("https://flagcdn.com/br.svg");
       expect(match.league).toBe(league._id.toString());
       expect(match.season).toBe(season._id.toString());
     });

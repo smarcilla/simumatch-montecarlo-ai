@@ -1,23 +1,11 @@
 import mongoose from "mongoose";
 import { UpsertSeasonCommand } from "@/application/commands/upsert-season.command";
-import { UpsertTeamCommand } from "@/application/commands/upsert-team.command";
 import { UpsertMatchCommand } from "@/application/commands/upsert-match.command";
 import { AddPlayerByShotCommand } from "@/application/commands/add-player-by-shot.command";
 import { AddShotByShotRawCommand } from "@/application/commands/add-shot-by-shot-raw.command";
 import { DIContainer } from "../di-container";
 
 type Database = NonNullable<typeof mongoose.connection.db>;
-
-interface TeamData {
-  name: string;
-  slug: string;
-  shortName: string;
-  id: number;
-  teamColors: {
-    primary: string;
-    secondary: string;
-  };
-}
 
 interface ScoreData {
   display: number;
@@ -31,8 +19,8 @@ interface SeasonRawDocument {
 
 interface MatchRawDocument {
   id: number;
-  homeTeam: { id: number } & TeamData;
-  awayTeam: { id: number } & TeamData;
+  homeTeam: { id: number };
+  awayTeam: { id: number };
   league_external_id: string;
   season_id: number;
   startTimestamp: number;
@@ -78,7 +66,6 @@ export interface DerivedRawData {
 
 export interface DerivedDeletionTargets {
   seasonExternalIds: number[];
-  teamExternalIds: number[];
   matchExternalIds: number[];
   playerExternalIds: number[];
   shotExternalIds: number[];
@@ -87,12 +74,24 @@ export interface DerivedDeletionTargets {
 export interface DerivedSyncSummary {
   seasonsProcessed: number;
   seasonsSkipped: number;
-  teamsProcessed: number;
-  teamsSkipped: number;
   matchesProcessed: number;
   matchesSkipped: number;
   playersProcessed: number;
   shotsProcessed: number;
+}
+
+function readFilterValue(
+  argv: string[],
+  index: number,
+  option: "--league" | "--season"
+): string {
+  const nextValue = argv[index + 1];
+
+  if (!nextValue || nextValue.startsWith("--")) {
+    throw new Error(`Missing value for ${option}`);
+  }
+
+  return nextValue;
 }
 
 export function parseDerivedSyncFilters(argv: string[]): DerivedSyncFilters {
@@ -101,28 +100,22 @@ export function parseDerivedSyncFilters(argv: string[]): DerivedSyncFilters {
 
   for (let index = 0; index < argv.length; index += 1) {
     const argument = argv[index];
-    const nextValue = argv[index + 1];
 
     if (argument === "--league") {
-      if (!nextValue || nextValue.startsWith("--")) {
-        throw new Error("Missing value for --league");
-      }
+      const value = readFilterValue(argv, index, "--league");
 
       if (league) {
         throw new Error("Only one --league value is supported");
       }
 
-      league = nextValue;
+      league = value;
       index += 1;
       continue;
     }
 
     if (argument === "--season") {
-      if (!nextValue || nextValue.startsWith("--")) {
-        throw new Error("Missing value for --season");
-      }
-
-      seasons.push(nextValue);
+      const value = readFilterValue(argv, index, "--season");
+      seasons.push(value);
       index += 1;
       continue;
     }
@@ -156,11 +149,11 @@ export function describeDerivedSyncFilters(
   }
 
   if (filters.seasons.length === 0) {
-    return `league \"${filters.league}\"`;
+    return `league "${filters.league}"`;
   }
 
-  return `league \"${filters.league}\" and seasons ${filters.seasons
-    .map((season) => `\"${season}\"`)
+  return `league "${filters.league}" and seasons ${filters.seasons
+    .map((season) => `"${season}"`)
     .join(", ")}`;
 }
 
@@ -175,12 +168,6 @@ export function hasDerivedRawData(rawData: DerivedRawData): boolean {
 export function buildDerivedDeletionTargets(
   rawData: DerivedRawData
 ): DerivedDeletionTargets {
-  const teamExternalIds = uniqueNumbers(
-    rawData.matchesRaw.flatMap((match) => [
-      match.homeTeam?.id,
-      match.awayTeam?.id,
-    ])
-  );
   const playerExternalIds = uniqueNumbers(
     rawData.shotsRaw.flatMap((shot) => [shot.player?.id, shot.goalkeeper?.id])
   );
@@ -190,7 +177,6 @@ export function buildDerivedDeletionTargets(
 
   return {
     seasonExternalIds: rawData.seasonExternalIds,
-    teamExternalIds,
     matchExternalIds: rawData.matchExternalIds,
     playerExternalIds,
     shotExternalIds,
@@ -287,13 +273,6 @@ export async function syncDerivedCollections(
     `Seasons synced: ${seasonSync.commands.length}, skipped: ${seasonSync.skipped}`
   );
 
-  const teamSync = buildTeamCommands(rawData.matchesRaw);
-  console.log("Syncing teams...");
-  await (await DIContainer.getUpsertTeamsUseCase()).execute(teamSync.commands);
-  console.log(
-    `Teams synced: ${teamSync.commands.length}, skipped: ${teamSync.skipped}`
-  );
-
   const matchSync = buildMatchCommands(rawData.matchesRaw);
   console.log("Syncing matches...");
   await (
@@ -318,8 +297,6 @@ export async function syncDerivedCollections(
   return {
     seasonsProcessed: seasonSync.commands.length,
     seasonsSkipped: seasonSync.skipped,
-    teamsProcessed: teamSync.commands.length,
-    teamsSkipped: teamSync.skipped,
     matchesProcessed: matchSync.commands.length,
     matchesSkipped: matchSync.skipped,
     playersProcessed: playerCommands.length,
@@ -345,47 +322,6 @@ function buildSeasonCommands(seasonsRaw: SeasonRawDocument[]): {
       seasonYear: rawSeason.season_name,
       leagueExternalId: rawSeason.league_external_id,
       externalId: rawSeason.season_id,
-    });
-  }
-
-  return { commands, skipped };
-}
-
-function buildTeamCommands(matchesRaw: MatchRawDocument[]): {
-  commands: UpsertTeamCommand[];
-  skipped: number;
-} {
-  const teamsMap = new Map<number, TeamData>();
-
-  for (const match of matchesRaw) {
-    if (match.homeTeam?.id) {
-      teamsMap.set(match.homeTeam.id, match.homeTeam);
-    }
-
-    if (match.awayTeam?.id) {
-      teamsMap.set(match.awayTeam.id, match.awayTeam);
-    }
-  }
-
-  const commands: UpsertTeamCommand[] = [];
-  let skipped = 0;
-
-  for (const [externalId, teamData] of teamsMap) {
-    if (!teamData.teamColors?.primary || !teamData.teamColors?.secondary) {
-      console.warn(
-        `Team missing colors: ${teamData.name} (${externalId}), skipping`
-      );
-      skipped += 1;
-      continue;
-    }
-
-    commands.push({
-      externalId,
-      name: teamData.name,
-      slug: teamData.slug,
-      shortName: teamData.shortName,
-      primaryColor: teamData.teamColors.primary,
-      secondaryColor: teamData.teamColors.secondary,
     });
   }
 

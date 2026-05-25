@@ -63,6 +63,8 @@ export default async function MatchPage({ params }: Readonly<MatchPageProps>) {
           awayColor={match.awayColorPrimary}
           homeColorSecondary={match.homeColorSecondary}
           awayColorSecondary={match.awayColorSecondary}
+          homeFlag={match.homeFlag}
+          awayFlag={match.awayFlag}
         />
         <ShotsTable
           matchId={id}
@@ -73,6 +75,8 @@ export default async function MatchPage({ params }: Readonly<MatchPageProps>) {
           awayColor={match.awayColorPrimary}
           homeColorSecondary={match.homeColorSecondary}
           awayColorSecondary={match.awayColorSecondary}
+          homeFlag={match.homeFlag}
+          awayFlag={match.awayFlag}
         />
       </div>
     </DashboardLayout>

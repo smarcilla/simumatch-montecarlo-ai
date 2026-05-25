@@ -1,6 +1,7 @@
 import { UpsertTeamsUseCase } from "@/application/use-cases/upsert-teams.use-case";
 import { TeamRepository } from "@/domain/repositories/team.repository";
 import { DIContainer } from "@/infrastructure/di-container";
+import { TeamModel } from "@/infrastructure/db/models/team.model";
 import { beforeEach, describe, expect, it } from "vitest";
 
 describe("UpsertTeamsUseCase", () => {
@@ -84,5 +85,38 @@ describe("UpsertTeamsUseCase", () => {
 
     expect(await teamRepository.findByExternalId(3001)).not.toBeNull();
     expect(await teamRepository.findByExternalId(3002)).not.toBeNull();
+  });
+
+  it("should recover team flagUrl when the document contains it", async () => {
+    await TeamModel.create({
+      externalId: 4001,
+      name: "France",
+      slug: "france",
+      shortName: "FRA",
+      primaryColor: "#0055A4",
+      secondaryColor: "#EF4135",
+      flagUrl: "https://flagcdn.com/fr.svg",
+    });
+
+    const team = await teamRepository.findByExternalId(4001);
+
+    expect(team).not.toBeNull();
+    expect(team!.flagUrl).toBe("https://flagcdn.com/fr.svg");
+  });
+
+  it("should recover undefined flagUrl when the document does not contain it", async () => {
+    await TeamModel.create({
+      externalId: 4002,
+      name: "Club Team",
+      slug: "club-team",
+      shortName: "CLB",
+      primaryColor: "#111111",
+      secondaryColor: "#eeeeee",
+    });
+
+    const team = await teamRepository.findByExternalId(4002);
+
+    expect(team).not.toBeNull();
+    expect(team!.flagUrl).toBeUndefined();
   });
 });

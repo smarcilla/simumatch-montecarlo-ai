@@ -1,57 +1,30 @@
 import type { ReactElement } from "react";
+import { TableTeamBadge as BaseTableTeamBadge } from "@/infrastructure/ui/components/TeamBadge";
 
 interface IconProps {
   readonly className?: string;
 }
 
-interface TableTeamShieldProps {
+interface TableTeamBadgeProps {
   readonly primary: string;
   readonly secondary: string;
   readonly name: string;
+  readonly flagUrl: string | undefined;
 }
 
-export function TableTeamShield({
+export function TableTeamBadge({
   primary,
   secondary,
   name,
-}: TableTeamShieldProps) {
-  const clipId = `clip-tbl-${primary.replace("#", "")}`;
+  flagUrl,
+}: TableTeamBadgeProps) {
   return (
-    <span className="table-team-shield-wrap" data-tooltip={name} title={name}>
-      <svg
-        width="20"
-        height="24"
-        viewBox="0 0 40 46"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-label={name}
-      >
-        <defs>
-          <clipPath id={clipId}>
-            <path d="M20 2L4 8V22C4 32 11.5 40.5 20 44C28.5 40.5 36 32 36 22V8L20 2Z" />
-          </clipPath>
-        </defs>
-        <path
-          d="M20 2L4 8V22C4 32 11.5 40.5 20 44C28.5 40.5 36 32 36 22V8L20 2Z"
-          fill={primary}
-        />
-        <rect
-          x="24"
-          y="0"
-          width="12"
-          height="46"
-          fill={secondary}
-          clipPath={`url(#${clipId})`}
-        />
-        <path
-          d="M20 2L4 8V22C4 32 11.5 40.5 20 44C28.5 40.5 36 32 36 22V8L20 2Z"
-          stroke={secondary}
-          strokeWidth="2"
-          fill="none"
-          opacity="0.5"
-        />
-      </svg>
-    </span>
+    <BaseTableTeamBadge
+      primary={primary}
+      secondary={secondary}
+      name={name}
+      flagUrl={flagUrl}
+    />
   );
 }
 

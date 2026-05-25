@@ -1,5 +1,5 @@
 import { GoalkeeperShotStatsResult } from "@/application/results/shot-match-stats.result";
-import { TableTeamShield } from "@/infrastructure/ui/components/ShotIcons";
+import { TableTeamBadge } from "@/infrastructure/ui/components/ShotIcons";
 import { getTranslations } from "next-intl/server";
 
 interface ShotGoalkeeperStatsTableProps {
@@ -10,6 +10,8 @@ interface ShotGoalkeeperStatsTableProps {
   readonly awayColor: string;
   readonly homeColorSecondary: string;
   readonly awayColorSecondary: string;
+  readonly homeFlag: string | undefined;
+  readonly awayFlag: string | undefined;
 }
 
 export async function ShotGoalkeeperStatsTable({
@@ -20,12 +22,15 @@ export async function ShotGoalkeeperStatsTable({
   awayColor,
   homeColorSecondary,
   awayColorSecondary,
+  homeFlag,
+  awayFlag,
 }: ShotGoalkeeperStatsTableProps) {
   const t = await getTranslations("shots");
   const tableData = goalkeeperStats.map((gk) => ({
     goalkeeperShortName: gk.goalkeeperShortName,
     primaryColor: gk.isHome ? homeColor : awayColor,
     secondaryColor: gk.isHome ? homeColorSecondary : awayColorSecondary,
+    flagUrl: gk.isHome ? homeFlag : awayFlag,
     teamName: gk.isHome ? homeTeam : awayTeam,
     xgotFaced: gk.xgotFaced.toFixed(2),
     goalsConceded: gk.goalsConceded,
@@ -59,10 +64,11 @@ export async function ShotGoalkeeperStatsTable({
               <tr key={gk.goalkeeperShortName} className="shot-stats-row">
                 <td className="shot-stats-td">{gk.goalkeeperShortName}</td>
                 <td className="shot-stats-td">
-                  <TableTeamShield
+                  <TableTeamBadge
                     primary={gk.primaryColor}
                     secondary={gk.secondaryColor}
                     name={gk.teamName}
+                    flagUrl={gk.flagUrl}
                   />
                 </td>
                 <td className="shot-stats-td shot-stats-td-number">

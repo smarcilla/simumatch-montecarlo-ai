@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { SimulationPlayerStat } from "@/domain/entities/simulation.types";
-import { TableTeamShield } from "@/infrastructure/ui/components/ShotIcons";
+import { TableTeamBadge } from "@/infrastructure/ui/components/ShotIcons";
 import { useTranslations } from "next-intl";
 
 interface PlayerBarShape {
@@ -74,6 +74,8 @@ interface PlayerStatsChartProps {
   readonly awayColor: string;
   readonly homeColorSecondary: string;
   readonly awayColorSecondary: string;
+  readonly homeFlag: string | undefined;
+  readonly awayFlag: string | undefined;
 }
 
 export function PlayerStatsChart({
@@ -84,6 +86,8 @@ export function PlayerStatsChart({
   awayColor,
   homeColorSecondary,
   awayColorSecondary,
+  homeFlag,
+  awayFlag,
 }: PlayerStatsChartProps) {
   const t = useTranslations("simulation");
   const tShots = useTranslations("shots");
@@ -101,6 +105,7 @@ export function PlayerStatsChart({
     playerName: p.playerShortName,
     team: p.isHome ? homeTeam : awayTeam,
     isHome: p.isHome,
+    flagUrl: p.isHome ? homeFlag : awayFlag,
     goalProbability: (Math.round(p.goalProbability * 10) / 10).toFixed(1),
     sga: p.sga.toFixed(3),
   }));
@@ -168,12 +173,13 @@ export function PlayerStatsChart({
               <tr key={p.playerName}>
                 <td>{p.playerName}</td>
                 <td>
-                  <TableTeamShield
+                  <TableTeamBadge
                     primary={p.isHome ? homeColor : awayColor}
                     secondary={
                       p.isHome ? homeColorSecondary : awayColorSecondary
                     }
                     name={p.team}
+                    flagUrl={p.flagUrl}
                   />
                 </td>
                 <td>{p.goalProbability}%</td>

@@ -39,7 +39,8 @@ export class MongooseTeamRepository implements TeamRepository {
       doc.slug,
       doc.shortName,
       Color.create(doc.primaryColor),
-      Color.create(doc.secondaryColor)
+      Color.create(doc.secondaryColor),
+      doc.flagUrl
     );
   }
 }

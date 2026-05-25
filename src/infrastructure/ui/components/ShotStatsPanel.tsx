@@ -12,6 +12,8 @@ interface ShotStatsPanelProps {
   readonly awayColor: string;
   readonly homeColorSecondary: string;
   readonly awayColorSecondary: string;
+  readonly homeFlag: string | undefined;
+  readonly awayFlag: string | undefined;
 }
 
 export async function ShotStatsPanel({
@@ -22,6 +24,8 @@ export async function ShotStatsPanel({
   awayColor,
   homeColorSecondary,
   awayColorSecondary,
+  homeFlag,
+  awayFlag,
 }: ShotStatsPanelProps) {
   const t = await getTranslations("shots");
   return (
@@ -39,6 +43,8 @@ export async function ShotStatsPanel({
         awayColor={awayColor}
         homeColorSecondary={homeColorSecondary}
         awayColorSecondary={awayColorSecondary}
+        homeFlag={homeFlag}
+        awayFlag={awayFlag}
       />
 
       {stats.playerStats.length > 0 && (
@@ -50,6 +56,8 @@ export async function ShotStatsPanel({
           awayColor={awayColor}
           homeColorSecondary={homeColorSecondary}
           awayColorSecondary={awayColorSecondary}
+          homeFlag={homeFlag}
+          awayFlag={awayFlag}
         />
       )}
 
@@ -62,6 +70,8 @@ export async function ShotStatsPanel({
           awayColor={awayColor}
           homeColorSecondary={homeColorSecondary}
           awayColorSecondary={awayColorSecondary}
+          homeFlag={homeFlag}
+          awayFlag={awayFlag}
         />
       )}
     </div>

@@ -10,7 +10,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { ScoreDistributionItemData } from "@/domain/entities/simulation.types";
-import { TableTeamShield } from "@/infrastructure/ui/components/ShotIcons";
+import { TableTeamBadge } from "@/infrastructure/ui/components/ShotIcons";
 import { useTranslations } from "next-intl";
 
 const ITERATIONS = 10_000;
@@ -72,6 +72,8 @@ interface ScoreDistributionChartProps {
   readonly awayColor: string;
   readonly homeColorSecondary: string;
   readonly awayColorSecondary: string;
+  readonly homeFlag: string | undefined;
+  readonly awayFlag: string | undefined;
 }
 
 function resolveBarColors(
@@ -95,6 +97,8 @@ export function ScoreDistributionChart({
   awayColor,
   homeColorSecondary,
   awayColorSecondary,
+  homeFlag,
+  awayFlag,
 }: ScoreDistributionChartProps) {
   const t = useTranslations("simulation");
   const tCommon = useTranslations("common");
@@ -208,16 +212,18 @@ export function ScoreDistributionChart({
             {tableData.map((item) => (
               <tr key={item.score}>
                 <td className="score-cell-flex">
-                  <TableTeamShield
+                  <TableTeamBadge
                     primary={homeColor}
                     secondary={homeColorSecondary}
                     name={homeTeam}
+                    flagUrl={homeFlag}
                   />
                   <span className="score-cell-bold">{item.score}</span>
-                  <TableTeamShield
+                  <TableTeamBadge
                     primary={awayColor}
                     secondary={awayColorSecondary}
                     name={awayTeam}
+                    flagUrl={awayFlag}
                   />
                 </td>
                 <td
