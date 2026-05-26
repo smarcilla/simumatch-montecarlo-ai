@@ -21,7 +21,7 @@ Next.js provides `unstable_cache` from `next/cache`, which stores results in the
 **Non-Goals:**
 
 - Caching simulation or chronicle data (low-frequency reads, not a measured bottleneck).
-- On-demand cache invalidation via `revalidateTag` (TTL-based expiry is sufficient for this data's volatility).
+- Broad on-demand cache invalidation beyond match detail entries.
 - Caching paginated shot listings (user-driven, filters vary, not a measured bottleneck).
 - Solving the structural double-fetch of leagues (page.tsx + Sidebar) — the cache makes both calls free after the first hit, so structural refactoring is deferred.
 
@@ -84,9 +84,20 @@ export async function getLeagues() {
 
 This keeps the exported function signature unchanged so no callers need to be updated.
 
+### Decision 5: Keep TTL and add targeted invalidation for match detail
+
+**Chosen:** Keep `getMatchById()` at `revalidate: 300`, add tag `match-${id}` to each cached entry, and invalidate that tag after `simulateMatch` and `writeChronicle` complete.
+
+**Alternatives considered:**
+
+- Lowering TTL globally for match detail (for example 60s) — rejected because it increases database load for all match detail traffic while still allowing stale windows.
+- Disabling cache for match detail — rejected because it would remove a meaningful performance gain on a high-frequency read path.
+
+This approach keeps the performance benefit while eliminating the stale-status window right after user-triggered state transitions for the affected match.
+
 ## Risks / Trade-offs
 
-**[Risk] Cache serves stale match data after a simulate/chronicle action** → The `MatchActionsPanel` triggers `router.refresh()` after a simulation or chronicle action, which invalidates Next.js router cache client-side but does not invalidate `unstable_cache`. A user who views a match, simulates it, then refreshes might see the old status for up to 5 minutes. Mitigation: the 5-minute TTL is short enough to be acceptable in practice; the client router cache is already invalidated so the same user's next navigation reflects the new state.
+**[Risk] Cache tag invalidation could be skipped on failed mutation** → If a status-changing action fails before completion, invalidation should not run. Mitigation: invalidation is executed only after successful completion of `simulateMatch` and `writeChronicle`; TTL remains as fallback behavior.
 
 **[Risk] Date-bypass logic adds a conditional branch** → The `getMatchesByLeagueAndSeason` function must check for date params and route accordingly. This is a small but real increase in complexity. Mitigation: the logic is a single guard clause at the top of the function, clearly documented.
 
@@ -102,4 +113,4 @@ This keeps the exported function signature unchanged so no callers need to be up
 
 ## Open Questions
 
-- Should `getMatchById` TTL be lower (e.g., 60s) to more aggressively reflect post-simulation status changes? Current proposal: 300s, acceptable given the `router.refresh()` client-side mitigation. De momento 300s, pero estaría bien que se pueda modificar por variable de entorno.
+- Should `getMatchById` TTL be configurable through environment variables for operational tuning without code changes?

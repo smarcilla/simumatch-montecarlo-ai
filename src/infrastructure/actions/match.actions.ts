@@ -1,5 +1,6 @@
 "use server";
 
+import { unstable_cache } from "next/cache";
 import { DIContainer } from "@/infrastructure/di-container";
 import { FindMatchByLeagueAndSeasonResult } from "@/application/results/find-matches-by-league-and-season.result";
 import { FindMatchByIdResult } from "@/application/results/find-match-by-id.result";
@@ -10,11 +11,15 @@ import { FindShotsByMatchCommand } from "@/application/commands/find-shots-by-ma
 import { createFindMatchesByLeagueAndSeasonCommand } from "@/application/commands/find-matches-by-league-and-season.comand";
 import { PaginatedResult } from "@/domain/types/pagination";
 
-export async function getMatchesByLeagueAndSeason(
+function getMatchCacheTag(id: string): string {
+  return `match-${id}`;
+}
+
+async function findMatchesByLeagueAndSeason(
   leagueId: string,
   seasonId: string,
-  page: number = 0,
-  pageSize: number = 12,
+  page: number,
+  pageSize: number,
   statusesRaw?: string,
   dateFromRaw?: string,
   dateToRaw?: string
@@ -30,16 +35,68 @@ export async function getMatchesByLeagueAndSeason(
   );
 
   const useCase = await DIContainer.getFindMatchesByLeagueAndSeasonUseCase();
-  const result = await useCase.execute(command);
+  return useCase.execute(command);
+}
 
-  return result;
+export async function getMatchesByLeagueAndSeason(
+  leagueId: string,
+  seasonId: string,
+  page: number = 0,
+  pageSize: number = 12,
+  statusesRaw?: string,
+  dateFromRaw?: string,
+  dateToRaw?: string
+): Promise<PaginatedResult<FindMatchByLeagueAndSeasonResult>> {
+  if ((dateFromRaw ?? "") !== "" || (dateToRaw ?? "") !== "") {
+    return findMatchesByLeagueAndSeason(
+      leagueId,
+      seasonId,
+      page,
+      pageSize,
+      statusesRaw,
+      dateFromRaw,
+      dateToRaw
+    );
+  }
+
+  const getMatchesByLeagueAndSeasonCached = unstable_cache(
+    async () =>
+      findMatchesByLeagueAndSeason(
+        leagueId,
+        seasonId,
+        page,
+        pageSize,
+        statusesRaw,
+        dateFromRaw,
+        dateToRaw
+      ),
+    [
+      "matches",
+      leagueId,
+      seasonId,
+      String(page),
+      String(pageSize),
+      statusesRaw ?? "",
+    ],
+    { revalidate: 300 }
+  );
+
+  return getMatchesByLeagueAndSeasonCached();
 }
 
 export async function getMatchById(
   id: string
 ): Promise<FindMatchByIdResult | null> {
-  const useCase = await DIContainer.getFindMatchByIdUseCase();
-  return useCase.execute(id);
+  const getMatchByIdCached = unstable_cache(
+    async () => {
+      const useCase = await DIContainer.getFindMatchByIdUseCase();
+      return useCase.execute(id);
+    },
+    ["match", id],
+    { revalidate: 300, tags: [getMatchCacheTag(id)] }
+  );
+
+  return getMatchByIdCached();
 }
 
 export async function getShotsByMatch(
@@ -52,6 +109,14 @@ export async function getShotsByMatch(
 export async function getShotStatsByMatch(
   matchId: string
 ): Promise<ShotMatchStatsResult> {
-  const useCase = await DIContainer.getFindShotStatsByMatchUseCase();
-  return useCase.execute(matchId);
+  const getShotStatsByMatchCached = unstable_cache(
+    async () => {
+      const useCase = await DIContainer.getFindShotStatsByMatchUseCase();
+      return useCase.execute(matchId);
+    },
+    ["shot-stats", matchId],
+    { revalidate: 3600 }
+  );
+
+  return getShotStatsByMatchCached();
 }

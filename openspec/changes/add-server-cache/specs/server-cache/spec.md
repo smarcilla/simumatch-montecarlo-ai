@@ -41,6 +41,7 @@ The system SHALL cache match listing queries using Next.js `unstable_cache` with
 ### Requirement: Match detail is served from server cache
 
 The system SHALL cache the result of single match queries using Next.js `unstable_cache` with a 5-minute TTL, keyed by match ID.
+The system SHALL support targeted invalidation of a specific match detail cache entry when that match state changes.
 
 #### Scenario: Match detail is served from cache on repeated requests
 
@@ -51,6 +52,11 @@ The system SHALL cache the result of single match queries using Next.js `unstabl
 
 - **WHEN** requests are made for two different match IDs
 - **THEN** each match ID has its own independent cache entry
+
+#### Scenario: Match detail cache is invalidated when match state changes
+
+- **WHEN** a status-changing action (`simulateMatch` or `writeChronicle`) completes for a match ID
+- **THEN** the cached match detail entry for that match ID is invalidated and the next request fetches fresh data
 
 ### Requirement: Shot statistics are served from server cache
 

@@ -8,6 +8,7 @@ The application has a Real Experience Score of 57/100 on Vercel Speed Insights, 
 - Wrap `getMatchesByLeagueAndSeason()` server action with `unstable_cache` (5 min TTL) when no date filters are active; bypass cache and query MongoDB directly when date filters are present.
 - Cache key for matches includes: `leagueId`, `seasonId`, `page`, `pageSize`, and `statusesRaw` — all low-cardinality parameters. Date filter parameters are intentionally excluded from caching.
 - Wrap `getMatchById()` with `unstable_cache` (5 min TTL) keyed by match ID.
+- Keep `getMatchById()` TTL at 5 minutes and add targeted invalidation with `updateTag` for that specific match after status-changing actions (`simulateMatch`, `writeChronicle`).
 - Wrap `getShotStatsByMatch()` with `unstable_cache` (1h TTL) keyed by match ID — shot stats for a finished match never change.
 
 ## Capabilities
