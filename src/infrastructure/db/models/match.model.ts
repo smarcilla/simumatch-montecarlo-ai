@@ -47,6 +47,8 @@ const MatchSchema = new Schema<IMatchDocument>(
 MatchSchema.index({ leagueId: 1, seasonId: 1, date: 1 });
 MatchSchema.index({ date: 1 });
 MatchSchema.index({ status: 1 });
+MatchSchema.index({ homeTeamId: 1 });
+MatchSchema.index({ awayTeamId: 1 });
 
 export const MatchModel =
   (mongoose.models.Match as mongoose.Model<IMatchDocument>) ||

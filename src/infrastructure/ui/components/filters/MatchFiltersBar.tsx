@@ -1,22 +1,25 @@
 import { Suspense } from "react";
 import { FindLeagueResult } from "@/application/results/find-leagues.result";
 import { SeasonSelector } from "./SeasonSelector";
-import { StatusFilter } from "./StatusFilter";
-import { DateRangeFilter } from "./DateRangeFilter";
+import { TeamSearchFilter } from "./TeamSearchFilter";
 
 interface MatchFiltersBarProps {
   readonly activeLeague: FindLeagueResult;
   readonly currentSeasonId: string;
+  readonly currentTeamSlug?: string;
+  readonly currentTeamName?: string;
 }
 
 export function MatchFiltersBar({
   activeLeague,
   currentSeasonId,
+  currentTeamSlug,
+  currentTeamName,
 }: MatchFiltersBarProps) {
-  const currentSeason = activeLeague.seasons.find(
-    (s) => s.id === currentSeasonId
-  );
-  const currentSeasonYear = currentSeason?.year ?? "";
+  const teamSearchFilterProps = {
+    ...(currentTeamSlug ? { currentTeamSlug } : {}),
+    ...(currentTeamName ? { currentTeamName } : {}),
+  };
 
   return (
     <div className="match-filters-bar">
@@ -27,10 +30,7 @@ export function MatchFiltersBar({
         />
       </Suspense>
       <Suspense fallback={null}>
-        <StatusFilter />
-      </Suspense>
-      <Suspense fallback={null}>
-        <DateRangeFilter seasonYear={currentSeasonYear} />
+        <TeamSearchFilter {...teamSearchFilterProps} />
       </Suspense>
     </div>
   );

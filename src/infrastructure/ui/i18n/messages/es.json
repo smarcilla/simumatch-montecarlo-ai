@@ -48,7 +48,8 @@
       "viewSimulation": "Ver simulación",
       "writeChronicle": "Escribir crónica",
       "readChronicle": "Leer crónica"
-    }
+    },
+    "teamNotInLeague": "{team} no juega en esta liga / temporada"
   },
   "shots": {
     "title": "Estadísticas de disparos",
@@ -107,6 +108,8 @@
     "period": "Período",
     "selectPeriod": "Seleccionar período",
     "clearDates": "Limpiar fechas",
+    "clearTeam": "Limpiar equipo",
+    "noTeamSuggestions": "No se encontraron equipos en esta competición",
     "since": "Desde",
     "page": "Página {current} de {total}"
   },

@@ -48,7 +48,8 @@
       "viewSimulation": "View simulation",
       "writeChronicle": "Write chronicle",
       "readChronicle": "Read chronicle"
-    }
+    },
+    "teamNotInLeague": "{team} does not play in this league / season"
   },
   "shots": {
     "title": "Shot statistics",
@@ -107,6 +108,8 @@
     "period": "Period",
     "selectPeriod": "Select period",
     "clearDates": "Clear dates",
+    "clearTeam": "Clear team",
+    "noTeamSuggestions": "No teams found in this competition",
     "since": "Since",
     "page": "Page {current} of {total}"
   },

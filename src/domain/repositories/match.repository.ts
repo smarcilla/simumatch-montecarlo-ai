@@ -10,6 +10,7 @@ export interface MatchRepository {
     options?: PaginationOptions,
     filters?: MatchFilterOptions
   ): Promise<PaginatedResult<Match>>;
+  findDistinctTeamIds(leagueId: string, seasonId: string): Promise<string[]>;
   findById(id: string): Promise<Match | null>;
   findByExternalId(externalId: number): Promise<Match | null>;
   upsert(match: Match): Promise<void>;
