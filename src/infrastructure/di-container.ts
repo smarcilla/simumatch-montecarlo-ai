@@ -46,6 +46,7 @@ import { MongooseSimulationRepository } from "./repositories/mongoose-simulation
 import { MongooseTeamRepository } from "./repositories/mongoose-team.repository";
 import { connectionManager } from "@/infrastructure/db/connection-manager";
 import { FindMatchByIdUseCase } from "@/application/use-cases/find-match-by-id.use-case";
+import { FindTeamSuggestionsUseCase } from "@/application/use-cases/find-team-suggestions.use-case";
 import { MongooseIdGeneratorService } from "./db/services/mongoose-id-generator.service";
 
 export class DIContainer {
@@ -59,6 +60,7 @@ export class DIContainer {
   private static simulationRepository: SimulationRepository;
   private static teamRepository: TeamRepository;
   private static findMatchesByLeagueAndSeasonUseCase: FindMatchesByLeagueAndSeasonUseCase;
+  private static findTeamSuggestionsUseCase: FindTeamSuggestionsUseCase;
   private static findLeaguesUseCase: FindLeaguesUseCase;
   private static findMatchByIdUseCase: FindMatchByIdUseCase;
   private static addPlayersByShotsUseCase: AddPlayersByShotsUseCase;
@@ -160,6 +162,17 @@ export class DIContainer {
         );
     }
     return DIContainer.findMatchesByLeagueAndSeasonUseCase;
+  }
+
+  static async getFindTeamSuggestionsUseCase(): Promise<FindTeamSuggestionsUseCase> {
+    await DIContainer.initializeDatabaseConnection();
+    if (!DIContainer.findTeamSuggestionsUseCase) {
+      DIContainer.findTeamSuggestionsUseCase = new FindTeamSuggestionsUseCase(
+        DIContainer.getMatchRepository(),
+        DIContainer.getTeamRepository()
+      );
+    }
+    return DIContainer.findTeamSuggestionsUseCase;
   }
 
   static async getFindLeaguesUseCase(): Promise<FindLeaguesUseCase> {
@@ -429,6 +442,8 @@ export class DIContainer {
     DIContainer.teamRepository = null as unknown as TeamRepository;
     DIContainer.findMatchesByLeagueAndSeasonUseCase =
       null as unknown as FindMatchesByLeagueAndSeasonUseCase;
+    DIContainer.findTeamSuggestionsUseCase =
+      null as unknown as FindTeamSuggestionsUseCase;
     DIContainer.findLeaguesUseCase = null as unknown as FindLeaguesUseCase;
     DIContainer.findMatchByIdUseCase = null as unknown as FindMatchByIdUseCase;
     DIContainer.addPlayersByShotsUseCase =

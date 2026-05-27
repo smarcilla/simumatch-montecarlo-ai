@@ -46,32 +46,53 @@ export class MongooseMatchRepository implements MatchRepository {
     return match ? this.mapToEntity(match) : null;
   }
 
+  async findDistinctTeamIds(
+    leagueId: string,
+    seasonId: string
+  ): Promise<string[]> {
+    const context = {
+      leagueId: new Types.ObjectId(leagueId),
+      seasonId: new Types.ObjectId(seasonId),
+    };
+
+    const [homeTeamIds, awayTeamIds] = await Promise.all([
+      MatchModel.distinct("homeTeamId", context),
+      MatchModel.distinct("awayTeamId", context),
+    ]);
+
+    return Array.from(
+      new Set(
+        [...homeTeamIds, ...awayTeamIds].map((teamId) => teamId.toString())
+      )
+    );
+  }
+
   async findByLeagueAndSeason(
     leagueId: string,
     seasonId: string,
     options?: PaginationOptions,
     filters?: MatchFilterOptions
   ): Promise<PaginatedResult<Match>> {
+    const paginationOptions = {
+      page: options?.page ?? 0,
+      pageSize: options?.pageSize ?? 12,
+    };
+
     const filter: Record<string, unknown> = {
       leagueId: new Types.ObjectId(leagueId),
       seasonId: new Types.ObjectId(seasonId),
     };
 
-    if (filters?.statuses && filters.statuses.length > 0) {
-      filter.status = { $in: filters.statuses };
-    }
+    if (filters?.teamIds && filters.teamIds.length > 0) {
+      const teamIds = filters.teamIds
+        .filter((teamId) => Types.ObjectId.isValid(teamId))
+        .map((teamId) => new Types.ObjectId(teamId));
 
-    if (filters?.dateFrom || filters?.dateTo) {
-      const dateFilter: Record<string, Date> = {};
-      if (filters.dateFrom) dateFilter.$gte = filters.dateFrom;
-      if (filters.dateTo) dateFilter.$lte = filters.dateTo;
-      filter.date = dateFilter;
+      filter.$or = [
+        { homeTeamId: { $in: teamIds } },
+        { awayTeamId: { $in: teamIds } },
+      ];
     }
-
-    const paginationOptions = {
-      page: options?.page ?? 0,
-      pageSize: options?.pageSize ?? 12,
-    };
 
     const total = await MatchModel.countDocuments(filter);
 

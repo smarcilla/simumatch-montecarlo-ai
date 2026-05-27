@@ -8,9 +8,7 @@ interface PaginationProps {
   readonly totalPages: number;
   readonly leagueId: string;
   readonly seasonId: string;
-  readonly statusesRaw?: string | undefined;
-  readonly dateFromRaw?: string | undefined;
-  readonly dateToRaw?: string | undefined;
+  readonly teamSlug?: string;
 }
 
 export function Pagination({
@@ -18,9 +16,7 @@ export function Pagination({
   totalPages,
   leagueId,
   seasonId,
-  statusesRaw,
-  dateFromRaw,
-  dateToRaw,
+  teamSlug,
 }: PaginationProps) {
   const t = useTranslations("layout");
   const tFilters = useTranslations("filters");
@@ -32,9 +28,7 @@ export function Pagination({
     params.set("league", leagueId);
     params.set("season", seasonId);
     params.set("page", String(page));
-    if (statusesRaw) params.set("statuses", statusesRaw);
-    if (dateFromRaw) params.set("dateFrom", dateFromRaw);
-    if (dateToRaw) params.set("dateTo", dateToRaw);
+    if (teamSlug) params.set("team", teamSlug);
     return `/?${params.toString()}`;
   };
 

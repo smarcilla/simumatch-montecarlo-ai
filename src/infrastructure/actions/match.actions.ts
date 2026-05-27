@@ -20,18 +20,28 @@ async function findMatchesByLeagueAndSeason(
   seasonId: string,
   page: number,
   pageSize: number,
-  statusesRaw?: string,
-  dateFromRaw?: string,
-  dateToRaw?: string
+  teamSlug?: string
 ): Promise<PaginatedResult<FindMatchByLeagueAndSeasonResult>> {
+  await DIContainer.initializeDatabaseConnection();
+
+  const normalizedTeamSlug = teamSlug?.trim() ?? "";
+  const team =
+    normalizedTeamSlug.length > 0
+      ? await DIContainer.getTeamRepository().findBySlug(normalizedTeamSlug)
+      : null;
+
+  let teamIds: string[] | undefined;
+
+  if (normalizedTeamSlug.length > 0) {
+    teamIds = team ? [team.id] : [];
+  }
+
   const command = createFindMatchesByLeagueAndSeasonCommand(
     leagueId,
     seasonId,
     page,
     pageSize,
-    statusesRaw,
-    dateFromRaw,
-    dateToRaw
+    teamIds
   );
 
   const useCase = await DIContainer.getFindMatchesByLeagueAndSeasonUseCase();
@@ -43,22 +53,8 @@ export async function getMatchesByLeagueAndSeason(
   seasonId: string,
   page: number = 0,
   pageSize: number = 12,
-  statusesRaw?: string,
-  dateFromRaw?: string,
-  dateToRaw?: string
+  teamSlug?: string
 ): Promise<PaginatedResult<FindMatchByLeagueAndSeasonResult>> {
-  if ((dateFromRaw ?? "") !== "" || (dateToRaw ?? "") !== "") {
-    return findMatchesByLeagueAndSeason(
-      leagueId,
-      seasonId,
-      page,
-      pageSize,
-      statusesRaw,
-      dateFromRaw,
-      dateToRaw
-    );
-  }
-
   const getMatchesByLeagueAndSeasonCached = unstable_cache(
     async () =>
       findMatchesByLeagueAndSeason(
@@ -66,9 +62,7 @@ export async function getMatchesByLeagueAndSeason(
         seasonId,
         page,
         pageSize,
-        statusesRaw,
-        dateFromRaw,
-        dateToRaw
+        teamSlug
       ),
     [
       "matches",
@@ -76,7 +70,7 @@ export async function getMatchesByLeagueAndSeason(
       seasonId,
       String(page),
       String(pageSize),
-      statusesRaw ?? "",
+      teamSlug ?? "",
     ],
     { revalidate: 300 }
   );

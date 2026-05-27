@@ -13,11 +13,7 @@ export class FindMatchesByLeagueAndSeasonUseCase {
   async execute(
     command: FindMatchesByLeagueAndSeasonCommand
   ): Promise<PaginatedResult<FindMatchByLeagueAndSeasonResult>> {
-    const filters = createMatchFilterOptions(
-      command.statuses,
-      command.dateFrom,
-      command.dateTo
-    );
+    const filters = createMatchFilterOptions(command.teamIds);
 
     const options = createPaginationOptions(command.page, command.pageSize);
 

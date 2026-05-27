@@ -21,15 +21,12 @@ export function SeasonSelector({
 
     params.set("season", selectedSeasonId);
     params.set("page", "0");
-    params.delete("statuses");
-    params.delete("dateFrom");
-    params.delete("dateTo");
 
     router.push(`/?${params.toString()}`);
   };
 
   return (
-    <div className="filter-group">
+    <div className="filter-group filter-group-season">
       <label htmlFor="season-selector" className="filter-label">
         Temporada
       </label>

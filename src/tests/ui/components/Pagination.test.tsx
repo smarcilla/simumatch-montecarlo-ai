@@ -103,13 +103,7 @@ describe("Pagination", () => {
 
   it("should include correct query params in page links", () => {
     render(
-      <Pagination
-        {...baseProps}
-        currentPage={1}
-        statusesRaw="simulated"
-        dateFromRaw="2025-01-01"
-        dateToRaw="2025-12-31"
-      />
+      <Pagination {...baseProps} currentPage={1} teamSlug="fc-barcelona" />
     );
     const links = screen.getAllByRole("link");
     const firstPageLink = links.find((l) => l.textContent === "1");
@@ -117,9 +111,7 @@ describe("Pagination", () => {
     const href = firstPageLink!.getAttribute("href")!;
     expect(href).toContain("league=league-1");
     expect(href).toContain("season=season-1");
-    expect(href).toContain("statuses=simulated");
-    expect(href).toContain("dateFrom=2025-01-01");
-    expect(href).toContain("dateTo=2025-12-31");
+    expect(href).toContain("team=fc-barcelona");
   });
 
   it("should mark current page with aria-current", () => {

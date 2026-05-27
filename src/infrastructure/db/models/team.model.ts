@@ -23,5 +23,8 @@ const TeamSchema = new Schema<ITeamDocument>(
   { timestamps: true }
 );
 
+TeamSchema.index({ name: 1 });
+TeamSchema.index({ shortName: 1 });
+
 export const TeamModel =
   mongoose.models.Team || mongoose.model<ITeamDocument>("Team", TeamSchema);

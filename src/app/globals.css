@@ -894,13 +894,23 @@ button {
   white-space: nowrap;
 }
 
+.matches-empty-contextual {
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-lg);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
 /* ============================================
    BARRA DE FILTROS DE PARTIDOS
    ============================================ */
 
 .match-filters-bar {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: flex-end;
   gap: var(--spacing-md);
   padding: var(--spacing-lg);
@@ -914,8 +924,124 @@ button {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
-  flex: 1;
-  min-width: 140px;
+  min-width: 0;
+}
+
+.filter-group-season {
+  flex: 0 0 auto;
+  min-width: 160px;
+  max-width: 220px;
+}
+
+.team-search-filter {
+  flex: 1 1 auto;
+  position: relative;
+}
+
+.team-search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.team-search-input {
+  width: 100%;
+  height: 38px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  padding: var(--spacing-sm) 2.25rem var(--spacing-sm) var(--spacing-md);
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.team-search-input:hover {
+  border-color: var(--text-tertiary);
+  background: var(--bg-hover);
+}
+
+.team-search-input:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--primary-alpha);
+}
+
+.team-search-clear {
+  position: absolute;
+  right: var(--spacing-sm);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.team-search-clear:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-alpha);
+}
+
+.team-search-dropdown {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-md);
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.team-search-item {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-primary);
+  text-align: left;
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  padding: var(--spacing-sm) var(--spacing-md);
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.team-search-item:last-child {
+  border-bottom: none;
+}
+
+.team-search-item:hover {
+  background: var(--bg-hover);
+}
+
+.team-search-empty {
+  color: var(--text-tertiary);
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
 }
 
 .filter-label {
@@ -1195,17 +1321,31 @@ button {
   .filter-group {
     min-width: 120px;
   }
+
+  .filter-group-season {
+    min-width: 140px;
+  }
 }
 
 @media (max-width: 640px) {
   .match-filters-bar {
     padding: var(--spacing-md);
     gap: var(--spacing-sm);
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .filter-group {
-    min-width: calc(50% - var(--spacing-sm));
-    flex: 1 1 calc(50% - var(--spacing-sm));
+    min-width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .filter-group-season {
+    max-width: none;
+  }
+
+  .team-search-filter {
+    width: 100%;
   }
 
   .filter-date-picker {

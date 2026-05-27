@@ -83,26 +83,4 @@ describe("FindMatchesByLeagueAndSeasonUseCase", () => {
     expect(result.hasPreviousPage).toBe(false);
     expect(result.totalPages).toBe(2);
   });
-
-  it("should filter matches by status", async () => {
-    const league = await buildLeague();
-    const season = await buildSeason(league._id);
-    const homeTeam = await buildTeam();
-    const awayTeam = await buildTeam();
-    await buildMatch(league._id, season._id, homeTeam._id, awayTeam._id, {
-      status: "finished",
-    });
-    await buildMatch(league._id, season._id, homeTeam._id, awayTeam._id, {
-      status: "simulated",
-    });
-
-    const result = await useCase.execute({
-      leagueId: league._id.toString(),
-      seasonId: season._id.toString(),
-      statuses: ["finished"],
-    });
-
-    expect(result.total).toBe(1);
-    expect(result.results[0]!.status).toBe("finished");
-  });
 });
