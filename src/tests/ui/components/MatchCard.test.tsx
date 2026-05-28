@@ -31,7 +31,9 @@ function buildMatch(
   return {
     id: "match-1",
     home: "FC Barcelona",
+    homeShortName: "BAR",
     away: "Real Madrid",
+    awayShortName: "RMA",
     date: "2025-03-15T20:00:00.000Z",
     homeColorPrimary: "#A50044",
     homeColorSecondary: "#004D98",
@@ -141,5 +143,21 @@ describe("MatchCard", () => {
     const card = container.querySelector(".match-card") as HTMLElement;
     expect(card.style.getPropertyValue("--team-home-primary")).toBe("#FF0000");
     expect(card.style.getPropertyValue("--team-away-primary")).toBe("#0000FF");
+  });
+
+  it("should truncate short team names to three characters", () => {
+    const { container } = render(
+      <MatchCard
+        match={buildMatch({
+          homeShortName: "Espanyol",
+          awayShortName: "Alaves",
+        })}
+      />
+    );
+
+    const shortNames = container.querySelectorAll(".team-name-short");
+
+    expect(shortNames[0]?.textContent).toBe("Esp");
+    expect(shortNames[1]?.textContent).toBe("Ala");
   });
 });

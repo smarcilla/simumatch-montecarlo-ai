@@ -44,6 +44,8 @@ describe("FindMatchByIdUseCase", () => {
     expect(result!).toHaveProperty("awayColorSecondary");
     expect(result!.homeFlag).toBe("https://flagcdn.com/es.svg");
     expect(result!.awayFlag).toBe("https://flagcdn.com/fr.svg");
+    expect(result!.homeShortName).toBe(homeTeam.shortName);
+    expect(result!.awayShortName).toBe(awayTeam.shortName);
     expect(result!).toHaveProperty("homeScore");
     expect(result!).toHaveProperty("awayScore");
   });

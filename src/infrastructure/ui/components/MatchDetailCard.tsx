@@ -39,7 +39,10 @@ export function MatchDetailCard({ match }: MatchDetailCardProps) {
             flagUrl={match.homeFlag}
             size="detail"
           />
-          <span className="match-detail-team-name">{match.home}</span>
+          <span className="match-detail-team-name">
+            <span className="team-name-full">{match.home}</span>
+            <span className="team-name-short">{match.homeShortName}</span>
+          </span>
         </div>
 
         <div className="match-detail-score">
@@ -56,7 +59,10 @@ export function MatchDetailCard({ match }: MatchDetailCardProps) {
             flagUrl={match.awayFlag}
             size="detail"
           />
-          <span className="match-detail-team-name">{match.away}</span>
+          <span className="match-detail-team-name">
+            <span className="team-name-full">{match.away}</span>
+            <span className="team-name-short">{match.awayShortName}</span>
+          </span>
         </div>
       </div>
 

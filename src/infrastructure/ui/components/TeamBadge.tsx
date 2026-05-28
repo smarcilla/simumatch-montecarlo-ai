@@ -79,6 +79,9 @@ export function TeamBadge({
 }: TeamBadgeProps) {
   const dimensions = BADGE_DIMENSIONS[size];
   const normalizedFlagUrl = flagUrl?.trim();
+  const tableWrapClassName = normalizedFlagUrl
+    ? "table-team-shield-wrap team-flag-circle-wrap"
+    : "table-team-shield-wrap";
   const badge = normalizedFlagUrl ? (
     <TeamFlag
       flagUrl={normalizedFlagUrl}
@@ -94,13 +97,17 @@ export function TeamBadge({
   if (size === "table") {
     return (
       <span
-        className="table-team-shield-wrap"
+        className={tableWrapClassName}
         data-tooltip={teamName}
         title={teamName}
       >
         {badge}
       </span>
     );
+  }
+
+  if (normalizedFlagUrl) {
+    return <span className={`team-flag-circle-wrap-${size}`}>{badge}</span>;
   }
 
   return badge;

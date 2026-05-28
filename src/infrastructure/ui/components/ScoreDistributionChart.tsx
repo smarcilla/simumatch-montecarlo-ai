@@ -201,9 +201,13 @@ export function ScoreDistributionChart({
         <table className="simulation-table">
           <thead>
             <tr>
-              <th>{t("score")}</th>
+              <th>
+                <span className="th-full">{t("score")}</span>
+                <span className="th-abbr">{t("scoreShort")}</span>
+              </th>
               <th title={t("totalSimulations", { total: totalSimulations })}>
-                {t("frequency")}
+                <span className="th-full">{t("frequency")}</span>
+                <span className="th-abbr">{t("frequencyShort")}</span>
               </th>
               <th title={t("percentageOfSimulations")}>%</th>
             </tr>

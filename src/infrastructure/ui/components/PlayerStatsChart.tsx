@@ -160,10 +160,21 @@ export function PlayerStatsChart({
         <table className="simulation-table">
           <thead>
             <tr>
-              <th>{tShots("tableHeaders.player")}</th>
-              <th>{tShots("tableHeaders.team")}</th>
+              <th>
+                <span className="th-full">{tShots("tableHeaders.player")}</span>
+                <span className="th-abbr">
+                  {tShots("tableHeaders.playerShort")}
+                </span>
+              </th>
+              <th>
+                <span className="th-full">{tShots("tableHeaders.team")}</span>
+                <span className="th-abbr">
+                  {tShots("tableHeaders.teamShort")}
+                </span>
+              </th>
               <th title={t("goalProbabilityTitle")}>
-                {t("goalProbabilityShort")}
+                <span className="th-full">{t("goalProbabilityShort")}</span>
+                <span className="th-abbr">{t("goalProbabilityCompact")}</span>
               </th>
               <th title={t("sgaTitle")}>SGA</th>
             </tr>

@@ -38,6 +38,8 @@ describe("FindMatchesByLeagueAndSeasonUseCase", () => {
       expect(match).toHaveProperty("status");
       expect(match.homeFlag).toBe("https://flagcdn.com/ar.svg");
       expect(match.awayFlag).toBe("https://flagcdn.com/br.svg");
+      expect(match.homeShortName).toBe(homeTeam.shortName);
+      expect(match.awayShortName).toBe(awayTeam.shortName);
       expect(match.league).toBe(league._id.toString());
       expect(match.season).toBe(season._id.toString());
     });

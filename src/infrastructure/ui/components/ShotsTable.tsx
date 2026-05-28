@@ -211,8 +211,28 @@ export function ShotsTable({
                   </span>
                 )}
               </th>
-              <th className="shots-th">{tShots("tableHeaders.team")}</th>
-              <th className="shots-th">{tShots("tableHeaders.situation")}</th>
+              <th
+                className="shots-th"
+                data-tooltip={tShots("tableHeaders.team")}
+                tabIndex={0}
+              >
+                <span className="th-full">{tShots("tableHeaders.team")}</span>
+                <span className="th-abbr">
+                  {tShots("tableHeaders.teamShort")}
+                </span>
+              </th>
+              <th
+                className="shots-th"
+                data-tooltip={tShots("tableHeaders.situation")}
+                tabIndex={0}
+              >
+                <span className="th-full">
+                  {tShots("tableHeaders.situation")}
+                </span>
+                <span className="th-abbr">
+                  {tShots("tableHeaders.situationShort")}
+                </span>
+              </th>
               <th
                 className="shots-th shots-th-sortable shots-th-right"
                 onClick={() => handleSortChange("xg")}

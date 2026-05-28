@@ -16,10 +16,26 @@ interface MatchCardProps {
   readonly match: FindMatchByLeagueAndSeasonResult;
 }
 
+function getCompactShortName(shortName: string, fallbackName: string): string {
+  const normalizedShortName = shortName.trim();
+  if (normalizedShortName.length > 0) {
+    return normalizedShortName.slice(0, 3);
+  }
+  return fallbackName.trim().slice(0, 3);
+}
+
 export function MatchCard({ match }: MatchCardProps) {
   const [tooltip, setTooltip] = useState<string | null>(null);
   const t = useTranslations("match.status");
   const locale = useLocale();
+  const homeCompactShortName = getCompactShortName(
+    match.homeShortName,
+    match.home
+  );
+  const awayCompactShortName = getCompactShortName(
+    match.awayShortName,
+    match.away
+  );
 
   return (
     <Link href={`/match/${match.id}`} className="match-card-link">
@@ -44,6 +60,7 @@ export function MatchCard({ match }: MatchCardProps) {
             />
             <button
               className="team-name"
+              aria-label={match.home}
               onMouseEnter={() => setTooltip(match.home)}
               onMouseLeave={() => setTooltip(null)}
               onFocus={() => setTooltip(match.home)}
@@ -51,7 +68,8 @@ export function MatchCard({ match }: MatchCardProps) {
               onTouchStart={() => setTooltip(match.home)}
               onTouchEnd={() => setTooltip(null)}
             >
-              {match.home}
+              <span className="team-name-full">{match.home}</span>
+              <span className="team-name-short">{homeCompactShortName}</span>
             </button>
             {tooltip === match.home && (
               <div className="team-tooltip">{match.home}</div>
@@ -67,6 +85,7 @@ export function MatchCard({ match }: MatchCardProps) {
           <div className="team-side away">
             <button
               className="team-name"
+              aria-label={match.away}
               onMouseEnter={() => setTooltip(match.away)}
               onMouseLeave={() => setTooltip(null)}
               onFocus={() => setTooltip(match.away)}
@@ -74,7 +93,8 @@ export function MatchCard({ match }: MatchCardProps) {
               onTouchStart={() => setTooltip(match.away)}
               onTouchEnd={() => setTooltip(null)}
             >
-              {match.away}
+              <span className="team-name-full">{match.away}</span>
+              <span className="team-name-short">{awayCompactShortName}</span>
             </button>
             {tooltip === match.away && (
               <div className="team-tooltip">{match.away}</div>
