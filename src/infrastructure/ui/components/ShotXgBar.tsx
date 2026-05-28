@@ -76,13 +76,13 @@ export async function ShotXgBar({
         }
       >
         <div className="shot-stats-xg-team-header">
-          <span className="shot-stats-xg-team-name">{awayTeam}</span>
           <TableTeamBadge
             primary={awayColor}
             secondary={awayColorSecondary}
             name={awayTeam}
             flagUrl={awayFlag}
           />
+          <span className="shot-stats-xg-team-name">{awayTeam}</span>
         </div>
         <span className="shot-stats-xg-value">{awayXgFormatted} xG</span>
         <span className="shot-stats-xg-goals">

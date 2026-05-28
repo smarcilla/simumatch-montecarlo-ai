@@ -24,6 +24,11 @@ Las cabeceras de la tabla de disparos ya usan el patrón de `data-tooltip` con C
 - Cabeceras "Equipo" y "Situación" abreviadas en mobile con tooltip al hover/focus/active.
 - `shortName` de equipo en mobile en `MatchCard` y `MatchDetailCard` mediante CSS sin JS.
 - Exponer `homeShortName`/`awayShortName` en los DTOs de resultado de partido.
+- En el listado de partidos, mostrar en mobile solo 3 caracteres del `shortName` para evitar overflow.
+- Añadir contraste visual a banderas circulares mobile mediante borde ligero.
+- Compactar cabeceras de tablas de stats/simulación a un máximo de 3 caracteres en mobile.
+- Corregir la alineación del bloque away en `ShotXgBar` para mobile.
+- Mantener el mismo orden visual bandera+nombre en `ShotXgBar` para local y visitante.
 
 **Non-Goals:**
 
@@ -87,6 +92,26 @@ CSS: `.team-name-short { display: none }` en desktop; en `@media (max-width: 640
 ### 4. homeShortName/awayShortName en DTOs, no en entidad de dominio
 
 Se añaden los campos a los DTOs de resultado y se mapean en los use cases. La entidad `Team` ya tiene `shortName`; no requiere cambios de dominio.
+
+### 5. Truncado a 3 caracteres para MatchCard mobile
+
+`MatchCard` mantiene dos spans (`team-name-full`, `team-name-short`) y calcula el valor de `team-name-short` truncando `shortName` a los primeros 3 caracteres. Esto evita desbordes cuando la fuente de datos trae short names largos.
+
+### 6. Borde ligero en wrappers de bandera mobile
+
+Los wrappers circulares de `TeamFlag` en mobile (`team-flag-circle-wrap-card`, `team-flag-circle-wrap-detail`, `team-flag-circle-wrap`) añaden un borde sutil para mantener legibilidad cuando el color dominante de la bandera coincide con el fondo de tarjeta.
+
+### 7. Cabeceras compactas (<=3) en tablas de stats/simulación
+
+Las tablas `ShotPlayerStatsTable`, `ShotGoalkeeperStatsTable`, `ScoreDistributionChart` y `PlayerStatsChart` adoptan patrón dual `th-full`/`th-abbr`. En mobile solo se muestra `th-abbr` con abreviaturas de 3 caracteres o menos.
+
+### 8. Alineación away en ShotXgBar mobile
+
+En `ShotXgBar`, la regla de escritorio que alinea el badge xG away a la derecha se revierte explícitamente en mobile para mantener consistencia visual con el resto de bloques de estadísticas.
+
+### 9. Orden visual consistente en cabecera away de ShotXgBar
+
+La cabecera del bloque away en `ShotXgBar` usa el mismo orden visual que el bloque local: primero `TableTeamBadge` y después el nombre del equipo. Esto evita una lectura inconsistente en la sección de estadísticas de disparos.
 
 ## Risks / Trade-offs
 

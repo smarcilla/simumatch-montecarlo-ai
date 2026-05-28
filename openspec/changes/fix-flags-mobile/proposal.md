@@ -7,6 +7,11 @@ Las banderas de equipos nacionales presentan defectos visuales en mobile: se mue
 - Las banderas de equipos (`TeamFlag`) se muestran como círculos en mobile (≤640px) mediante un wrapper CSS con `border-radius: 50%` y `overflow: hidden`; en tablet y desktop permanecen rectangulares.
 - Las cabeceras "Equipo" y "Situación" de `ShotsTable` muestran su versión abreviada en mobile con un tooltip CSS al hacer hover/focus/active (patrón existente `data-tooltip`).
 - Los nombres de equipo en `MatchCard` y `MatchDetailCard` usan `shortName` en mobile y `name` en tablet/desktop mediante dual span con CSS `display: none` por breakpoint.
+- En el listado (`MatchCard`), el texto mostrado en mobile para `shortName` se limita a 3 caracteres para evitar desbordes con short names largos.
+- Los wrappers circulares de banderas en mobile añaden un borde ligero para mejorar contraste cuando el color de la bandera se parece al fondo.
+- Se corrige la alineación mobile en `ShotXgBar` para que el xG del equipo away se alinee a la izquierda igual que el resto de métricas.
+- En `ShotXgBar`, el bloque del equipo away muestra la bandera a la izquierda del nombre para mantener consistencia visual con el equipo local.
+- Las tablas de estadísticas y simulación (`ShotPlayerStatsTable`, `ShotGoalkeeperStatsTable`, `ScoreDistributionChart`, `PlayerStatsChart`) usan cabeceras responsive con abreviaturas móviles de máximo 3 caracteres.
 - Los DTOs `FindMatchByLeagueAndSeasonResult` y `FindMatchByIdResult` exponen `homeShortName` y `awayShortName`.
 - Se añaden traducciones cortas `tableHeaders.teamShort` y `tableHeaders.situationShort` en los mensajes i18n (ES + EN).
 
@@ -19,6 +24,9 @@ Las banderas de equipos nacionales presentan defectos visuales en mobile: se mue
 - `shots-table-abbr-headers`: Las cabeceras "Equipo" y "Situación" de la tabla de disparos muestran texto abreviado en mobile con tooltip al hover/focus/active. El tooltip muestra el nombre completo de la columna.
 
 - `team-short-name-mobile`: Los nombres de equipo en las tarjetas de partido muestran `shortName` en mobile y `name` en tablet/desktop.
+- `mobile-compact-stats-headers`: Las cabeceras de tablas de stats y simulación se compactan a un máximo de 3 caracteres en mobile.
+- `mobile-shot-xg-alignment`: En mobile, el bloque away del resumen xG mantiene alineación izquierda consistente.
+- `shot-xg-away-flag-order`: En `ShotXgBar`, el bloque away mantiene la bandera a la izquierda del nombre de equipo.
 
 ### Modified Capabilities
 
@@ -32,6 +40,11 @@ Las banderas de equipos nacionales presentan defectos visuales en mobile: se mue
 - `src/application/use-cases/find-match-by-id.use-case.ts` — mapear `shortName`
 - `src/infrastructure/ui/components/TeamBadge.tsx` — añadir wrapper circular condicional
 - `src/infrastructure/ui/components/ShotsTable.tsx` — cabeceras abreviadas con tooltip
+- `src/infrastructure/ui/components/ShotPlayerStatsTable.tsx` — cabeceras compactas mobile
+- `src/infrastructure/ui/components/ShotGoalkeeperStatsTable.tsx` — cabeceras compactas mobile
+- `src/infrastructure/ui/components/ScoreDistributionChart.tsx` — cabeceras compactas mobile
+- `src/infrastructure/ui/components/PlayerStatsChart.tsx` — cabeceras compactas mobile
+- `src/infrastructure/ui/components/ShotXgBar.tsx` — alineación mobile del bloque away y orden visual bandera/nombre en bloque away
 - `src/infrastructure/ui/components/MatchCard.tsx` — dual span name/shortName
 - `src/infrastructure/ui/components/MatchDetailCard.tsx` — dual span name/shortName
 - `src/infrastructure/ui/i18n/messages/es.json` — traducciones cortas de cabecera

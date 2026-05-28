@@ -12,6 +12,8 @@ La clase del wrapper SHALL variar según el `size` de `TeamBadge`:
 
 Cuando `flagUrl` no está presente (`TeamShield`), NO se aplica ningún wrapper circular.
 
+Los wrappers circulares de bandera en mobile SHALL incluir un borde ligero para mejorar contraste visual cuando los colores de la bandera se aproximan al fondo.
+
 #### Scenario: Bandera en card es circular en mobile
 
 - **WHEN** `TeamBadge` recibe `flagUrl` no vacío con `size="card"` y el viewport es ≤640px
@@ -41,3 +43,8 @@ Cuando `flagUrl` no está presente (`TeamShield`), NO se aplica ningún wrapper 
 
 - **WHEN** `TeamFlag` está dentro de un wrapper circular en mobile
 - **THEN** la `<img>` ocupa el 100% del ancho y alto del wrapper con `object-fit: cover`
+
+#### Scenario: Borde ligero visible en flags circulares mobile
+
+- **WHEN** `TeamFlag` se renderiza en wrapper circular y el viewport es ≤640px
+- **THEN** el wrapper aplica un borde ligero visible alrededor del círculo

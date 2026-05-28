@@ -3,7 +3,9 @@ import { MatchStatusValue } from "@/domain/value-objects/match-status.value";
 export interface FindMatchByLeagueAndSeasonResult {
   id: string;
   home: string;
+  homeShortName: string;
   away: string;
+  awayShortName: string;
   date: string;
   homeColorPrimary: string;
   homeColorSecondary: string;

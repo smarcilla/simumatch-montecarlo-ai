@@ -48,19 +48,33 @@ export async function ShotPlayerStatsTable({
         <table className="shot-stats-table">
           <thead>
             <tr>
-              <th className="shot-stats-th">{t("tableHeaders.player")}</th>
-              <th className="shot-stats-th">{t("tableHeaders.team")}</th>
+              <th className="shot-stats-th">
+                <span className="th-full">{t("tableHeaders.player")}</span>
+                <span className="th-abbr">{t("tableHeaders.playerShort")}</span>
+              </th>
+              <th className="shot-stats-th">
+                <span className="th-full">{t("tableHeaders.team")}</span>
+                <span className="th-abbr">{t("tableHeaders.teamShort")}</span>
+              </th>
               <th
                 className="shot-stats-th shot-stats-th-right"
                 title={t("tableHeaders.shotsGoals")}
               >
-                {t("tableHeaders.shotsGoalsShort")}
+                <span className="th-full">
+                  {t("tableHeaders.shotsGoalsShort")}
+                </span>
+                <span className="th-abbr">
+                  {t("tableHeaders.shotsGoalsCompact")}
+                </span>
               </th>
               <th
                 className="shot-stats-th shot-stats-th-right"
                 title="Expected Goals / Expected Goals on Target"
               >
-                xG/xGOT
+                <span className="th-full">xG/xGOT</span>
+                <span className="th-abbr">
+                  {t("tableHeaders.xgotGoalsCompact")}
+                </span>
               </th>
             </tr>
           </thead>

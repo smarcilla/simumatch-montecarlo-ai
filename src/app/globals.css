@@ -555,6 +555,14 @@ button {
   min-width: 0;
 }
 
+.team-name-full {
+  display: inline;
+}
+
+.team-name-short {
+  display: none;
+}
+
 .team-tooltip {
   position: absolute;
   bottom: calc(100% + 6px);
@@ -698,6 +706,50 @@ button {
   .team-shield-svg {
     width: 30px;
     height: 35px;
+  }
+
+  .team-name-full {
+    display: none;
+  }
+
+  .team-name-short {
+    display: inline;
+  }
+
+  .team-flag-circle-wrap-card,
+  .team-flag-circle-wrap-detail,
+  .team-flag-circle-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    overflow: hidden;
+    box-sizing: border-box;
+    border: 1px solid
+      color-mix(in srgb, var(--border-default) 85%, var(--bg-surface));
+  }
+
+  .team-flag-circle-wrap-card {
+    width: 32px;
+    height: 32px;
+  }
+
+  .team-flag-circle-wrap-detail {
+    width: 64px;
+    height: 64px;
+  }
+
+  .team-flag-circle-wrap {
+    width: 20px;
+    height: 20px;
+  }
+
+  .team-flag-circle-wrap-card img,
+  .team-flag-circle-wrap-detail img,
+  .team-flag-circle-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 }
 
@@ -1628,6 +1680,18 @@ button {
   white-space: nowrap;
 }
 
+.th-full {
+  display: inline;
+}
+
+.th-abbr {
+  display: none;
+}
+
+.shots-th[data-tooltip] {
+  position: relative;
+}
+
 .shots-th-sortable {
   cursor: pointer;
   user-select: none;
@@ -1729,7 +1793,8 @@ button {
 }
 
 .shot-icon-wrapper[data-tooltip]::after,
-.table-team-shield-wrap[data-tooltip]::after {
+.table-team-shield-wrap[data-tooltip]::after,
+.shots-th[data-tooltip]::after {
   content: attr(data-tooltip);
   position: absolute;
   bottom: calc(100% + 5px);
@@ -1755,7 +1820,10 @@ button {
 .shot-icon-wrapper[data-tooltip]:active::after,
 .table-team-shield-wrap[data-tooltip]:hover::after,
 .table-team-shield-wrap[data-tooltip]:focus::after,
-.table-team-shield-wrap[data-tooltip]:active::after {
+.table-team-shield-wrap[data-tooltip]:active::after,
+.shots-th[data-tooltip]:hover::after,
+.shots-th[data-tooltip]:focus::after,
+.shots-th[data-tooltip]:active::after {
   opacity: 1;
 }
 
@@ -1824,6 +1892,16 @@ button {
   font-size: var(--font-size-sm);
   color: var(--text-tertiary);
   font-family: var(--font-mono);
+}
+
+@media (max-width: 640px) {
+  .th-full {
+    display: none;
+  }
+
+  .th-abbr {
+    display: inline;
+  }
 }
 
 /* ============================================
@@ -2021,6 +2099,10 @@ button {
   .shot-stats-xg-team-away {
     text-align: left;
     align-items: flex-start;
+  }
+
+  .shot-stats-xg-team-away .shot-stats-xg-value {
+    align-self: flex-start;
   }
 }
 

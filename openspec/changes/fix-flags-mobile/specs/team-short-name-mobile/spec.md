@@ -6,10 +6,17 @@
 
 `FindMatchByLeagueAndSeasonResult` y `FindMatchByIdResult` SHALL exponer los campos `homeShortName: string` y `awayShortName: string`.
 
+En `MatchCard`, el texto visible en mobile SHALL truncarse a los primeros 3 caracteres del `shortName` para garantizar que ambas columnas de equipo caben sin overflow.
+
 #### Scenario: MatchCard muestra shortName en mobile
 
 - **WHEN** `MatchCard` recibe un partido con `homeShortName: "ESP"` y el viewport es ≤640px
 - **THEN** el nombre del equipo local muestra "ESP" y oculta el nombre completo
+
+#### Scenario: MatchCard trunca shortName largo a 3 caracteres
+
+- **WHEN** `MatchCard` recibe `homeShortName: "Espanyol"` y el viewport es ≤640px
+- **THEN** el texto visible en `team-name-short` es "Esp"
 
 #### Scenario: MatchCard muestra name en desktop
 

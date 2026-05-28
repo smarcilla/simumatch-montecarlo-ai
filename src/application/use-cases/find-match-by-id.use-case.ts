@@ -15,7 +15,9 @@ export class FindMatchByIdUseCase {
     return {
       id: match.id,
       home: match.homeTeam.name,
+      homeShortName: match.homeTeam.shortName,
       away: match.awayTeam.name,
+      awayShortName: match.awayTeam.shortName,
       date: match.date.date.toISOString(),
       homeColorPrimary: match.homeTeam.primaryColor.hex,
       homeColorSecondary: match.homeTeam.secondaryColor.hex,
