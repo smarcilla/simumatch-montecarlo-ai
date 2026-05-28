@@ -96,6 +96,24 @@ describe("MatchCard", () => {
     expect(matchLink!.getAttribute("href")).toBe("/match/abc-123");
   });
 
+  it("should append encoded back query when backUrl is provided", () => {
+    render(
+      <MatchCard
+        match={buildMatch({ id: "abc-123" })}
+        backUrl="/?league=39&season=2025&page=4&team=spain"
+      />
+    );
+    const links = screen.getAllByRole("link");
+    const matchLink = links.find((l) =>
+      l.getAttribute("href")?.startsWith("/match/")
+    );
+
+    expect(matchLink).toBeDefined();
+    expect(matchLink!.getAttribute("href")).toBe(
+      "/match/abc-123?back=%2F%3Fleague%3D39%26season%3D2025%26page%3D4%26team%3Dspain"
+    );
+  });
+
   it("should show tooltip on team name hover", () => {
     render(<MatchCard match={buildMatch()} />);
     const [homeButton] = screen.getAllByRole("button", {

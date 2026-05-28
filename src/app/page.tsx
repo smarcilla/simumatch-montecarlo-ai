@@ -8,13 +8,38 @@ import { Pagination } from "@/infrastructure/ui/components/Pagination";
 import { MatchFiltersBar } from "@/infrastructure/ui/components/filters/MatchFiltersBar";
 import { MatchCard } from "@/infrastructure/ui/components/MatchCard";
 
+type HomeSearchParams = {
+  league?: string;
+  season?: string;
+  page?: string;
+  team?: string;
+};
+
 interface PageProps {
-  readonly searchParams: Promise<{
-    league?: string;
-    season?: string;
-    page?: string;
-    team?: string;
-  }>;
+  readonly searchParams: Promise<HomeSearchParams>;
+}
+
+export function buildBackUrl(searchParams: HomeSearchParams): string | null {
+  const { league, season, page, team } = searchParams;
+
+  if (!league || !season) {
+    return null;
+  }
+
+  const backParams = new URLSearchParams({
+    league,
+    season,
+  });
+
+  if (page) {
+    backParams.set("page", page);
+  }
+
+  if (team) {
+    backParams.set("team", team);
+  }
+
+  return `/?${backParams.toString()}`;
 }
 
 export default async function Home(props: PageProps) {
@@ -39,6 +64,13 @@ export default async function Home(props: PageProps) {
     getLeagues(),
     teamSlug ? getTeamBySlug(teamSlug) : Promise.resolve(null),
   ]);
+  const backUrl =
+    buildBackUrl({
+      league: leagueId,
+      season: seasonId,
+      ...(searchParams.page ? { page: searchParams.page } : {}),
+      ...(teamSlug ? { team: teamSlug } : {}),
+    }) ?? `/?league=${leagueId}&season=${seasonId}`;
 
   const activeLeague = leagues.find((l) => l.id === leagueId);
   const activeSeason = activeLeague?.seasons.find((s) => s.id === seasonId);
@@ -82,7 +114,7 @@ export default async function Home(props: PageProps) {
 
         <div className="matches-grid">
           {result.results.map((match) => (
-            <MatchCard key={match.id} match={match} />
+            <MatchCard key={match.id} match={match} backUrl={backUrl} />
           ))}
         </div>
 

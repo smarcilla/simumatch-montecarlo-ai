@@ -15,10 +15,34 @@ import { createFindShotsByMatchCommand } from "@/infrastructure/mappers/find-sho
 
 interface MatchPageProps {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ back?: string }>;
 }
 
-export default async function MatchPage({ params }: Readonly<MatchPageProps>) {
-  const { id } = await params;
+export function resolveBackHref(
+  back: string | undefined,
+  league: string,
+  season: string
+): string {
+  const fallbackHref = `/?league=${league}&season=${season}`;
+
+  if (!back) {
+    return fallbackHref;
+  }
+
+  const normalizedBack = back.trim();
+
+  if (!normalizedBack.startsWith("/") || normalizedBack.startsWith("//")) {
+    return fallbackHref;
+  }
+
+  return normalizedBack;
+}
+
+export default async function MatchPage({
+  params,
+  searchParams,
+}: Readonly<MatchPageProps>) {
+  const [{ id }, { back }] = await Promise.all([params, searchParams]);
 
   const [match, initialShots, shotStats] = await Promise.all([
     getMatchById(id),
@@ -32,6 +56,7 @@ export default async function MatchPage({ params }: Readonly<MatchPageProps>) {
     notFound();
   }
 
+  const backHref = resolveBackHref(back, match.league, match.season);
   const t = await getTranslations("common");
 
   return (
@@ -47,10 +72,7 @@ export default async function MatchPage({ params }: Readonly<MatchPageProps>) {
           } as React.CSSProperties
         }
       >
-        <Link
-          href={`/?league=${match.league}&season=${match.season}`}
-          className="match-detail-back"
-        >
+        <Link href={backHref} className="match-detail-back">
           {t("backToMatches")}
         </Link>
         <MatchDetailCard match={match} />

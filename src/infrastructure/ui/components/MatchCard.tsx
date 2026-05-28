@@ -14,6 +14,7 @@ const STATUS_KEYS: Record<string, string> = {
 
 interface MatchCardProps {
   readonly match: FindMatchByLeagueAndSeasonResult;
+  readonly backUrl?: string;
 }
 
 function getCompactShortName(shortName: string, fallbackName: string): string {
@@ -24,10 +25,13 @@ function getCompactShortName(shortName: string, fallbackName: string): string {
   return fallbackName.trim().slice(0, 3);
 }
 
-export function MatchCard({ match }: MatchCardProps) {
+export function MatchCard({ match, backUrl }: MatchCardProps) {
   const [tooltip, setTooltip] = useState<string | null>(null);
   const t = useTranslations("match.status");
   const locale = useLocale();
+  const href = backUrl
+    ? `/match/${match.id}?back=${encodeURIComponent(backUrl)}`
+    : `/match/${match.id}`;
   const homeCompactShortName = getCompactShortName(
     match.homeShortName,
     match.home
@@ -38,7 +42,7 @@ export function MatchCard({ match }: MatchCardProps) {
   );
 
   return (
-    <Link href={`/match/${match.id}`} className="match-card-link">
+    <Link href={href} className="match-card-link">
       <div
         className="match-card"
         style={
