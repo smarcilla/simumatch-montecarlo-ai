@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages, getTranslations } from "next-intl/server";
@@ -23,6 +24,19 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+async function IntlProvider({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
+  return (
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      {children}
+    </NextIntlClientProvider>
+  );
+}
+
 export async function generateMetadata(): Promise<{
   title: string;
   description: string;
@@ -39,17 +53,14 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const locale = await getLocale();
-  const messages = await getMessages();
-
   return (
-    <html lang={locale}>
+    <html lang="es">
       <body
         className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} antialiased`}
       >
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
+        <Suspense fallback={null}>
+          <IntlProvider>{children}</IntlProvider>
+        </Suspense>
         <Analytics />
         <SpeedInsights />
       </body>

@@ -1,6 +1,6 @@
 "use server";
 
-import { unstable_cache } from "next/cache";
+import { cacheTag, unstable_cache } from "next/cache";
 import { DIContainer } from "@/infrastructure/di-container";
 import { FindMatchByLeagueAndSeasonResult } from "@/application/results/find-matches-by-league-and-season.result";
 import { FindMatchByIdResult } from "@/application/results/find-match-by-id.result";
@@ -81,16 +81,17 @@ export async function getMatchesByLeagueAndSeason(
 export async function getMatchById(
   id: string
 ): Promise<FindMatchByIdResult | null> {
-  const getMatchByIdCached = unstable_cache(
-    async () => {
-      const useCase = await DIContainer.getFindMatchByIdUseCase();
-      return useCase.execute(id);
-    },
-    ["match", id],
-    { revalidate: 300, tags: [getMatchCacheTag(id)] }
-  );
+  "use cache";
+  cacheTag("match", `match-${id}`);
 
-  return getMatchByIdCached();
+  console.log(`Fetching match ${id} from database`);
+
+  const useCase = await DIContainer.getFindMatchByIdUseCase();
+  const result = await useCase.execute(id);
+
+  console.log(`Fetched match ${id} from database`);
+
+  return result;
 }
 
 export async function getShotsByMatch(

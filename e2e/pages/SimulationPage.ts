@@ -13,7 +13,7 @@ export class SimulationPage {
   constructor(page: Page) {
     this.page = page;
     this.backToMatchLink = page.locator(".match-detail-back");
-    this.matchDetailCard = page.locator(".match-detail-card");
+    this.matchDetailCard = page.locator(".simulation-page .match-detail-card");
     this.probabilityChart = page.locator(".simulation-probability-chart");
     this.xptsCards = page.locator(".simulation-xpts-cards");
     this.scoreDistribution = page.locator(".score-distribution-chart");
