@@ -1,6 +1,6 @@
 "use server";
 
-import { cacheTag, unstable_cache } from "next/cache";
+import { cacheTag } from "next/cache";
 import { DIContainer } from "@/infrastructure/di-container";
 import { FindMatchByLeagueAndSeasonResult } from "@/application/results/find-matches-by-league-and-season.result";
 import { FindMatchByIdResult } from "@/application/results/find-match-by-id.result";
@@ -55,27 +55,29 @@ export async function getMatchesByLeagueAndSeason(
   pageSize: number = 12,
   teamSlug?: string
 ): Promise<PaginatedResult<FindMatchByLeagueAndSeasonResult>> {
-  const getMatchesByLeagueAndSeasonCached = unstable_cache(
-    async () =>
-      findMatchesByLeagueAndSeason(
-        leagueId,
-        seasonId,
-        page,
-        pageSize,
-        teamSlug
-      ),
-    [
-      "matches",
-      leagueId,
-      seasonId,
-      String(page),
-      String(pageSize),
-      teamSlug ?? "",
-    ],
-    { revalidate: 300 }
+  "use cache";
+  cacheTag(
+    "matches",
+    `matches-league-${leagueId}-season-${seasonId}-page-${page}-size-${pageSize}-team-${teamSlug ?? "none"}`
   );
 
-  return getMatchesByLeagueAndSeasonCached();
+  console.log(
+    `Fetching matches for league ${leagueId}, season ${seasonId}, page ${page}, pageSize ${pageSize}, team ${teamSlug} from database`
+  );
+
+  const result = await findMatchesByLeagueAndSeason(
+    leagueId,
+    seasonId,
+    page,
+    pageSize,
+    teamSlug
+  );
+
+  console.log(
+    `Fetched matches for league ${leagueId}, season ${seasonId}, page ${page}, pageSize ${pageSize}, team ${teamSlug} from database`
+  );
+
+  return result;
 }
 
 export async function getMatchById(
