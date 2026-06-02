@@ -1,6 +1,6 @@
 "use server";
 
-import { unstable_cache } from "next/cache";
+import { cacheTag } from "next/cache";
 import { DIContainer } from "@/infrastructure/di-container";
 import { FindMatchByLeagueAndSeasonResult } from "@/application/results/find-matches-by-league-and-season.result";
 import { FindMatchByIdResult } from "@/application/results/find-match-by-id.result";
@@ -55,62 +55,75 @@ export async function getMatchesByLeagueAndSeason(
   pageSize: number = 12,
   teamSlug?: string
 ): Promise<PaginatedResult<FindMatchByLeagueAndSeasonResult>> {
-  const getMatchesByLeagueAndSeasonCached = unstable_cache(
-    async () =>
-      findMatchesByLeagueAndSeason(
-        leagueId,
-        seasonId,
-        page,
-        pageSize,
-        teamSlug
-      ),
-    [
-      "matches",
-      leagueId,
-      seasonId,
-      String(page),
-      String(pageSize),
-      teamSlug ?? "",
-    ],
-    { revalidate: 300 }
+  "use cache";
+  cacheTag(
+    "matches",
+    `matches-league-${leagueId}-season-${seasonId}-page-${page}-size-${pageSize}-team-${teamSlug ?? "none"}`
   );
 
-  return getMatchesByLeagueAndSeasonCached();
+  console.log(
+    `Fetching matches for league ${leagueId}, season ${seasonId}, page ${page}, pageSize ${pageSize}, team ${teamSlug} from database`
+  );
+
+  const result = await findMatchesByLeagueAndSeason(
+    leagueId,
+    seasonId,
+    page,
+    pageSize,
+    teamSlug
+  );
+
+  console.log(
+    `Fetched matches for league ${leagueId}, season ${seasonId}, page ${page}, pageSize ${pageSize}, team ${teamSlug} from database`
+  );
+
+  return result;
 }
 
 export async function getMatchById(
   id: string
 ): Promise<FindMatchByIdResult | null> {
-  const getMatchByIdCached = unstable_cache(
-    async () => {
-      const useCase = await DIContainer.getFindMatchByIdUseCase();
-      return useCase.execute(id);
-    },
-    ["match", id],
-    { revalidate: 300, tags: [getMatchCacheTag(id)] }
-  );
+  "use cache";
+  cacheTag("match", `match-${id}`);
 
-  return getMatchByIdCached();
+  console.log(`Fetching match ${id} from database`);
+
+  const useCase = await DIContainer.getFindMatchByIdUseCase();
+  const result = await useCase.execute(id);
+
+  console.log(`Fetched match ${id} from database`);
+
+  return result;
 }
 
 export async function getShotsByMatch(
   command: FindShotsByMatchCommand
 ): Promise<PaginatedResult<FindShotResult>> {
+  "use cache";
+  cacheTag("shots", getMatchCacheTag(command.matchId));
+
+  console.log(`Fetching shots for match ${command.matchId} from database`);
+
   const useCase = await DIContainer.getFindShotsByMatchUseCase();
-  return useCase.execute(command);
+  const result = await useCase.execute(command);
+
+  console.log(`Fetched shots for match ${command.matchId} from database`);
+
+  return result;
 }
 
 export async function getShotStatsByMatch(
   matchId: string
 ): Promise<ShotMatchStatsResult> {
-  const getShotStatsByMatchCached = unstable_cache(
-    async () => {
-      const useCase = await DIContainer.getFindShotStatsByMatchUseCase();
-      return useCase.execute(matchId);
-    },
-    ["shot-stats", matchId],
-    { revalidate: 3600 }
-  );
+  "use cache";
+  cacheTag("shot-stats", getMatchCacheTag(matchId));
 
-  return getShotStatsByMatchCached();
+  console.log(`Fetching shot stats for match ${matchId} from database`);
+
+  const useCase = await DIContainer.getFindShotStatsByMatchUseCase();
+  const result = await useCase.execute(matchId);
+
+  console.log(`Fetched shot stats for match ${matchId} from database`);
+
+  return result;
 }

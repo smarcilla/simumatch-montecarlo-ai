@@ -1,6 +1,6 @@
 "use server";
 
-import { updateTag } from "next/cache";
+import { cacheTag, updateTag } from "next/cache";
 import { DIContainer } from "@/infrastructure/di-container";
 import { SimulateMatchResult } from "@/application/results/simulate-match.result";
 import { ChronicleResult } from "@/application/results/chronicle.result";
@@ -21,6 +21,10 @@ export async function simulateMatch(
 export async function getSimulationByMatchId(
   matchId: string
 ): Promise<SimulateMatchResult | null> {
+  "use cache";
+
+  cacheTag("match-simulation", `match-simulation-${matchId}`);
+
   const useCase = await DIContainer.getFindSimulationByMatchIdUseCase();
   return useCase.execute(matchId);
 }
@@ -34,6 +38,8 @@ export async function writeChronicle(id: string): Promise<void> {
 export async function getChronicleByMatchId(
   matchId: string
 ): Promise<ChronicleResult | null> {
+  "use cache";
+  cacheTag("match-chronicle", `match-chronicle-${matchId}`);
   const useCase = await DIContainer.getFindChronicleByMatchIdUseCase();
   return useCase.execute(matchId);
 }

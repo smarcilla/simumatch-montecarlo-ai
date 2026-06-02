@@ -12,9 +12,11 @@ function resolveLocale(raw: string | undefined): Locale {
   return DEFAULT_LOCALE;
 }
 
-export default getRequestConfig(async () => {
+export default getRequestConfig(async ({ requestLocale }) => {
   const cookieStore = await cookies();
-  const locale = resolveLocale(cookieStore.get("NEXT_LOCALE")?.value);
+  const locale =
+    resolveLocale(cookieStore.get("NEXT_LOCALE")?.value) ||
+    resolveLocale(await requestLocale);
   const messages = (await import(`./messages/${locale}.json`)).default;
 
   return { locale, messages };
