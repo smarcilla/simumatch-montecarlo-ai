@@ -97,21 +97,31 @@ export async function getMatchById(
 export async function getShotsByMatch(
   command: FindShotsByMatchCommand
 ): Promise<PaginatedResult<FindShotResult>> {
+  "use cache";
+  cacheTag("shots", getMatchCacheTag(command.matchId));
+
+  console.log(`Fetching shots for match ${command.matchId} from database`);
+
   const useCase = await DIContainer.getFindShotsByMatchUseCase();
-  return useCase.execute(command);
+  const result = await useCase.execute(command);
+
+  console.log(`Fetched shots for match ${command.matchId} from database`);
+
+  return result;
 }
 
 export async function getShotStatsByMatch(
   matchId: string
 ): Promise<ShotMatchStatsResult> {
-  const getShotStatsByMatchCached = unstable_cache(
-    async () => {
-      const useCase = await DIContainer.getFindShotStatsByMatchUseCase();
-      return useCase.execute(matchId);
-    },
-    ["shot-stats", matchId],
-    { revalidate: 3600 }
-  );
+  "use cache";
+  cacheTag("shot-stats", getMatchCacheTag(matchId));
 
-  return getShotStatsByMatchCached();
+  console.log(`Fetching shot stats for match ${matchId} from database`);
+
+  const useCase = await DIContainer.getFindShotStatsByMatchUseCase();
+  const result = await useCase.execute(matchId);
+
+  console.log(`Fetched shot stats for match ${matchId} from database`);
+
+  return result;
 }
