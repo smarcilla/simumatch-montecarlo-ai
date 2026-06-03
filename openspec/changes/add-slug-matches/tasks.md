@@ -1,8 +1,8 @@
 ## 1. Data Contracts and Persistence
 
-- [ ] 1.1 Extend match upsert command and domain entity contracts with `tournamentSlug` and `matchSlug`.
-- [ ] 1.2 Extend match persistence schema/model and repository mapping to store and hydrate slug fields.
-- [ ] 1.3 Extend match read result DTOs and use-case mappers to expose slug fields for UI routing.
+- [x] 1.1 Extend match upsert command and domain entity contracts with `tournamentSlug` and `matchSlug`.
+- [x] 1.2 Extend match persistence schema/model and repository mapping to store and hydrate slug fields.
+- [x] 1.3 Extend match read result DTOs and use-case mappers to expose slug fields for UI routing.
 
 ## 2. Derived Synchronization
 

@@ -132,6 +132,8 @@ export class MongooseMatchRepository implements MatchRepository {
           homeScore: match.score.home,
           awayScore: match.score.away,
           status: match.statusValue,
+          tournamentSlug: match.tournamentSlug,
+          slug: match.matchSlug,
         },
       },
       { upsert: true }
@@ -193,6 +195,8 @@ export class MongooseMatchRepository implements MatchRepository {
     return new Match(
       doc._id.toString(),
       doc.externalId,
+      doc.tournamentSlug,
+      doc.slug,
       league,
       season,
       matchDate,

@@ -6,6 +6,8 @@ export interface UpsertMatchCommand {
   awayTeamExternalId: number;
   leagueExternalId: string;
   seasonExternalId: number;
+  tournamentSlug?: string;
+  matchSlug?: string;
   date: number;
   homeScore: number;
   awayScore: number;

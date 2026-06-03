@@ -30,6 +30,8 @@ export class FindMatchByIdUseCase {
       status: match.statusValue,
       league: match.league.id!,
       season: match.season.id!,
+      tournamentSlug: match.tournamentSlug,
+      matchSlug: match.matchSlug,
     };
   }
 }
