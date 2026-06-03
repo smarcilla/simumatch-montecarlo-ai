@@ -13,7 +13,7 @@ test.describe("Chronicle flow", () => {
     await homePage.selectLeagueFromMenu(/.+/);
     await expect(homePage.matchCards.first()).toBeVisible();
     await homePage.clickFirstMatch();
-    await page.waitForURL(/\/match\/.+/);
+    await page.waitForURL(/\/match\/[^/]+\/[^/]+\/[^/]+$/);
 
     const matchDetail = new MatchDetailPage(page);
     await expect(matchDetail.actionsPanel).toBeVisible();
@@ -39,7 +39,7 @@ test.describe("Chronicle flow", () => {
 
     if (canReadChronicle) {
       await matchDetail.navigateToChronicle();
-      await page.waitForURL(/\/match\/.+\/chronicle/);
+      await page.waitForURL(/\/match\/[^/]+\/[^/]+\/[^/]+\/chronicle$/);
 
       const chroniclePage = new ChroniclePage(page);
       await expect(chroniclePage.chronicleHero).toBeVisible({

@@ -13,7 +13,7 @@ test.describe("Simulation flow", () => {
     await homePage.selectLeagueFromMenu(/.+/);
     await expect(homePage.matchCards.first()).toBeVisible();
     await homePage.clickFirstMatch();
-    await page.waitForURL(/\/match\/.+/);
+    await page.waitForURL(/\/match\/[^/]+\/[^/]+\/[^/]+$/);
 
     const matchDetail = new MatchDetailPage(page);
     await expect(matchDetail.matchDetailCard).toBeVisible();
@@ -33,7 +33,7 @@ test.describe("Simulation flow", () => {
       const viewBtn = matchDetail.viewSimulationButton;
       await expect(viewBtn).toBeVisible({ timeout: 10_000 });
       await matchDetail.navigateToSimulation();
-      await page.waitForURL(/\/match\/.+\/simulation/);
+      await page.waitForURL(/\/match\/[^/]+\/[^/]+\/[^/]+\/simulation$/);
 
       const simulationPage = new SimulationPage(page);
       await expect(simulationPage.matchDetailCard).toBeVisible();

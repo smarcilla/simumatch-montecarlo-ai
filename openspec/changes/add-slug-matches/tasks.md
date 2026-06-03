@@ -26,5 +26,5 @@
 ## 5. Validation, Backfill, and Release Readiness
 
 - [x] 5.1 Update unit tests that assert match href generation to cover canonical URLs and legacy redirect expectations.
-- [ ] 5.2 Update e2e page objects/specs to navigate and assert canonical match routes.
-- [ ] 5.4 Run lint, type-check, unit tests, and e2e smoke checks for routing and navigation before release.
+- [x] 5.2 Update e2e page objects/specs to navigate and assert canonical match routes.
+- [x] 5.4 Run lint, type-check, unit tests, and e2e smoke checks for routing and navigation before release.
