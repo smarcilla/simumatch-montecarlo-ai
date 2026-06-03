@@ -6,9 +6,9 @@
 
 ## 2. Derived Synchronization
 
-- [ ] 2.1 Extend raw match document typing in derived sync and seed scripts to include `tournament.slug` and top-level `slug`.
-- [ ] 2.2 Map raw slug fields into match upsert commands in both `seed:derived` and `seed:matches` flows.
-- [ ] 2.3 Add or update sync-focused tests to verify slug persistence and idempotent re-sync behavior.
+- [x] 2.1 Extend raw match document typing in derived sync and seed scripts to include `tournament.slug` and top-level `slug`.
+- [x] 2.2 Map raw slug fields into match upsert commands in both `seed:derived` and `seed:matches` flows.
+- [x] 2.3 Add or update sync-focused tests to verify slug persistence and idempotent re-sync behavior.
 
 ## 3. Canonical Routing and Legacy Compatibility
 
