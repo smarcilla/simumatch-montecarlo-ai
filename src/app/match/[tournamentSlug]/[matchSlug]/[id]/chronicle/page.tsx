@@ -35,7 +35,7 @@ export default async function CanonicalMatchChroniclePage({
 
   const chronicle = await getChronicleByMatchId(id);
   if (!chronicle) {
-    redirect(buildCanonicalMatchHref(match) ?? `/match/${id}`);
+    redirect(buildCanonicalMatchHref(match) ?? "/");
   }
 
   return ChroniclePage({

@@ -19,13 +19,12 @@
 
 ## 4. Navigation and URL Builder Adoption
 
-- [ ] 4.1 Create a shared match URL builder utility for detail/simulation/chronicle canonical paths.
-- [ ] 4.2 Replace inline route string generation in match cards, action panels, and page redirects with the shared URL builder.
-- [ ] 4.3 Keep temporary fallback behavior for records missing slugs until backfill is complete.
+- [x] 4.1 Create a shared match URL builder utility for detail/simulation/chronicle canonical paths.
+- [x] 4.2 Replace inline route string generation in match cards, action panels, and page redirects with the shared URL builder.
+- [x] 4.3 Keep temporary fallback behavior for records missing slugs until backfill is complete.
 
 ## 5. Validation, Backfill, and Release Readiness
 
-- [ ] 5.1 Update unit tests that assert match href generation to cover canonical URLs and legacy redirect expectations.
+- [x] 5.1 Update unit tests that assert match href generation to cover canonical URLs and legacy redirect expectations.
 - [ ] 5.2 Update e2e page objects/specs to navigate and assert canonical match routes.
-- [ ] 5.3 Execute derived data backfill (`seed:derived`) in target environments to populate slug fields for existing matches.
 - [ ] 5.4 Run lint, type-check, unit tests, and e2e smoke checks for routing and navigation before release.

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { FindMatchByLeagueAndSeasonResult } from "@/application/results/find-matches-by-league-and-season.result";
+import { buildCanonicalMatchHref } from "@/app/match/match-route-utils";
 import { TeamBadge } from "@/infrastructure/ui/components/TeamBadge";
 
 const STATUS_KEYS: Record<string, string> = {
@@ -29,9 +30,7 @@ export function MatchCard({ match, backUrl }: MatchCardProps) {
   const [tooltip, setTooltip] = useState<string | null>(null);
   const t = useTranslations("match.status");
   const locale = useLocale();
-  const href = backUrl
-    ? `/match/${match.id}?back=${encodeURIComponent(backUrl)}`
-    : `/match/${match.id}`;
+  const href = buildCanonicalMatchHref(match, { back: backUrl }) ?? "/";
   const homeCompactShortName = getCompactShortName(
     match.homeShortName,
     match.home

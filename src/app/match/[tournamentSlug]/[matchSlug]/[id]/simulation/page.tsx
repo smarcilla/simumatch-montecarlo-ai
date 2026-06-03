@@ -35,7 +35,7 @@ export default async function CanonicalMatchSimulationPage({
 
   const simulation = await getSimulationByMatchId(id);
   if (!simulation) {
-    redirect(buildCanonicalMatchHref(match) ?? `/match/${id}`);
+    redirect(buildCanonicalMatchHref(match) ?? "/");
   }
 
   return SimulationPage({

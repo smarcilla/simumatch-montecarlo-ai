@@ -5,6 +5,10 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { FindMatchByIdResult } from "@/application/results/find-match-by-id.result";
 import {
+  buildCanonicalMatchChronicleHref,
+  buildCanonicalMatchSimulationHref,
+} from "@/app/match/match-route-utils";
+import {
   simulateMatch,
   writeChronicle,
 } from "@/infrastructure/actions/simulation.actions";
@@ -30,6 +34,9 @@ export function MatchActionsPanel({ match }: MatchActionsPanelProps) {
     }
   };
 
+  const simulationHref = buildCanonicalMatchSimulationHref(match);
+  const chronicleHref = buildCanonicalMatchChronicleHref(match);
+
   return (
     <div className="match-actions-panel">
       {status === "finished" && (
@@ -45,8 +52,8 @@ export function MatchActionsPanel({ match }: MatchActionsPanelProps) {
       {(status === "simulated" || status === "chronicle_generated") && (
         <button
           className="match-action-btn secondary"
-          disabled={isPending}
-          onClick={() => router.push(`/match/${id}/simulation`)}
+          disabled={isPending || !simulationHref}
+          onClick={() => simulationHref && router.push(simulationHref)}
         >
           {t("viewSimulation")}
         </button>
@@ -65,8 +72,8 @@ export function MatchActionsPanel({ match }: MatchActionsPanelProps) {
       {status === "chronicle_generated" && (
         <button
           className="match-action-btn secondary"
-          disabled={isPending}
-          onClick={() => router.push(`/match/${id}/chronicle`)}
+          disabled={isPending || !chronicleHref}
+          onClick={() => chronicleHref && router.push(chronicleHref)}
         >
           {t("readChronicle")}
         </button>
