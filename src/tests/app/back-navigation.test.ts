@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildBackUrl } from "@/app/page";
-import { resolveBackHref } from "@/app/match/[id]/page";
+import { resolveBackHref } from "@/app/match/_internal/[id]/page";
 
 describe("Back navigation", () => {
   it("builds backUrl from search params and keeps encoded href stable", () => {

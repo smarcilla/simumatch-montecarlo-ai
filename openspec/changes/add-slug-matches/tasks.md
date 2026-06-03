@@ -12,10 +12,10 @@
 
 ## 3. Canonical Routing and Legacy Compatibility
 
-- [ ] 3.1 Add canonical match detail route structure for `/match/{tournamentSlug}/{matchSlug}/{matchId}` using ID-based data resolution.
-- [ ] 3.2 Add canonical nested routes for simulation and chronicle under the slug-based path.
-- [ ] 3.3 Implement legacy `/match/{matchId}` and nested route redirects to canonical paths while preserving supported query parameters.
-- [ ] 3.4 Implement slug mismatch canonicalization redirect for requests with valid IDs but stale slug segments.
+- [x] 3.1 Add canonical match detail route structure for `/match/{tournamentSlug}/{matchSlug}/{matchId}` using ID-based data resolution.
+- [x] 3.2 Add canonical nested routes for simulation and chronicle under the slug-based path.
+- [x] 3.3 Implement legacy `/match/{matchId}` and nested route redirects to canonical paths while preserving supported query parameters.
+- [x] 3.4 Implement slug mismatch canonicalization redirect for requests with valid IDs but stale slug segments.
 
 ## 4. Navigation and URL Builder Adoption
 

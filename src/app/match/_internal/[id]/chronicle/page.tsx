@@ -45,7 +45,6 @@ function formatSignedNumber(value: number): string {
   if (value > 0) {
     return `+${value.toFixed(2)}`;
   }
-
   return value.toFixed(2);
 }
 
@@ -506,6 +505,7 @@ export default async function ChroniclePage({
   }
 
   const detailHref = buildCanonicalMatchHref(match) ?? `/match/${id}`;
+
   const [t, tCommon, locale] = await Promise.all([
     getTranslations("chronicle"),
     getTranslations("common"),

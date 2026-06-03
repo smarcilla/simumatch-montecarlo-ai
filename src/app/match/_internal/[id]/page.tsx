@@ -16,7 +16,7 @@ import { createFindShotsByMatchCommand } from "@/infrastructure/mappers/find-sho
 
 interface MatchPageProps {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ back?: string | undefined }>;
+  searchParams: Promise<{ back: string | undefined }>;
   skipCanonicalRedirect?: boolean;
 }
 

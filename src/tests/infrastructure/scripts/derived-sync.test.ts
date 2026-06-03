@@ -16,7 +16,7 @@ describe("Derived sync slug handling", () => {
         tournament: { slug: "tournament-slug-1" },
         slug: "match-slug-1",
       },
-    ] as any;
+    ];
 
     const { commands, skipped } = buildMatchCommands(rawMatches);
 
