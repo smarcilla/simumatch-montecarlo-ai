@@ -1,9 +1,7 @@
 # Purpose
 
 TBD: Main specification for the seed-derived synchronization script.
-
 ## Requirements
-
 ### Requirement: Sincronización de colecciones derivadas sin filtros
 
 El sistema SHALL disponer de un script `seed:derived` que, cuando se ejecuta sin argumentos, sincronice todas las colecciones derivadas (`seasons`, `teams`, `matches`, `players`, `shots`) a partir de los datos existentes en las colecciones raw de MongoDB (`seasons_raw`, `league_matches_raw`, `match_shots_raw`).
@@ -72,3 +70,32 @@ El sistema SHALL realizar operaciones de upsert (no borrado previo) al sincroniz
 
 - **WHEN** se ejecuta `pnpm seed:derived` dos veces consecutivas con los mismos raw
 - **THEN** el conteo de documentos en las colecciones derivadas es idéntico tras ambas ejecuciones
+
+### Requirement: Derived match synchronization includes slugs
+
+The `seed:derived` synchronization flow SHALL map `league_matches_raw.tournament.slug` to `tournamentSlug` and `league_matches_raw.slug` to `matchSlug` in derived match upsert data.
+
+#### Scenario: Full synchronization persists match slugs
+
+- **WHEN** `pnpm seed:derived` synchronizes a raw match that contains tournament and match slugs
+- **THEN** the derived `matches` record stores `tournamentSlug` and `matchSlug` alongside existing match fields
+
+#### Scenario: Filtered synchronization persists match slugs
+
+- **WHEN** `pnpm seed:derived --league <externalId> --season <season>` synchronizes raw matches with slugs
+- **THEN** each synchronized derived match in that scope stores `tournamentSlug` and `matchSlug`
+
+### Requirement: Match slug synchronization remains idempotent
+
+Repeated synchronization SHALL keep one derived match per external ID and SHALL update slug fields to the latest raw values.
+
+#### Scenario: Re-running synchronization does not duplicate matches
+
+- **WHEN** `seed:derived` runs multiple times with unchanged raw data
+- **THEN** no duplicate derived matches are created and stored slug fields remain unchanged
+
+#### Scenario: Re-running synchronization updates changed slugs
+
+- **WHEN** a raw match slug value changes and `seed:derived` runs again
+- **THEN** the existing derived match for that external ID is updated with the new slug value
+
