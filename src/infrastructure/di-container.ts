@@ -48,6 +48,7 @@ import { connectionManager } from "@/infrastructure/db/connection-manager";
 import { FindMatchByIdUseCase } from "@/application/use-cases/find-match-by-id.use-case";
 import { FindTeamSuggestionsUseCase } from "@/application/use-cases/find-team-suggestions.use-case";
 import { MongooseIdGeneratorService } from "./db/services/mongoose-id-generator.service";
+import { FindActiveMatchesUseCase } from "@/application/use-cases/find-active-matches.use-case";
 
 export class DIContainer {
   private static chronicleRepository: ChronicleRepository;
@@ -63,6 +64,7 @@ export class DIContainer {
   private static findTeamSuggestionsUseCase: FindTeamSuggestionsUseCase;
   private static findLeaguesUseCase: FindLeaguesUseCase;
   private static findMatchByIdUseCase: FindMatchByIdUseCase;
+  private static findActiveMatchesUseCase: FindActiveMatchesUseCase;
   private static addPlayersByShotsUseCase: AddPlayersByShotsUseCase;
   private static addShotsByShotRawUseCase: AddShotsByShotRawUseCase;
   private static findShotsByMatchUseCase: FindShotsByMatchUseCase;
@@ -193,6 +195,17 @@ export class DIContainer {
       );
     }
     return DIContainer.findMatchByIdUseCase;
+  }
+
+  static async getFindActiveMatchesUseCase(): Promise<FindActiveMatchesUseCase> {
+    await DIContainer.initializeDatabaseConnection();
+    if (!DIContainer.findActiveMatchesUseCase) {
+      DIContainer.findActiveMatchesUseCase = new FindActiveMatchesUseCase(
+        DIContainer.getMatchRepository(),
+        DIContainer.getLeagueRepository()
+      );
+    }
+    return DIContainer.findActiveMatchesUseCase;
   }
 
   static async getAddPlayersByShotsUseCase(): Promise<AddPlayersByShotsUseCase> {

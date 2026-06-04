@@ -10,6 +10,7 @@ import { ShotMatchStatsResult } from "@/application/results/shot-match-stats.res
 import { FindShotsByMatchCommand } from "@/application/commands/find-shots-by-match.command";
 import { createFindMatchesByLeagueAndSeasonCommand } from "@/application/commands/find-matches-by-league-and-season.comand";
 import { PaginatedResult } from "@/domain/types/pagination";
+import { MatchSlug } from "@/domain/types/match-slug";
 
 function getMatchCacheTag(id: string): string {
   return `match-${id}`;
@@ -46,6 +47,19 @@ async function findMatchesByLeagueAndSeason(
 
   const useCase = await DIContainer.getFindMatchesByLeagueAndSeasonUseCase();
   return useCase.execute(command);
+}
+
+export async function getActiveMatches(): Promise<MatchSlug[]> {
+  "use cache";
+  cacheTag("active-matches");
+
+  console.log("Fetching active matches from database");
+
+  const useCase = await DIContainer.getFindActiveMatchesUseCase();
+  const result = await useCase.execute();
+
+  console.log("Fetched active matches from database");
+  return result;
 }
 
 export async function getMatchesByLeagueAndSeason(
