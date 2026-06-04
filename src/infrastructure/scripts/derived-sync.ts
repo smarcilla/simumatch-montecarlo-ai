@@ -26,6 +26,8 @@ interface MatchRawDocument {
   startTimestamp: number;
   homeScore: ScoreData;
   awayScore: ScoreData;
+  tournament?: { slug?: string };
+  slug?: string;
 }
 
 interface RawPlayerData {
@@ -328,7 +330,7 @@ function buildSeasonCommands(seasonsRaw: SeasonRawDocument[]): {
   return { commands, skipped };
 }
 
-function buildMatchCommands(matchesRaw: MatchRawDocument[]): {
+export function buildMatchCommands(matchesRaw: MatchRawDocument[]): {
   commands: UpsertMatchCommand[];
   skipped: number;
 } {
@@ -355,6 +357,8 @@ function buildMatchCommands(matchesRaw: MatchRawDocument[]): {
       awayTeamExternalId: rawMatch.awayTeam.id,
       leagueExternalId: rawMatch.league_external_id,
       seasonExternalId: rawMatch.season_id,
+      tournamentSlug: rawMatch.tournament?.slug,
+      matchSlug: rawMatch.slug,
       date: rawMatch.startTimestamp * 1000,
       homeScore: rawMatch.homeScore.display,
       awayScore: rawMatch.awayScore.display,

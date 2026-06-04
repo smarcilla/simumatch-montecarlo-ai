@@ -18,4 +18,6 @@ export interface FindMatchByIdResult {
   status: MatchStatusValue;
   league: string;
   season: string;
+  tournamentSlug?: string | undefined;
+  matchSlug?: string | undefined;
 }

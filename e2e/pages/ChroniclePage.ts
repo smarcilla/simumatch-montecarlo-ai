@@ -1,4 +1,12 @@
 import { type Locator, type Page } from "@playwright/test";
+import { buildCanonicalMatchChronicleHref } from "@/app/match/match-route-utils";
+
+export interface CanonicalMatchChronicleRoute {
+  id: string;
+  tournamentSlug: string;
+  matchSlug: string;
+  backUrl?: string;
+}
 
 export class ChroniclePage {
   readonly page: Page;
@@ -23,6 +31,15 @@ export class ChroniclePage {
 
   async goto(matchId: string) {
     await this.page.goto(`/match/${matchId}/chronicle`);
+  }
+
+  async gotoCanonical(match: CanonicalMatchChronicleRoute) {
+    const href =
+      buildCanonicalMatchChronicleHref(
+        match,
+        match.backUrl ? { back: match.backUrl } : undefined
+      ) ?? `/match/${match.id}/chronicle`;
+    await this.page.goto(href);
   }
 
   async goBackToMatch() {

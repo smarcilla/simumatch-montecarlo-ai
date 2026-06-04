@@ -92,4 +92,47 @@ describe("UpsertMatchesUseCase", () => {
 
     expect(await matchRepository.findByExternalId(9003)).toBeNull();
   });
+
+  it("should persist tournamentSlug and matchSlug and preserve them across repeated syncs", async () => {
+    const league = await buildLeague({ externalId: "league-ext-4" });
+    const season = await buildSeason(league._id, { externalId: 1004 });
+    const homeTeam = await buildTeam({ externalId: 5001 });
+    const awayTeam = await buildTeam({ externalId: 5002 });
+
+    const command = {
+      externalId: 9004,
+      homeTeamExternalId: homeTeam.externalId as number,
+      awayTeamExternalId: awayTeam.externalId as number,
+      leagueExternalId: league.externalId as string,
+      seasonExternalId: season.externalId as number,
+      tournamentSlug: "tournament-slug-4",
+      matchSlug: "match-slug-4",
+      date: new Date("2024-03-10").getTime(),
+      homeScore: 4,
+      awayScore: 2,
+      status: "finished" as const,
+    };
+
+    await useCase.execute([command]);
+
+    let match = await matchRepository.findByExternalId(9004);
+    expect(match).not.toBeNull();
+    expect(match!.tournamentSlug).toBe("tournament-slug-4");
+    expect(match!.matchSlug).toBe("match-slug-4");
+
+    await useCase.execute([
+      {
+        ...command,
+        homeScore: 5,
+        awayScore: 3,
+      },
+    ]);
+
+    match = await matchRepository.findByExternalId(9004);
+    expect(match).not.toBeNull();
+    expect(match!.tournamentSlug).toBe("tournament-slug-4");
+    expect(match!.matchSlug).toBe("match-slug-4");
+    expect(match!.score.home).toBe(5);
+    expect(match!.score.away).toBe(3);
+  });
 });

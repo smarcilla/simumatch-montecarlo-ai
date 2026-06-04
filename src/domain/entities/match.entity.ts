@@ -12,6 +12,8 @@ export class Match {
   constructor(
     readonly id: string,
     readonly externalId: number,
+    readonly tournamentSlug: string | undefined,
+    readonly matchSlug: string | undefined,
     readonly league: League,
     readonly season: Season,
     readonly date: MatchDate,

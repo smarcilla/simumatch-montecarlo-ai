@@ -86,20 +86,36 @@ describe("MatchCard", () => {
     expect(screen.getByText("chronicle_generated")).toBeDefined();
   });
 
-  it("should link to /match/{id}", () => {
-    render(<MatchCard match={buildMatch({ id: "abc-123" })} />);
+  it("should link to canonical slug path when slugs are available", () => {
+    render(
+      <MatchCard
+        match={buildMatch({
+          id: "abc-123",
+          tournamentSlug: "tournament-slug-1",
+          matchSlug: "match-slug-1",
+        })}
+      />
+    );
+
     const links = screen.getAllByRole("link");
     const matchLink = links.find((l) =>
       l.getAttribute("href")?.startsWith("/match/")
     );
+
     expect(matchLink).toBeDefined();
-    expect(matchLink!.getAttribute("href")).toBe("/match/abc-123");
+    expect(matchLink!.getAttribute("href")).toBe(
+      "/match/tournament-slug-1/match-slug-1/abc-123"
+    );
   });
 
   it("should append encoded back query when backUrl is provided", () => {
     render(
       <MatchCard
-        match={buildMatch({ id: "abc-123" })}
+        match={buildMatch({
+          id: "abc-123",
+          tournamentSlug: "tournament-slug-1",
+          matchSlug: "match-slug-1",
+        })}
         backUrl="/?league=39&season=2025&page=4&team=spain"
       />
     );
@@ -110,7 +126,7 @@ describe("MatchCard", () => {
 
     expect(matchLink).toBeDefined();
     expect(matchLink!.getAttribute("href")).toBe(
-      "/match/abc-123?back=%2F%3Fleague%3D39%26season%3D2025%26page%3D4%26team%3Dspain"
+      "/match/tournament-slug-1/match-slug-1/abc-123?back=%2F%3Fleague%3D39%26season%3D2025%26page%3D4%26team%3Dspain"
     );
   });
 

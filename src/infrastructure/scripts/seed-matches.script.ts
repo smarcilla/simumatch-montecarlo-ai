@@ -29,6 +29,8 @@ interface MatchRawDocument {
   startTimestamp: number;
   homeScore: ScoreData;
   awayScore: ScoreData;
+  tournament?: { slug?: string };
+  slug?: string;
 }
 
 const scriptStart = Date.now();
@@ -105,6 +107,8 @@ try {
       awayTeamExternalId: rawMatch.awayTeam.id,
       leagueExternalId: rawMatch.league_external_id,
       seasonExternalId: rawMatch.season_id,
+      tournamentSlug: rawMatch.tournament?.slug,
+      matchSlug: rawMatch.slug,
       date: rawMatch.startTimestamp * 1000,
       homeScore: rawMatch.homeScore.display,
       awayScore: rawMatch.awayScore.display,

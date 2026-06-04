@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import {
@@ -6,6 +6,7 @@ import {
   getShotsByMatch,
   getShotStatsByMatch,
 } from "@/infrastructure/actions/match.actions";
+import { buildCanonicalMatchHref } from "@/app/match/match-route-utils";
 import { DashboardLayout } from "@/infrastructure/ui/layout/DashboardLayout";
 import { MatchDetailCard } from "@/infrastructure/ui/components/MatchDetailCard";
 import { MatchActionsPanel } from "@/infrastructure/ui/components/MatchActionsPanel";
@@ -15,7 +16,8 @@ import { createFindShotsByMatchCommand } from "@/infrastructure/mappers/find-sho
 
 interface MatchPageProps {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ back?: string }>;
+  searchParams: Promise<{ back: string | undefined }>;
+  skipCanonicalRedirect?: boolean;
 }
 
 export function resolveBackHref(
@@ -41,6 +43,7 @@ export function resolveBackHref(
 export default async function MatchPage({
   params,
   searchParams,
+  skipCanonicalRedirect,
 }: Readonly<MatchPageProps>) {
   const [{ id }, { back }] = await Promise.all([params, searchParams]);
 
@@ -54,6 +57,11 @@ export default async function MatchPage({
 
   if (!match) {
     notFound();
+  }
+
+  const canonicalHref = buildCanonicalMatchHref(match, { back });
+  if (canonicalHref && !skipCanonicalRedirect) {
+    redirect(canonicalHref);
   }
 
   const backHref = resolveBackHref(back, match.league, match.season);

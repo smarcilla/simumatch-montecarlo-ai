@@ -3,6 +3,10 @@ import { notFound, redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import { getMatchById } from "@/infrastructure/actions/match.actions";
 import { getChronicleByMatchId } from "@/infrastructure/actions/simulation.actions";
+import {
+  buildCanonicalMatchChronicleHref,
+  buildCanonicalMatchHref,
+} from "@/app/match/match-route-utils";
 import { DashboardLayout } from "@/infrastructure/ui/layout/DashboardLayout";
 import { MatchDetailCard } from "@/infrastructure/ui/components/MatchDetailCard";
 import {
@@ -17,6 +21,7 @@ import {
 
 interface ChroniclePageProps {
   params: Promise<{ id: string }>;
+  skipCanonicalRedirect?: boolean;
 }
 
 function getAccentClass(accent: ChronicleAccent): string {
@@ -40,7 +45,6 @@ function formatSignedNumber(value: number): string {
   if (value > 0) {
     return `+${value.toFixed(2)}`;
   }
-
   return value.toFixed(2);
 }
 
@@ -478,6 +482,7 @@ function renderSections(chronicle: ChronicleResult) {
 
 export default async function ChroniclePage({
   params,
+  skipCanonicalRedirect,
 }: Readonly<ChroniclePageProps>) {
   const { id } = await params;
 
@@ -490,9 +495,16 @@ export default async function ChroniclePage({
     notFound();
   }
 
-  if (!chronicle) {
-    redirect(`/match/${id}`);
+  const canonicalChronicleHref = buildCanonicalMatchChronicleHref(match);
+  if (canonicalChronicleHref && !skipCanonicalRedirect) {
+    redirect(canonicalChronicleHref);
   }
+
+  if (!chronicle) {
+    redirect(buildCanonicalMatchHref(match) ?? `/match/${id}`);
+  }
+
+  const detailHref = buildCanonicalMatchHref(match) ?? `/match/${id}`;
 
   const [t, tCommon, locale] = await Promise.all([
     getTranslations("chronicle"),
@@ -547,7 +559,7 @@ export default async function ChroniclePage({
           } as React.CSSProperties
         }
       >
-        <Link href={`/match/${id}`} className="match-detail-back">
+        <Link href={detailHref} className="match-detail-back">
           {tCommon("backToMatch")}
         </Link>
 

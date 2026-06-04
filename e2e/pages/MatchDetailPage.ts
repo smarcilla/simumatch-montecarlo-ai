@@ -1,4 +1,12 @@
 import { type Locator, type Page, expect } from "@playwright/test";
+import { buildCanonicalMatchHref } from "@/app/match/match-route-utils";
+
+export interface CanonicalMatchRoute {
+  id: string;
+  tournamentSlug: string;
+  matchSlug: string;
+  backUrl?: string;
+}
 
 export class MatchDetailPage {
   readonly page: Page;
@@ -33,6 +41,13 @@ export class MatchDetailPage {
 
   async goto(matchId: string) {
     await this.page.goto(`/match/${matchId}`);
+  }
+
+  async gotoCanonical(match: CanonicalMatchRoute) {
+    const href =
+      buildCanonicalMatchHref(match, match.backUrl ? { back: match.backUrl } : undefined) ??
+      `/match/${match.id}`;
+    await this.page.goto(href);
   }
 
   async simulateMatch() {

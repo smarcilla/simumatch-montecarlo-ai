@@ -56,7 +56,7 @@ test.describe("Match browsing", () => {
     await expect(homePage.matchCards.first()).toBeVisible();
 
     await homePage.clickFirstMatch();
-    await page.waitForURL(/\/match\/.+/);
-    expect(page.url()).toMatch(/\/match\/.+/);
+    await page.waitForURL(/\/match\/[^/]+\/[^/]+\/[^/]+$/);
+    expect(page.url()).toMatch(/\/match\/[^/]+\/[^/]+\/[^/]+$/);
   });
 });

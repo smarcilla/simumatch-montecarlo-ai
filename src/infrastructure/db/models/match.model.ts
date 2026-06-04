@@ -13,6 +13,8 @@ export interface IMatchDocument extends Document {
   homeScore?: number;
   awayScore?: number;
   externalId: number;
+  tournamentSlug?: string;
+  slug?: string;
 }
 
 export interface IMatchPopulated extends Omit<
@@ -40,6 +42,8 @@ const MatchSchema = new Schema<IMatchDocument>(
     homeScore: { type: Number },
     awayScore: { type: Number },
     externalId: { type: Number, required: true },
+    tournamentSlug: { type: String },
+    slug: { type: String },
   },
   { timestamps: true }
 );

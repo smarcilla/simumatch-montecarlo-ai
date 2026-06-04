@@ -3,6 +3,10 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { getMatchById } from "@/infrastructure/actions/match.actions";
 import { getSimulationByMatchId } from "@/infrastructure/actions/simulation.actions";
+import {
+  buildCanonicalMatchHref,
+  buildCanonicalMatchSimulationHref,
+} from "@/app/match/match-route-utils";
 import { DashboardLayout } from "@/infrastructure/ui/layout/DashboardLayout";
 import { MatchDetailCard } from "@/infrastructure/ui/components/MatchDetailCard";
 import { SimulationProbabilityChart } from "@/infrastructure/ui/components/SimulationProbabilityChart";
@@ -13,10 +17,12 @@ import { MomentumTimelineChart } from "@/infrastructure/ui/components/MomentumTi
 
 interface SimulationPageProps {
   params: Promise<{ id: string }>;
+  skipCanonicalRedirect?: boolean;
 }
 
 export default async function SimulationPage({
   params,
+  skipCanonicalRedirect,
 }: Readonly<SimulationPageProps>) {
   const { id } = await params;
 
@@ -26,8 +32,15 @@ export default async function SimulationPage({
   ]);
 
   if (!match) notFound();
+
+  const canonicalSimulationHref = buildCanonicalMatchSimulationHref(match);
+  if (canonicalSimulationHref && !skipCanonicalRedirect) {
+    redirect(canonicalSimulationHref);
+  }
+
   if (!simulation) redirect(`/match/${id}`);
 
+  const detailHref = buildCanonicalMatchHref(match) ?? `/match/${id}`;
   const t = await getTranslations("common");
 
   return (
@@ -43,7 +56,7 @@ export default async function SimulationPage({
           } as React.CSSProperties
         }
       >
-        <Link href={`/match/${id}`} className="match-detail-back">
+        <Link href={detailHref} className="match-detail-back">
           {t("backToMatch")}
         </Link>
         <MatchDetailCard match={match} />

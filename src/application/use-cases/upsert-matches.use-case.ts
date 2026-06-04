@@ -82,6 +82,8 @@ export class UpsertMatchesUseCase {
     const match = new Match(
       "",
       command.externalId,
+      command.tournamentSlug,
+      command.matchSlug,
       league,
       season,
       MatchDate.create(command.date),
