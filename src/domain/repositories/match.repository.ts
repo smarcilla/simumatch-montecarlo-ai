@@ -2,6 +2,7 @@
 import { Match } from "../entities/match.entity";
 import { PaginationOptions, PaginatedResult } from "@/domain/types/pagination";
 import { MatchFilterOptions } from "@/domain/types/match-filter";
+import { MatchSlug } from "../types/match-slug";
 
 export interface MatchRepository {
   findByLeagueAndSeason(
@@ -15,4 +16,8 @@ export interface MatchRepository {
   findByExternalId(externalId: number): Promise<Match | null>;
   upsert(match: Match): Promise<void>;
   deleteAll(): Promise<void>;
+  findByLeagueAndSeasonOnlyMatches(
+    leagueId: string,
+    seasonId: string
+  ): Promise<MatchSlug[]>;
 }

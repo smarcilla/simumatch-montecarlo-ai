@@ -1,7 +1,11 @@
 // src/infrastructure/repositories/mongoose-match.repository.ts
 import { Match } from "@/domain/entities/match.entity";
 import { MatchRepository } from "@/domain/repositories/match.repository";
-import { IMatchPopulated, MatchModel } from "../db/models/match.model";
+import {
+  IMatchDocument,
+  IMatchPopulated,
+  MatchModel,
+} from "../db/models/match.model";
 import { TeamModel } from "../db/models/team.model";
 import { LeagueModel } from "../db/models/league.model";
 import { SeasonModel } from "../db/models/season.model";
@@ -16,6 +20,7 @@ import { Score } from "@/domain/value-objects/score.value";
 import { MatchStatus } from "@/domain/value-objects/match-status.value";
 import { MatchFilterOptions } from "@/domain/types/match-filter";
 import { PaginatedResult, PaginationOptions } from "@/domain/types/pagination";
+import { MatchSlug } from "@/domain/types/match-slug";
 
 export class MongooseMatchRepository implements MatchRepository {
   private static readonly REGISTERED_MODELS = Object.freeze({
@@ -116,6 +121,24 @@ export class MongooseMatchRepository implements MatchRepository {
       hasNextPage: paginationOptions.page < totalPages - 1,
       hasPreviousPage: paginationOptions.page > 0,
     };
+  }
+
+  async findByLeagueAndSeasonOnlyMatches(
+    leagueId: string,
+    seasonId: string
+  ): Promise<MatchSlug[]> {
+    const matches = await MatchModel.find({
+      leagueId: new Types.ObjectId(leagueId),
+      seasonId: new Types.ObjectId(seasonId),
+    })
+      .sort({ date: 1 })
+      .lean<IMatchDocument[]>();
+
+    return matches.map((doc) => ({
+      id: doc._id.toString(),
+      slug: doc.slug!,
+      leagueSlug: doc.tournamentSlug!,
+    }));
   }
 
   async upsert(match: Match): Promise<void> {
