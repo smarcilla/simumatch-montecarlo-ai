@@ -10,5 +10,11 @@
     "country": "World",
     "externalId": "FIFA World Cup",
     "numericExternalId": 16
+  },
+  {
+    "name": "UEFA European Championship",
+    "country": "Europe",
+    "externalId": "UEFA European Championship",
+    "numericExternalId": 1
   }
 ]
